@@ -1,0 +1,10 @@
+Package: com.galacticdev.isponsorblock
+Name: iSponsorBlock
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Galactic Dev
+Author: Galactic Dev
+Section: Tweaks
+Version: 0.0.1-157+debug
+Installed-Size: 112
