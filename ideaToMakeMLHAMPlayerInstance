@@ -1,4 +1,0 @@
-make MLHAMPlayerInstance like this:
-[[MLHAMPlayer alloc] initWithVideo:MLVideoInstance playerConfig:MLInnerTubePlayerConfigInstance stickySettings:MLPlayerStickySettingsInstance playerView:MLHAMIOSurfaceMainThreadRenderingViewInstance frameSourceDelegate:MLHAMIOSurfaceMainThreadRenderingViewInstance];
-
-also need to NSLog all the init methods of classes being pumped into initWithVideo to make sure that they actually get called lel. 
