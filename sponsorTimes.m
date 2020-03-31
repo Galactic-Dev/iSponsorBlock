@@ -11,14 +11,28 @@
     [request setHTTPMethod:@"GET"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-
+        NSLog(@"data = %@", data);
         if (data != nil && error == nil){
             id jsonData = [[NSJSONSerialization JSONObjectWithData:data options:0 error:&error] objectForKey:@"sponsorTimes"];
-            NSArray *result = jsonData;
-
-            NSLog(@"sponsorTimes.m called getSponsorTimes and it returned this data: %@", data);
+            if(jsonData != nil) {
+                NSDictionary *result = @{
+                @"sponsorTimes" : jsonData, 
+                @"videoID" : videoID
+            };
             [target performSelectorOnMainThread:sel withObject:result waitUntilDone:NO];
+            }
+
+            else {
+                [target performSelectorOnMainThread:sel withObject:nil waitUntilDone:NO]; 
+            }
+            
+
+            
         }
+      
+           
+
+        
        
 
     }];
