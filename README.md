@@ -8,4 +8,4 @@ This tweak has been tested on the latest YouTube version (15.49.4)
 
 # Installation
 
-Add the following repository: galactic-dev.github.io
+Add the following repository: https://galactic-dev.github.io
