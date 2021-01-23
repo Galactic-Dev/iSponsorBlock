@@ -254,6 +254,13 @@ NSString *modifiedTimeString;
     }
     return %orig;
 }
+-(void)setFrame:(CGRect)frame {
+    if (CGRectIsNull(frame)) {
+        %orig(CGRectMake(0,0,0,0));
+    }
+    %orig;
+}
+
 -(UIColor *)colorForType:(NSInteger)type {
     switch (type) {
         case 100:
