@@ -85,12 +85,12 @@
     self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section"];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 13;
+    return 14;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if(section == 0) return 1;
-    else if(section <= 6 || section == 12) return 2;
+    else if(section <= 6 || section == 13) return 2;
     return 1;
 }
 
@@ -183,18 +183,27 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    else if(indexPath.section >= 8 && indexPath.section < 12) {
+    if(indexPath.section == 8) {
+        UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
+        textCell.textLabel.text = @"Set How Long Skip Notice Will Appear:";
+        textCell.textLabel.adjustsFontSizeToFitWidth = YES;
+        [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"skipNoticeDuration"] floatValue]];
+        [textCell editableTextField].keyboardType = UIKeyboardTypeDecimalPad;
+        [textCell editableTextField].delegate = self;
+        return textCell;
+    }
+    else if(indexPath.section >= 9 && indexPath.section < 13) {
         NSArray *titles = @[@"Show Skip Notice", @"Show iSponsorBlock Buttons in Video Player", @"Show Modified Time in Seek Bar", @"Enable Skip Count Tracking"];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
-        tableCell.textLabel.text = titles[indexPath.section-8];
+        tableCell.textLabel.text = titles[indexPath.section-9];
         tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
 
         UISwitch *toggleSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         tableCell.accessoryView = toggleSwitch;
         [toggleSwitch addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
-        if([self.settings valueForKey:titlesNames[indexPath.section-8]]) {
-            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-8]] boolValue] animated:NO];
+        if([self.settings valueForKey:titlesNames[indexPath.section-9]]) {
+            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-9]] boolValue] animated:NO];
         }
         else {
             [toggleSwitch setOn:YES animated:NO];
@@ -202,7 +211,7 @@
         }
         return tableCell;
     }
-    else if(indexPath.section == 12) {
+    else if(indexPath.section == 13) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
         if(indexPath.row == 0) cell.textLabel.text = @"Donate on Venmo!";
         else cell.textLabel.text = @"Donate on PayPal!";
@@ -249,7 +258,7 @@
     UITableViewCell *cell = (UITableViewCell *)sender.superview;
     NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-8]];
+    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-9]];
     [self writeSettings:self.settings];
 }
 
@@ -261,15 +270,18 @@
     [self writeSettings:self.settings];
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField {
-    //[self.tableView setContentOffset:CGPointMake(0, textField.center.y+200) animated:YES];
-}
-
 -(void)textFieldDidEndEditing:(UITextField *)textField {
+    UITableViewCell *cell = (UITableViewCell *)textField.superview.superview;
     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
     f.numberStyle = NSNumberFormatterDecimalStyle;
-    [self.settings setValue:[f numberFromString:textField.text] forKey:@"minimumDuration"];
-    [self writeSettings:self.settings];
+    if([cell.textLabel.text isEqualToString:@"Set Minimum Segment Duration:"]) {
+        [self.settings setValue:[f numberFromString:textField.text] forKey:@"minimumDuration"];
+        [self writeSettings:self.settings];
+    }
+    else {
+        [self.settings setValue:[f numberFromString:textField.text] forKey:@"skipNoticeDuration"];
+        [self writeSettings:self.settings];
+    }
 }
 
 -(void)writeSettings:(NSDictionary *)settings {

@@ -13,10 +13,11 @@ NSString *modifiedTimeString;
 %property (strong, nonatomic) MBProgressHUD *hud;
 %property (nonatomic, assign) NSInteger unskippedSegment;
 %property (strong, nonatomic) NSMutableArray *userSkipSegments;
+%property (strong, nonatomic) NSString *channelID;
 -(void)singleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
     %orig;
     id overlayView = self.view.overlayView;
-    if(self.skipSegments.count > 0 && [overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+    if(self.skipSegments.count > 0 && [overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)] && ![kWhitelistedChannels containsObject:self.channelID]){
         if(kShowModifiedTime){
             UILabel *durationLabel = self.view.overlayView.playerBar.durationLabel;
             if(![durationLabel.text containsString:modifiedTimeString]) durationLabel.text = [NSString stringWithFormat:@"%@ (%@)", durationLabel.text, modifiedTimeString];
@@ -62,18 +63,16 @@ NSString *modifiedTimeString;
                 [self.hud.button setTitle:@"Unskip Segment" forState:UIControlStateNormal];
                 [self.hud.button addTarget:self action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                 self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
-                [self.hud hideAnimated:YES afterDelay:3.0f];
+                [self.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
             }
                                                                                                          
             if(self.currentSponsorSegment <= self.skipSegments.count-1) self.currentSponsorSegment ++;
-            //if (self.skipSegments.count > 0 && self.currentSponsorSegment+1 <= self.skipSegments.count) sponsorSegment.startTime = self.skipSegments[self.currentSponsorSegment].startTime;
         }
         else if(lroundf(arg2.time) > sponsorSegment.startTime && self.currentSponsorSegment != self.skipSegments.count && self.currentSponsorSegment != self.skipSegments.count-1) {
             self.currentSponsorSegment ++;
         }
         else if(self.currentSponsorSegment == 0 && self.unskippedSegment != -1) {
             self.currentSponsorSegment ++;
-            //self.unskippedSegment = -1;
         }
         else if(self.currentSponsorSegment > 0 && lroundf(arg2.time) < self.skipSegments[self.currentSponsorSegment-1].endTime) {
             if(self.unskippedSegment != self.currentSponsorSegment-1) {
@@ -86,6 +85,7 @@ NSString *modifiedTimeString;
     }
     if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
         YTPlayerBarSegmentedProgressView *segmentedProgressView = [self.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"];
+        if(segmentedProgressView.playerViewController != self) segmentedProgressView.playerViewController = self;
         for(UIView *markerView in segmentedProgressView.subviews){
             if(![(NSArray *)[segmentedProgressView valueForKey:@"_markerViews"] containsObject:markerView] && [markerView isKindOfClass:%c(YTPlayerBarSegmentMarkerView)] && segmentedProgressView.skipSegments.count == 0) {
                 [segmentedProgressView maybeCreateMarkerViews];
@@ -104,6 +104,7 @@ NSString *modifiedTimeString;
         self.unskippedSegment = -1;
         self.view.overlayView.controlsOverlayView.playerViewController = self;
         self.view.overlayView.controlsOverlayView.isDisplayingSponsorBlockViewController = NO;
+        self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
     }
 }
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
@@ -283,6 +284,7 @@ NSString *modifiedTimeString;
 %hook YTPlayerBarSegmentedProgressView
 %property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 %property (strong, nonatomic) NSMutableArray *skipSegments;
+%property (strong, nonatomic) YTPlayerViewController *playerViewController;
 -(void)maybeCreateMarkerViews {
     %orig;
     [self removeSponsorMarkers];
@@ -305,6 +307,9 @@ NSString *modifiedTimeString;
 
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
     %orig;
+    if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
+        return;
+    }
     NSMutableArray <YTPlayerBarSegmentMarkerView *> *markerViews = [self valueForKey:@"_markerViews"];
     [markerViews removeObjectsInArray:self.sponsorMarkerViews];
      [self setValue:markerViews forKey:@"_markerViews"];
@@ -581,7 +586,7 @@ AVQueuePlayer *queuePlayer;
                     [weakSelf.hud.button setTitle:@"Unskip Segment" forState:UIControlStateNormal];
                     [weakSelf.hud.button addTarget:weakSelf action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                     weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
-                    [weakSelf.hud hideAnimated:YES afterDelay:3.0f];
+                    [weakSelf.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
                 }
                 
                 if(weakSelf.currentSponsorSegment <= weakSelf.skipSegments.count-1) weakSelf.currentSponsorSegment ++;
@@ -619,16 +624,28 @@ AVQueuePlayer *queuePlayer;
 %end
 
 %group JustSettings
+NSInteger pageStyle = 0;
 %hook YTRightNavigationButtons
 %property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
 -(NSMutableArray *)buttons {
     NSMutableArray *retVal = %orig.mutableCopy;
     [self.sponsorBlockButton removeFromSuperview];
     [self addSubview:self.sponsorBlockButton];
-    if(!self.sponsorBlockButton) {
+    if(!self.sponsorBlockButton || pageStyle != [%c(YTPageStyleController) pageStyle]) {
         self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
-        [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
+        
+        if([%c(YTPageStyleController) pageStyle]) { //dark mode
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
+        }
+        else { //light mode
+            UIImage *image = [UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"];
+            image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
+            [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
+            [self.sponsorBlockButton setTintColor:UIColor.blackColor];
+        }
+        pageStyle = [%c(YTPageStyleController) pageStyle];
+        
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [retVal insertObject:self.sponsorBlockButton atIndex:0];
     }
@@ -680,7 +697,9 @@ static void loadPrefs() {
     kShowButtonsInPlayer = [settings objectForKey:@"showButtonsInPlayer"] ? [[settings objectForKey:@"showButtonsInPlayer"] boolValue] : YES;
     kShowModifiedTime = [settings objectForKey:@"showModifiedTime"] ? [[settings objectForKey:@"showModifiedTime"] boolValue] : YES;
     kEnableSkipCountTracking = [settings objectForKey:@"enableSkipCountTracking"] ? [[settings objectForKey:@"enableSkipCountTracking"] boolValue] : YES;
-
+    kSkipNoticeDuration = [settings objectForKey:@"skipNoticeDuration"] ? [[settings objectForKey:@"skipNoticeDuration"] floatValue] : 3.0f;
+    kWhitelistedChannels = [settings objectForKey:@"whitelistedChannels"] ? [(NSArray *)[settings objectForKey:@"whitelistedChannels"] mutableCopy] : [NSMutableArray array];
+    
     NSDictionary *newSettings = @{
       @"enabled" : @(kIsEnabled),
       @"userID" : kUserID,
@@ -689,7 +708,9 @@ static void loadPrefs() {
       @"showSkipNotice" : @(kShowSkipNotice),
       @"showButtonsInPlayer" : @(kShowButtonsInPlayer),
       @"showModifiedTime" : @(kShowModifiedTime),
-      @"enableSkipCountTracking" : @(kEnableSkipCountTracking)
+      @"enableSkipCountTracking" : @(kEnableSkipCountTracking),
+      @"skipNoticeDuration" : @(kSkipNoticeDuration),
+      @"whitelistedChannels" : kWhitelistedChannels
     };
     if(![newSettings isEqualToDictionary:settings]) {
         [newSettings writeToURL:[NSURL fileURLWithPath:path isDirectory:NO] error:nil];

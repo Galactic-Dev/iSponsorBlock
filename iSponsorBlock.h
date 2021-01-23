@@ -17,6 +17,8 @@ BOOL kShowSkipNotice;
 BOOL kShowButtonsInPlayer;
 BOOL kShowModifiedTime;
 BOOL kEnableSkipCountTracking;
+CGFloat kSkipNoticeDuration;
+NSMutableArray <NSString *> *kWhitelistedChannels;
 
 @interface YTInlinePlayerBarView : UIView
 @end
@@ -45,6 +47,22 @@ BOOL kEnableSkipCountTracking;
 @property (strong, nonatomic) YTMainAppVideoPlayerOverlayView *overlayView;
 @end
 
+@interface YTIVideoDetails
+@property (strong, nonatomic) NSString *channelId;
+@end
+
+@interface MLVideo
+@property (strong, nonatomic) YTIVideoDetails *videoDetails;
+@end
+
+@interface YTSingleVideo
+@property (strong, nonatomic) MLVideo *video;
+@end
+
+@interface YTSingleVideoController
+@property (strong, nonatomic) YTSingleVideo *singleVideo;
+@end
+
 @interface YTPlayerViewController : UIViewController
 @property (strong, nonatomic) YTPlayerView *view;
 -(instancetype)initWithParentResponder:(id)arg1 overlayFactory:(id)arg2;
@@ -61,6 +79,8 @@ BOOL kEnableSkipCountTracking;
 @property (strong, nonatomic) MBProgressHUD *hud;
 @property (nonatomic, assign) NSInteger unskippedSegment;
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *userSkipSegments;
+@property (strong, nonatomic) YTSingleVideoController *activeVideo;
+@property (strong, nonatomic) NSString *channelID;
 @end
 
 //ik i'm redefining it im just lazy and dont feel like fixing this header
@@ -103,6 +123,7 @@ BOOL kEnableSkipCountTracking;
 @property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 @property (nonatomic, assign) NSInteger playerViewLayout;
 @property (nonatomic, retain) NSMutableArray <SponsorSegment *> *skipSegments;
+@property (strong, nonatomic) YTPlayerViewController *playerViewController;
 -(void)createAndAddMarker:(CGFloat)arg1 type:(NSInteger)arg2 width:(CGFloat)arg3;
 -(void)createAndAddMarker:(CGFloat)arg1 type:(NSInteger)arg2 clusterType:(NSInteger)arg3 width:(CGFloat)arg4;
 -(void)maybeCreateMarkerViews;
@@ -126,6 +147,9 @@ BOOL kEnableSkipCountTracking;
 -(void)setLeadingPadding:(CGFloat)arg1;
 @end
 
+@interface YTPageStyleController
++(NSInteger)pageStyle;
+@end
 
 //Cercube
 @interface CADownloadObject : NSObject

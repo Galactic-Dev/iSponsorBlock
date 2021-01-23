@@ -12,6 +12,7 @@
     [self.segmentsInDatabaseLabel removeFromSuperview];
     [self.userSegmentsLabel removeFromSuperview];
     [self.submitSegmentsButton removeFromSuperview];
+    [self.whitelistChannelLabel removeFromSuperview];
     
     self.sponsorSegmentViews = [NSMutableArray array];
     self.userSponsorSegmentViews = [NSMutableArray array];
@@ -140,6 +141,48 @@
         [self.submitSegmentsButton.heightAnchor constraintEqualToConstant:50].active = YES;
         self.submitSegmentsButton.clipsToBounds = YES;
     }
+    self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.whitelistChannelLabel.text = @"Whitelist Channel";
+    [self.playerViewController.view addSubview:self.whitelistChannelLabel];
+    self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.whitelistChannelLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
+    [self.whitelistChannelLabel.centerXAnchor constraintEqualToAnchor:self.startEndSegmentButton.centerXAnchor].active = YES;
+    [self.whitelistChannelLabel.widthAnchor constraintEqualToConstant:185].active = YES;
+    [self.whitelistChannelLabel.heightAnchor constraintEqualToConstant:31].active = YES;
+    self.whitelistChannelLabel.userInteractionEnabled = YES;
+    
+    UISwitch *whitelistSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
+    [whitelistSwitch addTarget:self action:@selector(whitelistSwitchToggled:) forControlEvents:UIControlEventValueChanged];
+    [self.whitelistChannelLabel addSubview:whitelistSwitch];
+    whitelistSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+    [whitelistSwitch.leadingAnchor constraintEqualToAnchor:self.whitelistChannelLabel.trailingAnchor constant:-51].active = YES;
+    [whitelistSwitch.centerYAnchor constraintEqualToAnchor:self.whitelistChannelLabel.centerYAnchor].active = YES;
+    
+    if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
+        [whitelistSwitch setOn:YES animated:NO];
+    }
+    else {
+        [whitelistSwitch setOn:NO animated:NO];
+    }
+    
+}
+
+-(void)whitelistSwitchToggled:(UISwitch *)sender {
+    if(sender.isOn) {
+        [kWhitelistedChannels addObject:self.playerViewController.channelID];
+    }
+    else {
+        [kWhitelistedChannels removeObject:self.playerViewController.channelID];
+    }
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *settingsPath = [documentsDirectory stringByAppendingPathComponent:@"iSponsorBlock.plist"];
+    NSMutableDictionary *settings = [NSMutableDictionary dictionary];
+    [settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:settingsPath]];
+    
+    [settings setValue:kWhitelistedChannels forKey:@"whitelistedChannels"];
+    [settings writeToURL:[NSURL fileURLWithPath:settingsPath isDirectory:NO] error:nil];
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.galacticdev.isponsorblockprefs.changed"), NULL, NULL, YES);
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
@@ -148,6 +191,7 @@
     [self.segmentsInDatabaseLabel removeFromSuperview];
     [self.userSegmentsLabel removeFromSuperview];
     [self.submitSegmentsButton removeFromSuperview];
+    [self.whitelistChannelLabel removeFromSuperview];
     
     [self.previousParentViewController addChildViewController:self.playerViewController];
     [self.previousParentViewController.view addSubview:self.playerViewController.view];
@@ -279,11 +323,45 @@
         if (sponsorSegmentView.editable)
         {
             [actions addObject:[UIAction actionWithTitle:@"Edit Start Time" image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Edit Start Time: (ex. type 1:15)" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                handler:^(UIAlertAction * action) {
+                    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+                    f.numberStyle = NSNumberFormatterDecimalStyle;
+                    
+                    NSArray *strings = [alert.textFields[0].text componentsSeparatedByString:@":"];
+                    NSString *minutesString = strings[0];
+                    NSString *secondsString = strings[1];
+                    
+                    CGFloat minutes = [[f numberFromString:minutesString] floatValue];
+                    CGFloat seconds = [[f numberFromString:secondsString] floatValue];
+                    sponsorSegmentView.sponsorSegment.startTime = (minutes*60)+seconds;
+                    [self setupViews];
+                }];
+                [alert addAction:defaultAction];
+                [alert addTextFieldWithConfigurationHandler:nil];
+                [self presentViewController:alert animated:YES completion:nil];
             }]];
             
             [actions addObject:[UIAction actionWithTitle:@"Edit End Time" image:[UIImage systemImageNamed:@"arrow.right.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Edit End Time:" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                handler:^(UIAlertAction * action) {
+                    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+                    f.numberStyle = NSNumberFormatterDecimalStyle;
+                    
+                    NSArray *strings = [alert.textFields[0].text componentsSeparatedByString:@":"];
+                    NSString *minutesString = strings[0];
+                    NSString *secondsString = strings[1];
+                    
+                    CGFloat minutes = [[f numberFromString:minutesString] floatValue];
+                    CGFloat seconds = [[f numberFromString:secondsString] floatValue];
+                    sponsorSegmentView.sponsorSegment.endTime = (minutes*60)+seconds;
+                    [self setupViews];
+                }];
+                [alert addAction:defaultAction];
+                [alert addTextFieldWithConfigurationHandler:nil];
+                [self presentViewController:alert animated:YES completion:nil];
             }]];
             
             UIMenu *categoriesMenu = [UIMenu menuWithTitle:@"Edit Category" image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];
