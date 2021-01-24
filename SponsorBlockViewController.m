@@ -323,13 +323,14 @@
         if (sponsorSegmentView.editable)
         {
             [actions addObject:[UIAction actionWithTitle:@"Edit Start Time" image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Edit Start Time: (ex. type 1:15)" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Edit" message:@"Edit Start Time: (ex. type 1:15)" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction * action) {
                     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
                     f.numberStyle = NSNumberFormatterDecimalStyle;
                     
                     NSArray *strings = [alert.textFields[0].text componentsSeparatedByString:@":"];
+                    if(strings.count != 2) return;
                     NSString *minutesString = strings[0];
                     NSString *secondsString = strings[1];
                     
@@ -338,19 +339,24 @@
                     sponsorSegmentView.sponsorSegment.startTime = (minutes*60)+seconds;
                     [self setupViews];
                 }];
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    
+                }];
                 [alert addAction:defaultAction];
+                [alert addAction:cancelAction];
                 [alert addTextFieldWithConfigurationHandler:nil];
                 [self presentViewController:alert animated:YES completion:nil];
             }]];
             
             [actions addObject:[UIAction actionWithTitle:@"Edit End Time" image:[UIImage systemImageNamed:@"arrow.right.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Edit End Time:" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Edit" message:@"Edit End Time:" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction * action) {
                     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
                     f.numberStyle = NSNumberFormatterDecimalStyle;
                     
                     NSArray *strings = [alert.textFields[0].text componentsSeparatedByString:@":"];
+                    if(strings.count != 2) return;
                     NSString *minutesString = strings[0];
                     NSString *secondsString = strings[1];
                     
@@ -359,7 +365,11 @@
                     sponsorSegmentView.sponsorSegment.endTime = (minutes*60)+seconds;
                     [self setupViews];
                 }];
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    
+                }];
                 [alert addAction:defaultAction];
+                [alert addAction:cancelAction];
                 [alert addTextFieldWithConfigurationHandler:nil];
                 [self presentViewController:alert animated:YES completion:nil];
             }]];
