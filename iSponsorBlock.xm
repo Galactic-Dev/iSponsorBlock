@@ -187,11 +187,6 @@ NSString *modifiedTimeString;
     }
     return %orig;
 }
--(CGFloat)textPaddingLeft {
-    self.sponsorBlockButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
-    self.sponsorStartedEndedButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
-    return %orig;
-}
 -(void)setTopOverlayVisible:(BOOL)arg1 isAutonavCanceledState:(BOOL)arg2 {
     if(self.isDisplayingSponsorBlockViewController) {
         %orig(NO, arg2);
@@ -199,8 +194,8 @@ NSString *modifiedTimeString;
         self.sponsorStartedEndedButton.imageView.hidden = YES;
         return;
     }
-    self.sponsorBlockButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
-    self.sponsorStartedEndedButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    self.sponsorBlockButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    self.sponsorStartedEndedButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
     %orig;
 }
 

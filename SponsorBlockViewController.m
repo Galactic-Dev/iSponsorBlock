@@ -38,6 +38,31 @@
         [self.startEndSegmentButton.heightAnchor constraintEqualToConstant:50].active = YES;
         self.startEndSegmentButton.clipsToBounds = YES;
     }
+    
+    self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.whitelistChannelLabel.text = @"Whitelist Channel";
+    [self.playerViewController.view addSubview:self.whitelistChannelLabel];
+    self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.whitelistChannelLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
+    [self.whitelistChannelLabel.centerXAnchor constraintEqualToAnchor:self.startEndSegmentButton.centerXAnchor].active = YES;
+    [self.whitelistChannelLabel.widthAnchor constraintEqualToConstant:185].active = YES;
+    [self.whitelistChannelLabel.heightAnchor constraintEqualToConstant:31].active = YES;
+    self.whitelistChannelLabel.userInteractionEnabled = YES;
+    
+    UISwitch *whitelistSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
+    [whitelistSwitch addTarget:self action:@selector(whitelistSwitchToggled:) forControlEvents:UIControlEventValueChanged];
+    [self.whitelistChannelLabel addSubview:whitelistSwitch];
+    whitelistSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+    [whitelistSwitch.leadingAnchor constraintEqualToAnchor:self.whitelistChannelLabel.trailingAnchor constant:-51].active = YES;
+    [whitelistSwitch.centerYAnchor constraintEqualToAnchor:self.whitelistChannelLabel.centerYAnchor].active = YES;
+    
+    if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
+        [whitelistSwitch setOn:YES animated:NO];
+    }
+    else {
+        [whitelistSwitch setOn:NO animated:NO];
+    }
+
 
     //I'm using the playerBar skipSegments instead of the playerViewController ones because of the show in seek bar option
     if([[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments].count > 0) {
@@ -52,7 +77,7 @@
         [self.playerViewController.view addSubview:self.segmentsInDatabaseLabel];
         self.segmentsInDatabaseLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        [self.segmentsInDatabaseLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
+        [self.segmentsInDatabaseLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-15].active = YES;
         [self.segmentsInDatabaseLabel.centerXAnchor constraintEqualToAnchor:self.playerViewController.view.centerXAnchor].active = YES;
         [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:self.playerViewController.view.widthAnchor].active = YES;
         [self.segmentsInDatabaseLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
@@ -117,8 +142,8 @@
         [self.playerViewController.view addSubview:self.userSegmentsLabel];
         self.userSegmentsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        if([[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments].count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor].active = YES;
-        else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor].active = YES;
+        if([[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments].count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
+        else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-10].active = YES;
         
         [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:self.playerViewController.view.centerXAnchor].active = YES;
         [self.userSegmentsLabel.widthAnchor constraintEqualToAnchor:self.playerViewController.view.widthAnchor].active = YES;
@@ -141,30 +166,6 @@
         [self.submitSegmentsButton.heightAnchor constraintEqualToConstant:50].active = YES;
         self.submitSegmentsButton.clipsToBounds = YES;
     }
-    self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    self.whitelistChannelLabel.text = @"Whitelist Channel";
-    [self.playerViewController.view addSubview:self.whitelistChannelLabel];
-    self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.whitelistChannelLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
-    [self.whitelistChannelLabel.centerXAnchor constraintEqualToAnchor:self.startEndSegmentButton.centerXAnchor].active = YES;
-    [self.whitelistChannelLabel.widthAnchor constraintEqualToConstant:185].active = YES;
-    [self.whitelistChannelLabel.heightAnchor constraintEqualToConstant:31].active = YES;
-    self.whitelistChannelLabel.userInteractionEnabled = YES;
-    
-    UISwitch *whitelistSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
-    [whitelistSwitch addTarget:self action:@selector(whitelistSwitchToggled:) forControlEvents:UIControlEventValueChanged];
-    [self.whitelistChannelLabel addSubview:whitelistSwitch];
-    whitelistSwitch.translatesAutoresizingMaskIntoConstraints = NO;
-    [whitelistSwitch.leadingAnchor constraintEqualToAnchor:self.whitelistChannelLabel.trailingAnchor constant:-51].active = YES;
-    [whitelistSwitch.centerYAnchor constraintEqualToAnchor:self.whitelistChannelLabel.centerYAnchor].active = YES;
-    
-    if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
-        [whitelistSwitch setOn:YES animated:NO];
-    }
-    else {
-        [whitelistSwitch setOn:NO animated:NO];
-    }
-    
 }
 
 -(void)whitelistSwitchToggled:(UISwitch *)sender {
