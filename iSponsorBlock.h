@@ -59,7 +59,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) MLVideo *video;
 @end
 
-@interface YTSingleVideoController
+@interface YTSingleVideoController : NSObject
 @property (strong, nonatomic) YTSingleVideo *singleVideo;
 @end
 

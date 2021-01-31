@@ -85,19 +85,55 @@
         [dataTask resume];
     }
 }
-+(void)normalVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID type:(BOOL)type {
++(void)normalVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID type:(BOOL)type withViewController:(UIViewController *)viewController {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&type=%d", segment.UUID, userID, type]]];
     request.HTTPMethod = @"POST";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
+        NSString *title;
+        CGFloat delay;
+        if(URLResponse.statusCode != 200) {
+            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            delay = 3.0f;
+        }
+        else {
+            title = @"Successfully Voted";
+            delay = 1.0f;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:viewController.view animated:YES];
+        hud.mode = MBProgressHUDModeText;
+        hud.label.text = title;
+        hud.offset = CGPointMake(0.f, 50);
+        [hud hideAnimated:YES afterDelay:delay];
+        });
     }];
     [dataTask resume];
 }
-+(void)categoryVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID category:(NSString *)category {
++(void)categoryVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID category:(NSString *)category withViewController:(UIViewController *)viewController {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&category=%@", segment.UUID, userID, category]]];
     request.HTTPMethod = @"POST";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
+        NSString *title;
+        CGFloat delay;
+        if(URLResponse.statusCode != 200) {
+            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            delay = 3.0f;
+        }
+        else {
+            title = @"Successfully Voted";
+            delay = 1.0f;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:viewController.view animated:YES];
+        hud.mode = MBProgressHUDModeText;
+        hud.label.text = title;
+        hud.offset = CGPointMake(0.f, 50);
+        [hud hideAnimated:YES afterDelay:delay];
+        });
     }];
     [dataTask resume];
 }

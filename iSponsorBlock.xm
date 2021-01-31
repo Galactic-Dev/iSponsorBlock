@@ -104,7 +104,11 @@ NSString *modifiedTimeString;
         self.unskippedSegment = -1;
         self.view.overlayView.controlsOverlayView.playerViewController = self;
         self.view.overlayView.controlsOverlayView.isDisplayingSponsorBlockViewController = NO;
-        self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
+        
+        YTSingleVideoController *activeVideo = self.activeVideo;
+        if([activeVideo isKindOfClass:%c(YTSingleVideoController)]) {
+            self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
+        }
     }
 }
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
@@ -245,13 +249,13 @@ NSString *modifiedTimeString;
 %property (nonatomic, assign) BOOL isSponsorMarker;
 //fix crash when frame had an invalid rect
 -(instancetype)initWithFrame:(CGRect)frame {
-    if (CGRectIsNull(frame)) {
+    if (CGRectIsEmpty(frame)) {
         return %orig(CGRectMake(0,0,0,0));
     }
     return %orig;
 }
 -(void)setFrame:(CGRect)frame {
-    if (CGRectIsNull(frame)) {
+    if (CGRectIsEmpty(frame)) {
         %orig(CGRectMake(0,0,0,0));
     }
     %orig;
