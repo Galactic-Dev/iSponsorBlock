@@ -117,8 +117,19 @@ NSString *modifiedTimeString;
     for(SponsorSegment *segment in arg1) {
         totalSavedTime += lroundf(segment.endTime) - lroundf(segment.startTime);
     }
-    if(arg1.count > 0) modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld",(lroundf(self.currentVideoTotalMediaTime) - totalSavedTime)/60, (lroundf(self.currentVideoTotalMediaTime) - totalSavedTime)%60];
-    else modifiedTimeString = nil;
+    if(arg1.count > 0) {
+        NSInteger seconds = lroundf(self.currentVideoTotalMediaTime - totalSavedTime);
+        NSInteger hours = seconds / 3600;
+        NSInteger  minutes = (seconds - (hours * 3600)) / 60;
+        seconds = seconds %60;
+        
+        if(hours >= 1) modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld:%02ld",hours, minutes, seconds];
+        else modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld", minutes, seconds];
+    }
+
+    else {
+        modifiedTimeString = nil;
+    }
 }
 -(void)scrubToTime:(CGFloat)arg1 {
     %orig;
@@ -200,6 +211,9 @@ NSString *modifiedTimeString;
     }
     self.sponsorBlockButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
     self.sponsorStartedEndedButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    
+    self.sponsorBlockButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    self.sponsorStartedEndedButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
     %orig;
 }
 
@@ -371,6 +385,11 @@ NSString *modifiedTimeString;
 -(instancetype)initWithScrubbedTimeLabelsDisplayBelowStoryboard:(BOOL)arg1 enableSegmentedProgressView:(BOOL)arg2 {
     return %orig(arg1, YES);
 }
+//does the same thing as the method above on youtube v. 16.0x
+-(instancetype)initWithEnableSegmentedProgressView:(BOOL)arg1 {
+    return %orig(YES);
+}
+
 -(void)setPeekableViewVisible:(BOOL)arg1 {
     %orig;
     if(kShowModifiedTime && modifiedTimeString && ![self.durationLabel.text containsString:modifiedTimeString]){
@@ -384,7 +403,7 @@ NSString *modifiedTimeString;
 %hook YTNGWatchLayerViewController
 -(void)didCompleteFullscreenDismissAnimation {
     %orig;
-    if(self.playerViewController.view.overlayView.controlsOverlayView.isDisplayingSponsorBlockViewController){
+    if(!self.playerViewController.isPlayingAd && self.playerViewController.view.overlayView.controlsOverlayView.isDisplayingSponsorBlockViewController){
         [self.playerViewController.view.overlayView.controlsOverlayView presentSponsorBlockViewController];
     }
 }

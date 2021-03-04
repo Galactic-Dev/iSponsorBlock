@@ -29,7 +29,32 @@
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.segmentLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.categoryLabel.text = category;
-        self.segmentLabel.text = [NSString stringWithFormat:@"%ld:%02ld to %ld:%02ld",lroundf(segment.startTime)/60, lroundf(segment.startTime)%60,lroundf(segment.endTime)/60,lroundf(segment.endTime)%60];
+        
+        NSInteger startSeconds = lroundf(segment.startTime);
+        NSInteger startHours = startSeconds / 3600;
+        NSInteger  startMinutes = (startSeconds - (startHours * 3600)) / 60;
+        startSeconds = startSeconds %60;
+        NSString *startTime;
+        if(startHours >= 1) {
+            startTime = [NSString stringWithFormat:@"%ld:%02ld:%02ld", startHours, startMinutes, startSeconds];
+        }
+        else {
+            startTime = [NSString stringWithFormat:@"%ld:%02ld", startMinutes, startSeconds];
+        }
+        
+        NSInteger endSeconds = lroundf(segment.endTime);
+        NSInteger endHours = endSeconds / 3600;
+        NSInteger  endMinutes = (endSeconds - (endHours * 3600)) / 60;
+        endSeconds = endSeconds %60;
+        NSString *endTime;
+        if(endHours >= 1) {
+            endTime = [NSString stringWithFormat:@"%ld:%02ld:%02ld", endHours, endMinutes, endSeconds];
+        }
+        else {
+            endTime = [NSString stringWithFormat:@"%ld:%02ld", endMinutes, endSeconds];
+        }
+        
+        self.segmentLabel.text = [NSString stringWithFormat:@"%@ to %@", startTime, endTime];
         
         [self addSubview:self.categoryLabel];
         self.categoryLabel.adjustsFontSizeToFitWidth = YES;
