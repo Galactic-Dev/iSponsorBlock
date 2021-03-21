@@ -7,7 +7,7 @@ This tweak has been tested on the latest YouTube version (16.09.2) and supports,
 
 # Installation
 
-Add the following repository: https://galactic-dev.github.io
+Add the following repository: https://galacticdev.me
 
 # Customization
 To access this tweaks settings open the YouTube app, and there should be a button in the top right, like in this image: https://imgur.com/lLpfXue.
