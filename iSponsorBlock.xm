@@ -33,7 +33,6 @@ NSString *modifiedTimeString;
         }
         else if (self.unskippedSegment != self.currentSponsorSegment-1) {
             sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
-
         }
         
         if((lroundf(arg2.time) == ceil(sponsorSegment.startTime) && arg2.time >= sponsorSegment.startTime) || (lroundf(arg2.time) >= ceil(sponsorSegment.startTime) && arg2.time < sponsorSegment.endTime)) {
@@ -69,7 +68,7 @@ NSString *modifiedTimeString;
                 [self.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
             }
                                                                                                          
-            if(self.currentSponsorSegment <= self.skipSegments.count-1) self.currentSponsorSegment ++;
+            if(self.currentSponsorSegment <= self.skipSegments.count-1 && [[kCategorySettings objectForKey:sponsorSegment.category] intValue] != 3) self.currentSponsorSegment ++;
         }
         else if(lroundf(arg2.time) > sponsorSegment.startTime && self.currentSponsorSegment != self.skipSegments.count && self.currentSponsorSegment != self.skipSegments.count-1) {
             self.currentSponsorSegment ++;
@@ -100,6 +99,8 @@ NSString *modifiedTimeString;
 -(void)playbackController:(id)arg1 didActivateVideo:(id)arg2 withPlaybackData:(id)arg3{
     %orig;
     if(!self.isPlayingAd && [self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+        [MBProgressHUD hideHUDForView:self.view animated:YES]; //fix manual skip popup not disappearing when changing videos
+
         self.skipSegments = [NSMutableArray array];
         self.userSkipSegments = [NSMutableArray array];
         [SponsorBlockRequest getSponsorTimes:self.currentVideoID completionTarget:self completionSelector:@selector(setSkipSegments:)];
@@ -160,9 +161,24 @@ NSString *modifiedTimeString;
 }
 %new
 -(void)manuallySkipSegment:(UIButton *)sender {
-    [self scrubToTime:self.skipSegments[self.currentSponsorSegment-1].endTime];
-    if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:self.skipSegments[self.currentSponsorSegment-1]];
+    SponsorSegment *sponsorSegment = [[SponsorSegment alloc] initWithStartTime:-1 endTime:-1 category:nil UUID:nil];
+    if(self.currentSponsorSegment <= self.skipSegments.count-1){
+        sponsorSegment = self.skipSegments[self.currentSponsorSegment];
+    }
+    else if (self.unskippedSegment != self.currentSponsorSegment-1) {
+        sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
+    }
+    
+    if(sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
+        [self scrubToTime:self.currentVideoTotalMediaTime];
+        if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+    }
+    else {
+        [self scrubToTime:sponsorSegment.endTime];
+        if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+    }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
+    self.currentSponsorSegment++;
 }
 %end
 
