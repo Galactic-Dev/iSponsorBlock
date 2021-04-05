@@ -81,6 +81,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *userSkipSegments;
 @property (strong, nonatomic) YTSingleVideoController *activeVideo;
 @property (strong, nonatomic) NSString *channelID;
+@property (nonatomic, assign, getter=isMDXActive) BOOL MDXActive;
 @end
 
 //ik i'm redefining it im just lazy and dont feel like fixing this header
@@ -126,6 +127,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) YTPlayerViewController *playerViewController;
 -(void)createAndAddMarker:(CGFloat)arg1 type:(NSInteger)arg2 width:(CGFloat)arg3;
 -(void)createAndAddMarker:(CGFloat)arg1 type:(NSInteger)arg2 clusterType:(NSInteger)arg3 width:(CGFloat)arg4;
+-(void)addMarkerViewToClosestSegmentView:(id)arg1;
 -(void)maybeCreateMarkerViews;
 -(void)removeSponsorMarkers;
 -(NSMutableArray *)segmentViews;
@@ -136,6 +138,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (nonatomic, assign) CGFloat endTime;
 @property (nonatomic, assign) CGFloat width;
 @property (nonatomic, assign) BOOL isSponsorMarker;
+@property (nonatomic, assign) NSInteger type;
 @end
 
 @interface YTNGWatchLayerViewController
