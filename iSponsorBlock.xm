@@ -76,8 +76,11 @@ NSString *modifiedTimeString;
         else if(self.currentSponsorSegment == 0 && self.unskippedSegment != -1) {
             self.currentSponsorSegment ++;
         }
-        else if(self.currentSponsorSegment > 0 && lroundf(arg2.time) < self.skipSegments[self.currentSponsorSegment-1].endTime - self.MDXActive /*<-- what this does is subtract 1 from the endTime if screencasting to eliminate a skip loop and leave it the same if its not casting*/) {
-            if(self.unskippedSegment != self.currentSponsorSegment-1) {
+        else if(self.currentSponsorSegment > 0 && lroundf(arg2.time) < self.skipSegments[self.currentSponsorSegment-1].endTime) {
+            if(self.MDXActive) {
+        
+            }
+            else if(self.unskippedSegment != self.currentSponsorSegment-1) {
                 self.currentSponsorSegment --;
             }
             else if(arg2.time < self.skipSegments[self.currentSponsorSegment-1].startTime-0.01) {
