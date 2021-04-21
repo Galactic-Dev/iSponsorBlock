@@ -97,6 +97,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) YTQTMButton *sponsorStartedEndedButton;
 @property (strong, nonatomic) YTPlayerViewController *playerViewController;
 @property (nonatomic, assign) BOOL isDisplayingSponsorBlockViewController;
+@property (nonatomic, assign, getter=isOverlayVisible) BOOL overlayVisible;
 @end
 
 @interface YTSingleVideoTime : NSObject

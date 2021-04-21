@@ -231,11 +231,18 @@ NSString *modifiedTimeString;
         self.sponsorStartedEndedButton.imageView.hidden = YES;
         return;
     }
-    self.sponsorBlockButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
-    self.sponsorStartedEndedButton.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    BOOL overlayVisible;
+    if([self respondsToSelector:@selector(isOverlayVisible)]) {
+        overlayVisible = self.overlayVisible;
+    }
+    else {
+        overlayVisible = [[self valueForKey:@"_isOverlayVisible"] boolValue];
+    }
+    self.sponsorBlockButton.hidden = !overlayVisible;
+    self.sponsorStartedEndedButton.hidden = !overlayVisible;
     
-    self.sponsorBlockButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
-    self.sponsorStartedEndedButton.imageView.hidden = ![[self valueForKey:@"_isOverlayVisible"] boolValue];
+    self.sponsorBlockButton.imageView.hidden = !overlayVisible;
+    self.sponsorStartedEndedButton.imageView.hidden = !overlayVisible;
     %orig;
 }
 
