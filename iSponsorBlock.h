@@ -47,16 +47,21 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) YTMainAppVideoPlayerOverlayView *overlayView;
 @end
 
-@interface YTIVideoDetails
+@interface YTIVideoDetails : NSObject
 @property (strong, nonatomic) NSString *channelId;
 @end
 
-@interface MLVideo
+@interface MLVideo : NSObject
 @property (strong, nonatomic) YTIVideoDetails *videoDetails;
 @end
 
-@interface YTSingleVideo
+@interface YTPlaybackData : NSObject
 @property (strong, nonatomic) MLVideo *video;
+@end
+
+@interface YTSingleVideo : NSObject
+@property (strong, nonatomic) MLVideo *video;
+@property (strong, nonatomic) YTPlaybackData *playbackData;
 @end
 
 @interface YTSingleVideoController : NSObject

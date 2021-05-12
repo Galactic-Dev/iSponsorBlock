@@ -114,7 +114,12 @@ NSString *modifiedTimeString;
         
         YTSingleVideoController *activeVideo = self.activeVideo;
         if([activeVideo isKindOfClass:%c(YTSingleVideoController)]) {
-            self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
+            if([self.activeVideo.singleVideo respondsToSelector:@selector(video)]) {
+                self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
+            }
+            else {
+                self.channelID = self.activeVideo.singleVideo.playbackData.video.videoDetails.channelId;
+            }
         }
     }
 }
