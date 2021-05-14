@@ -3,7 +3,7 @@ A jailbreak tweak that implements the SponsorBlock API to skip sponsorships in y
 
 More info about SponsorBlock and the API used can be found [here](https://sponsor.ajay.app).
 
-This tweak has been tested on the latest YouTube version (16.09.2) and supports, at least, down to version 15.31.3.
+This tweak has been tested on the latest YouTube version (16.18.5) and supports, at least, down to version 15.31.3.
 
 # Installation
 
