@@ -813,7 +813,10 @@ static void prefsChanged(CFNotificationCenterRef center, void *observer, CFStrin
     if(kIsEnabled) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
-        if(dlopen("/Library/MobileSubstrate/DynamicLibraries/Cercube.dylib", RTLD_LAZY)) {
+        NSString *frameworkString = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:@"Frameworks/Cercube.dylib"];
+        const char* pathFramework = [frameworkString UTF8String];
+        if(dlopen("/Library/MobileSubstrate/DynamicLibraries/Cercube.dylib", RTLD_LAZY) ||
+        dlopen(pathFramework, RTLD_LAZY)) {
             %init(Cercube)
             NSString *downloadsDirectory = [documentsDirectory stringByAppendingPathComponent:@"Carida_Files"];
             NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:downloadsDirectory error:nil];
@@ -833,7 +836,10 @@ static void prefsChanged(CFNotificationCenterRef center, void *observer, CFStrin
 }
 
 %dtor {
-    if(dlopen("/Library/MobileSubstrate/DynamicLibraries/Cercube.dylib", RTLD_LAZY)) {
+    NSString *frameworkString = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:@"Frameworks/Cercube.dylib"];
+    const char* pathFramework = [frameworkString UTF8String];
+    if(dlopen("/Library/MobileSubstrate/DynamicLibraries/Cercube.dylib", RTLD_LAZY) ||
+    dlopen(pathFramework, RTLD_LAZY)) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
         NSString *downloadsDirectory = [documentsDirectory stringByAppendingPathComponent:@"Carida_Files"];
