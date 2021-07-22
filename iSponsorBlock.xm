@@ -293,6 +293,12 @@ NSString *modifiedTimeString;
 }
 %end
 
+%hook YTPlayerBarSegmentView
+-(void)setFrame:(CGRect)frame {
+    %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
+}
+%end
+
 %hook YTPlayerBarSegmentMarkerView
 %property (nonatomic, assign) BOOL isSponsorMarker;
 //fix crash when frame had an invalid rect
@@ -300,13 +306,17 @@ NSString *modifiedTimeString;
     if (CGRectIsEmpty(frame)) {
         return %orig(CGRectMake(0,0,0,0));
     }
-    return %orig;
+    return %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
 }
 -(void)setFrame:(CGRect)frame {
     if (CGRectIsEmpty(frame)) {
         %orig(CGRectMake(0,0,0,0));
     }
-    %orig;
+    %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
+}
+-(CGRect)frame {
+    CGRect frame = %orig;
+    return CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2);
 }
 
 -(UIColor *)colorForType:(NSInteger)type {
@@ -325,6 +335,19 @@ NSString *modifiedTimeString;
             return colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
     }
     return %orig;
+}
+%end
+
+%hook YTInlinePlayerBarView
+-(void)maybeUseSegmentedProgressView {
+    if([[self valueForKey:@"_chapters"] count] == 0 && [[self valueForKey:@"_timestampMarkers"] count] == 0) {
+        [self setValue:@[[[%c(YTPlayerBarTimestampMarkerInfo) alloc] init]] forKey:@"_timestampMarkers"];
+        %orig;
+        [self setValue:[NSArray array] forKey:@"_timestampMarkers"];
+    }
+    else {
+        %orig;
+    }
 }
 %end
 
@@ -432,6 +455,9 @@ NSString *modifiedTimeString;
 //does the same thing as the method above on youtube v. 16.0x
 -(instancetype)initWithEnableSegmentedProgressView:(BOOL)arg1 {
     return %orig(YES);
+}
+-(BOOL)alwaysEnableSegmentedProgressView {
+    return YES;
 }
 
 -(void)setPeekableViewVisible:(BOOL)arg1 {
