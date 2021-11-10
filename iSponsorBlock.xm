@@ -3,6 +3,7 @@
 #import "SponsorBlockSettingsController.h"
 #import "SponsorBlockRequest.h"
 #import "SponsorBlockViewController.h"
+#import <UIKit/UIKit.h>
 
 %group Main
 NSString *modifiedTimeString;
@@ -199,15 +200,17 @@ NSString *modifiedTimeString;
     NSArray <UIView *> *topControls = %orig;
     if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer){
         NSMutableArray *mutableArray = topControls.mutableCopy;
+		NSString *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"com.galacticdev.isponsorblock" ofType:@"bundle"];
+        NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
         if(!self.sponsorBlockButton){
             self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
             self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png"] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
             
             self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
             self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
-            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
+            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
 
             if(topControls[0].superview == self){
                 [self addSubview:self.sponsorBlockButton];
@@ -263,9 +266,11 @@ NSString *modifiedTimeString;
 }
 %new
 -(void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
+	NSString *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"com.galacticdev.isponsorblock" ofType:@"bundle"];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
     if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
@@ -277,7 +282,7 @@ NSString *modifiedTimeString;
             [[[UIApplication sharedApplication] delegate].window.rootViewController  presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
     }
 }
 %new
@@ -716,6 +721,8 @@ NSInteger pageStyle = 0;
 %hook YTRightNavigationButtons
 %property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
 -(NSMutableArray *)buttons {
+	NSString *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"com.galacticdev.isponsorblock" ofType:@"bundle"];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
     NSMutableArray *retVal = %orig.mutableCopy;
     [self.sponsorBlockButton removeFromSuperview];
     [self addSubview:self.sponsorBlockButton];
@@ -724,10 +731,10 @@ NSInteger pageStyle = 0;
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if([%c(YTPageStyleController) pageStyle]) { //dark mode
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
         }
         else { //light mode
-            UIImage *image = [UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"];
+            UIImage *image = [UIImage imageWithContentsOfFile:[resourcesBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
             image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
             [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
             [self.sponsorBlockButton setTintColor:UIColor.blackColor];

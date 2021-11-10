@@ -62,7 +62,11 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/LogoSponsorBlocker128px.png"]];
+    // NSBundle *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+    NSString *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"com.galacticdev.isponsorblock" ofType:@"bundle"];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
+    NSString *pathToImage = [resourcesBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:pathToImage]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
     label.text = @"iSponsorBlock";
     label.font = [UIFont boldSystemFontOfSize:48];
