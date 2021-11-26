@@ -47,8 +47,7 @@
                 YTPlayerViewController *playerViewController = (YTPlayerViewController *)target;
                 id overlayView = playerViewController.view.overlayView;
                 if([overlayView isKindOfClass:objc_getClass("YTMainAppVideoPlayerOverlayView")]){
-                    YTPlayerBarSegmentedProgressView *segmentedProgressView = [playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"];
-                    [segmentedProgressView performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                    [playerViewController.view.overlayView.playerBar.playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
                 }
             }
         }

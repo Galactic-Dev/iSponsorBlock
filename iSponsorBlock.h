@@ -160,6 +160,16 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 +(NSInteger)pageStyle;
 @end
 
+//redefinition
+@interface YTInlinePlayerBarView ()
+@property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+@property (strong, nonatomic) NSMutableArray *skipSegments;
+@property (strong, nonatomic) YTPlayerViewController *playerViewController;
+-(void)removeSponsorMarkers;
+-(void)maybeCreateMarkerViews;
+@property (nonatomic, assign) CGFloat totalTime;
+@end
+
 //Cercube
 @interface CADownloadObject : NSObject
 @property(readonly, nonatomic) NSString *filePath;

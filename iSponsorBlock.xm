@@ -89,11 +89,11 @@ NSString *modifiedTimeString;
         }
     }
     if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
-        YTPlayerBarSegmentedProgressView *segmentedProgressView = [self.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"];
-        if(segmentedProgressView.playerViewController != self) segmentedProgressView.playerViewController = self;
-        for(UIView *markerView in segmentedProgressView.subviews){
-            if(![(NSArray *)[segmentedProgressView valueForKey:@"_markerViews"] containsObject:markerView] && [markerView isKindOfClass:%c(YTPlayerBarSegmentMarkerView)] && segmentedProgressView.skipSegments.count == 0) {
-                [segmentedProgressView maybeCreateMarkerViews];
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar;
+        //if(segmentedProgressView.playerViewController != self) segmentedProgressView.playerViewController = self;
+        for(UIView *markerView in playerBarView.subviews){
+            if(![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
+                [playerBarView maybeCreateMarkerViews];
                 return;
             }
         }
@@ -149,9 +149,8 @@ NSString *modifiedTimeString;
     if(!self.isPlayingAd) {
         id overlayView = self.view.overlayView;
         if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
-            YTPlayerBarSegmentedProgressView *segmentedProgressView = [self.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"];
-            [segmentedProgressView maybeCreateMarkerViews];
-
+            YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar;
+            [playerBarView maybeCreateMarkerViews];
         }
     }
 }
@@ -187,6 +186,11 @@ NSString *modifiedTimeString;
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     self.currentSponsorSegment++;
+}
+-(void)setPlayerViewLayout:(NSInteger)arg1 {
+    %orig;
+    YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar;
+    [playerBarView maybeCreateMarkerViews];
 }
 %end
 
@@ -293,97 +297,20 @@ NSString *modifiedTimeString;
 }
 %end
 
-%hook YTPlayerBarSegmentView
--(void)setFrame:(CGRect)frame {
-    %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
-}
-%end
-
-%hook YTPlayerBarSegmentMarkerView
-%property (nonatomic, assign) BOOL isSponsorMarker;
-//fix crash when frame had an invalid rect
--(instancetype)initWithFrame:(CGRect)frame {
-    if (CGRectIsEmpty(frame)) {
-        return %orig(CGRectMake(0,0,0,0));
-    }
-    return %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
-}
--(void)setFrame:(CGRect)frame {
-    if (CGRectIsEmpty(frame)) {
-        %orig(CGRectMake(0,0,0,0));
-    }
-    %orig(CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2));
-}
--(CGRect)frame {
-    CGRect frame = %orig;
-    return CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, 2);
-}
-
--(UIColor *)colorForType:(NSInteger)type {
-    switch (type) {
-        case 100:
-            return colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
-        case 101:
-            return colorWithHexString([kCategorySettings objectForKey:@"introColor"]);
-        case 102:
-            return colorWithHexString([kCategorySettings objectForKey:@"outroColor"]);
-        case 103:
-            return colorWithHexString([kCategorySettings objectForKey:@"interactionColor"]);
-        case 104:
-            return colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
-        case 105:
-            return colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
-    }
-    return %orig;
-}
-%end
-
 %hook YTInlinePlayerBarView
--(void)maybeUseSegmentedProgressView {
-    if([[self valueForKey:@"_chapters"] count] == 0 && [[self valueForKey:@"_timestampMarkers"] count] == 0) {
-        [self setValue:@[[[%c(YTPlayerBarTimestampMarkerInfo) alloc] init]] forKey:@"_timestampMarkers"];
-        %orig;
-        [self setValue:[NSArray array] forKey:@"_timestampMarkers"];
-    }
-    else {
-        %orig;
-    }
-}
-%end
-
-%hook YTPlayerBarSegmentedProgressView
 %property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 %property (strong, nonatomic) NSMutableArray *skipSegments;
 %property (strong, nonatomic) YTPlayerViewController *playerViewController;
+%new
 -(void)maybeCreateMarkerViews {
-    %orig;
     [self removeSponsorMarkers];
     self.skipSegments = self.skipSegments;
-    for(YTPlayerBarSegmentMarkerView *markerView in self.sponsorMarkerViews){
-        CGFloat beginX = (markerView.startTime * self.superview.frame.size.width) / self.totalTime;
-        CGFloat endX = (markerView.endTime * self.superview.frame.size.width) / self.totalTime;
-        if(endX >= beginX) markerView.width = endX - beginX;
-        else markerView.width = 0;
-        if(!markerView.superview) {
-            [self addSubview:markerView];
-        }
-    }
-    for(UIView *markerView in self.subviews){
-        if(![(NSArray *)[self valueForKey:@"_markerViews"] containsObject:markerView] && [markerView isKindOfClass:%c(YTPlayerBarSegmentMarkerView)]) {
-            [markerView removeFromSuperview];
-        }
-    }
 }
-
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
     %orig;
     if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
         return;
     }
-    NSMutableArray <YTPlayerBarSegmentMarkerView *> *markerViews = [self valueForKey:@"_markerViews"];
-    [markerViews removeObjectsInArray:self.sponsorMarkerViews];
-     [self setValue:markerViews forKey:@"_markerViews"];
-    [self removeSponsorMarkers];
     self.sponsorMarkerViews = [NSMutableArray array];
     for(SponsorSegment *segment in arg1) {
         CGFloat startTime = segment.startTime;
@@ -394,55 +321,31 @@ NSString *modifiedTimeString;
         if(endX >= beginX) markerWidth = endX - beginX;
             else markerWidth = 0;
         
-        NSInteger type;
-        if([segment.category isEqualToString:@"sponsor"]) type = 100;
-        else if([segment.category isEqualToString:@"intro"]) type = 101;
-        else if([segment.category isEqualToString:@"outro"]) type = 102;
-        else if([segment.category isEqualToString:@"interaction"]) type = 103;
-        else if([segment.category isEqualToString:@"selfpromo"]) type = 104;
-        else if([segment.category isEqualToString:@"music_offtopic"]) type = 105;
+        UIColor *color;
+        if([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
+        else if([segment.category isEqualToString:@"intro"]) color = colorWithHexString([kCategorySettings objectForKey:@"introColor"]);
+        else if([segment.category isEqualToString:@"outro"]) color = colorWithHexString([kCategorySettings objectForKey:@"outroColor"]);
+        else if([segment.category isEqualToString:@"interaction"]) color = colorWithHexString([kCategorySettings objectForKey:@"interactionColor"]);
+        else if([segment.category isEqualToString:@"selfpromo"]) color = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
+        else if([segment.category isEqualToString:@"music_offtopic"]) color = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
+        UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectZero];
+        newMarkerView.backgroundColor = color;
+        [self addSubview:newMarkerView];
+        newMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
+        [newMarkerView.widthAnchor constraintEqualToConstant:markerWidth].active = YES;
+        [newMarkerView.heightAnchor constraintEqualToConstant:2].active = YES;
+        [newMarkerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:beginX].active = YES;
+        [newMarkerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+        
 
-        if([self respondsToSelector:@selector(createAndAddMarker:type:width:)]){
-            [self createAndAddMarker:startTime type:type width:markerWidth];
-        }
-        else if ([self respondsToSelector:@selector(createAndAddMarker:type:clusterType:width:)]){
-            [self createAndAddMarker:startTime type:type clusterType:0 width:markerWidth];
-        }
-        else if ([self respondsToSelector:@selector(addMarkerViewToClosestSegmentView:)]) {
-            YTPlayerBarSegmentMarkerView *markerView = [[%c(YTPlayerBarSegmentMarkerView) alloc] init];
-            markerView.startTime = startTime;
-            markerView.endTime = endTime;
-            markerView.width = markerWidth;
-            markerView.type = type;
-            NSMutableArray *markerViews = [self valueForKey:@"_markerViews"];
-            [markerViews addObject:markerView];
-            [self addMarkerViewToClosestSegmentView:markerView];
-        }
-        else {
-            return;
-        }
-        markerViews = [self valueForKey:@"_markerViews"];
-        [self.sponsorMarkerViews addObject:markerViews.lastObject];
-        markerViews.lastObject.isSponsorMarker = YES;
+        [self.sponsorMarkerViews addObject:newMarkerView];
     }
 }
--(void)setAnchorPoint:(id)arg1 {
-    %orig;
-    //fixes visual glitch with player bar
-    NSMutableArray <UIView *> *segmentViews = [self segmentViews];
-    if(segmentViews.count == 1){
-        segmentViews[0].frame = CGRectMake(0, segmentViews[0].frame.origin.y, segmentViews[0].frame.size.width, segmentViews[0].frame.size.height);
-    }
-}
+
 %new
 -(void)removeSponsorMarkers {
-    NSMutableArray *markerViews = [self valueForKey:@"_markerViews"];
-    [markerViews removeObjectsInArray:self.sponsorMarkerViews];
-     [self setValue:markerViews forKey:@"_markerViews"];
-    for(YTPlayerBarSegmentMarkerView *markerView in [self valueForKey:@"_markerViews"]) {
-        if(markerView.isSponsorMarker){
-            [markerView removeFromSuperview];
-        }
+    for(UIView *markerView in self.sponsorMarkerViews) {
+        [markerView removeFromSuperview];
     }
     self.sponsorMarkerViews = [NSMutableArray array];
 }
