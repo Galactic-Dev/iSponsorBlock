@@ -189,8 +189,10 @@ NSString *modifiedTimeString;
 }
 -(void)setPlayerViewLayout:(NSInteger)arg1 {
     %orig;
-    YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar;
-    [playerBarView maybeCreateMarkerViews];
+    if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar;
+        [playerBarView maybeCreateMarkerViews];
+    }
 }
 %end
 
@@ -308,6 +310,7 @@ NSString *modifiedTimeString;
 }
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
     %orig;
+    [self removeSponsorMarkers];
     if([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
         return;
     }
@@ -332,6 +335,10 @@ NSString *modifiedTimeString;
         newMarkerView.backgroundColor = color;
         [self addSubview:newMarkerView];
         newMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
+        if(isnan(markerWidth) || !isfinite(beginX)) {
+            RLog(@"Called");
+            return;
+        }
         [newMarkerView.widthAnchor constraintEqualToConstant:markerWidth].active = YES;
         [newMarkerView.heightAnchor constraintEqualToConstant:2].active = YES;
         [newMarkerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:beginX].active = YES;

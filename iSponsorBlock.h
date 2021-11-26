@@ -6,6 +6,7 @@
 #import <dlfcn.h>
 #import "MBProgressHUD.h"
 #import "SponsorSegment.h"
+#include <math.h>
 
 
 //prefs
