@@ -389,6 +389,17 @@ NSString *modifiedTimeString;
 }
 %end
 
+//For newer versions of YT the class name changed
+%hook YTWatchLayerViewController
+-(void)didCompleteFullscreenDismissAnimation {
+    %orig;
+    if(!self.playerViewController.isPlayingAd && self.playerViewController.view.overlayView.controlsOverlayView.isDisplayingSponsorBlockViewController && [self.playerViewController.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
+        [self.playerViewController.view.overlayView.controlsOverlayView presentSponsorBlockViewController];
+    }
+}
+%end
+
+
 %hook YTPlayerView
 //https://stackoverflow.com/questions/11770743/capturing-touches-on-a-subview-outside-the-frame-of-its-superview-using-hittest
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {

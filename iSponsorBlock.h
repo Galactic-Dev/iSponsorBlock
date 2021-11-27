@@ -152,6 +152,10 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) YTPlayerViewController *playerViewController;
 @end
 
+@interface YTWatchLayerViewController
+@property (strong, nonatomic) YTPlayerViewController *playerViewController;
+@end
+
 @interface YTRightNavigationButtons : UIView
 @property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
 -(void)setLeadingPadding:(CGFloat)arg1;
