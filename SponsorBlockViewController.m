@@ -65,7 +65,7 @@
 
 
     //I'm using the playerBar skipSegments instead of the playerViewController ones because of the show in seek bar option
-    if([[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments].count > 0) {
+    if([self.playerViewController.view.overlayView.playerBar.playerBar skipSegments].count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.segmentsInDatabaseLabel.userInteractionEnabled = YES;
         
@@ -82,7 +82,7 @@
         [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:self.playerViewController.view.widthAnchor].active = YES;
         [self.segmentsInDatabaseLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
         
-        self.sponsorSegmentViews = [self segmentViewsForSegments:[[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments] editable:NO];
+        self.sponsorSegmentViews = [self segmentViewsForSegments:[self.playerViewController.view.overlayView.playerBar.playerBar skipSegments] editable:NO];
         for(int i = 0; i < self.sponsorSegmentViews.count; i++) {
             [self.segmentsInDatabaseLabel addSubview:self.sponsorSegmentViews[i]];
             [self.sponsorSegmentViews[i] addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
@@ -142,7 +142,7 @@
         [self.playerViewController.view addSubview:self.userSegmentsLabel];
         self.userSegmentsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        if([[self.playerViewController.view.overlayView.playerBar.playerBar valueForKey:@"_segmentedProgressView"] skipSegments].count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
+        if([self.playerViewController.view.overlayView.playerBar.playerBar skipSegments].count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
         else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-10].active = YES;
         
         [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:self.playerViewController.view.centerXAnchor].active = YES;

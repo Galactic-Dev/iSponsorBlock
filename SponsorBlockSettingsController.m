@@ -1,6 +1,8 @@
 #import "SponsorBlockSettingsController.h"
 #import "colorFunctions.h"
 
+static NSString *LogoSponsorBlockerPath;
+
 @implementation SponsorBlockTableCell
 -(void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
     self.colorWell.color = color;
@@ -62,11 +64,15 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    // NSBundle *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
-    NSString *resourcesBundlePath = [[NSBundle mainBundle] pathForResource:@"com.galacticdev.isponsorblock" ofType:@"bundle"];
-    NSBundle *resourcesBundle = [NSBundle bundleWithPath:resourcesBundlePath];
-    NSString *pathToImage = [resourcesBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:pathToImage]];
+    // NSBundle *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+        NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+    if (tweakBundlePath) {
+        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
+        LogoSponsorBlockerPath = [tweakBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+    } else {
+        LogoSponsorBlockerPath = @"/Library/Application Support/iSponsorBlock.bundle/LogoSponsorBlocker128px.png";
+    }
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:LogoSponsorBlockerPath]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
     label.text = @"iSponsorBlock";
     label.font = [UIFont boldSystemFontOfSize:48];
@@ -237,7 +243,7 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if(indexPath.section == 12) {
+    if(indexPath.section == 13) {
         if(indexPath.row == 0) {
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"venmo://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];
