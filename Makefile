@@ -12,6 +12,7 @@ TWEAK_NAME = iSponsorBlock
 
 iSponsorBlock_FILES = iSponsorBlock.xm $(wildcard *.m)
 iSponsorBlock_LIBRARIES = colorpicker
+iSponsorBlock_FRAMEWORKS = UIKit CoreGraphics AVFoundation CoreMedia QuartzCore
 iSponsorBlock_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 
 include $(THEOS_MAKE_PATH)/tweak.mk
