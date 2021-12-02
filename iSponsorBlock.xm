@@ -4,6 +4,11 @@
 #import "SponsorBlockRequest.h"
 #import "SponsorBlockViewController.h"
 
+static NSString *PlayerInfoIconSponsorBlockerPath;
+static NSString *sponsorblockstartPath;
+static NSString *sponsorblockendPath;
+static NSString *sponsorblocksettingsPath;
+
 %group Main
 NSString *modifiedTimeString;
 
@@ -205,15 +210,22 @@ NSString *modifiedTimeString;
     NSArray <UIView *> *topControls = %orig;
     if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer){
         NSMutableArray *mutableArray = topControls.mutableCopy;
+		NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+        if (tweakBundlePath) {
+            NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
+            PlayerInfoIconSponsorBlockerPath = [tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"];
+        } else {
+            PlayerInfoIconSponsorBlockerPath = @"/Library/Application Support/iSponsorBlock.bundle/PlayerInfoIconSponsorBlocker256px-20@2x.png";
+        }
         if(!self.sponsorBlockButton){
             self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
             self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png"] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:PlayerInfoIconSponsorBlockerPath] forState:UIControlStateNormal];
             
             self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
             self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
-            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockstartPath] forState:UIControlStateNormal];
+            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockendPath] forState:UIControlStateNormal];
 
             if(topControls[0].superview == self){
                 [self addSubview:self.sponsorBlockButton];
@@ -269,9 +281,18 @@ NSString *modifiedTimeString;
 }
 %new
 -(void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
+	NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+    if (tweakBundlePath) {
+        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
+		sponsorblockstartPath = [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"];
+		sponsorblockendPath = [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
+    } else {
+		sponsorblockstartPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblockstart-20@2x.png";
+		sponsorblockendPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblockend-20@2x.png";
+    }
     if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockendPath] forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
@@ -283,7 +304,7 @@ NSString *modifiedTimeString;
             [[[UIApplication sharedApplication] delegate].window.rootViewController  presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockstartPath] forState:UIControlStateNormal];
     }
 }
 %new
@@ -637,6 +658,13 @@ NSInteger pageStyle = 0;
 %hook YTRightNavigationButtons
 %property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
 -(NSMutableArray *)buttons {
+	NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+    if (tweakBundlePath) {
+        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
+		sponsorblocksettingsPath = [tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"];
+    } else {
+		sponsorblocksettingsPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblocksettings-20@2x.png";
+    }
     NSMutableArray *retVal = %orig.mutableCopy;
     [self.sponsorBlockButton removeFromSuperview];
     [self addSubview:self.sponsorBlockButton];
@@ -645,10 +673,10 @@ NSInteger pageStyle = 0;
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if([%c(YTPageStyleController) pageStyle]) { //dark mode
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:sponsorblocksettingsPath] forState:UIControlStateNormal];
         }
         else { //light mode
-            UIImage *image = [UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"];
+            UIImage *image = [UIImage imageWithContentsOfFile:sponsorblocksettingsPath];
             image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
             [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
             [self.sponsorBlockButton setTintColor:UIColor.blackColor];
