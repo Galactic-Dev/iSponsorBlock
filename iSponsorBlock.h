@@ -24,10 +24,14 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @interface YTInlinePlayerBarView : UIView
 @end
 
+@interface YTSegmentableInlinePlayerBarView : UIView
+@end
+
 @interface YTInlinePlayerBarContainerView : UIView
 -(void)setChapters:(NSArray *)arg1;
 @property (strong, nonatomic) NSArray *chaptersArray;
 @property (strong, nonatomic) YTInlinePlayerBarView *playerBar;
+@property (strong, nonatomic) YTInlinePlayerBarView *segmentablePlayerBar;
 @property (strong, nonatomic) UILabel *durationLabel;
 @end
 
@@ -165,13 +169,24 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 +(NSInteger)pageStyle;
 @end
 
+
 //redefinition
 @interface YTInlinePlayerBarView ()
 @property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 @property (strong, nonatomic) NSMutableArray *skipSegments;
 @property (strong, nonatomic) YTPlayerViewController *playerViewController;
 -(void)removeSponsorMarkers;
--(void)maybeCreateMarkerViews;
+-(void)maybeCreateMarkerViewsISB;
+@property (nonatomic, assign) CGFloat totalTime;
+@end
+
+//redefinition
+@interface YTSegmentableInlinePlayerBarView ()
+@property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+@property (strong, nonatomic) NSMutableArray *skipSegments;
+@property (strong, nonatomic) YTPlayerViewController *playerViewController;
+-(void)removeSponsorMarkers;
+-(void)maybeCreateMarkerViewsISB;
 @property (nonatomic, assign) CGFloat totalTime;
 @end
 
