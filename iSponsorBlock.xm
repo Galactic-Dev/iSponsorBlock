@@ -194,6 +194,13 @@ NSString *modifiedTimeString;
         [playerBarView maybeCreateMarkerViewsISB];
     }
 }
+-(void)updateViewportSizeProvider {
+    %orig;
+    if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
+        [playerBarView maybeCreateMarkerViewsISB];
+    }
+}
 %end
 
 %hook YTMainAppControlsOverlayView
