@@ -47,7 +47,12 @@
                 YTPlayerViewController *playerViewController = (YTPlayerViewController *)target;
                 id overlayView = playerViewController.view.overlayView;
                 if([overlayView isKindOfClass:objc_getClass("YTMainAppVideoPlayerOverlayView")]){
-                    [playerViewController.view.overlayView.playerBar.playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                    if(playerViewController.view.overlayView.playerBar.playerBar) {
+                        [playerViewController.view.overlayView.playerBar.playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                    }
+                    else {
+                        [playerViewController.view.overlayView.playerBar.segmentablePlayerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                    }
                 }
             }
         }
