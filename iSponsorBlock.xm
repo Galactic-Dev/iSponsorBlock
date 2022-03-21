@@ -444,6 +444,12 @@ NSString *modifiedTimeString;
         [self.durationLabel sizeToFit];
     }
 }
+
+//thanks @iCraze >>
+%new
+-(id)playerBar {
+    return [self segmentablePlayerBar];
+}
 %end
 
 %hook YTNGWatchLayerViewController
