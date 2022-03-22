@@ -96,7 +96,7 @@ NSString *modifiedTimeString;
     if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
         YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
 		
-		[playerBarView maybeCreateMarkerViewsISB];
+        [playerBarView maybeCreateMarkerViewsISB];
 		
         for(UIView *markerView in playerBarView.subviews){
             if(![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
@@ -411,7 +411,7 @@ NSString *modifiedTimeString;
         CGFloat markerWidth;
         if(endX >= beginX) markerWidth = endX - beginX;
             else markerWidth = 0;
-
+        
         UIColor *color;
         if([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
         else if([segment.category isEqualToString:@"intro"]) color = colorWithHexString([kCategorySettings objectForKey:@"introColor"]);
