@@ -95,9 +95,9 @@ NSString *modifiedTimeString;
     }
     if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
         YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
-		
+        
         [playerBarView maybeCreateMarkerViewsISB];
-		
+        
         for(UIView *markerView in playerBarView.subviews){
             if(![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
                 [playerBarView maybeCreateMarkerViewsISB];
