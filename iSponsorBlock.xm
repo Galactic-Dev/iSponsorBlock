@@ -244,25 +244,17 @@ NSString *modifiedTimeString;
     }
     return %orig;
 }
+
 -(void)setTopOverlayVisible:(BOOL)arg1 isAutonavCanceledState:(BOOL)arg2 {
-    if(self.isDisplayingSponsorBlockViewController) {
+    if (self.isDisplayingSponsorBlockViewController) {
         %orig(NO, arg2);
         self.sponsorBlockButton.imageView.hidden = YES;
         self.sponsorStartedEndedButton.imageView.hidden = YES;
         return;
     }
-    BOOL overlayVisible;
-    if([self respondsToSelector:@selector(isOverlayVisible)]) {
-        overlayVisible = self.overlayVisible;
-    }
-    else {
-        overlayVisible = [[self valueForKey:@"_isOverlayVisible"] boolValue];
-    }
-    self.sponsorBlockButton.hidden = !overlayVisible;
-    self.sponsorStartedEndedButton.hidden = !overlayVisible;
-    
-    self.sponsorBlockButton.imageView.hidden = !overlayVisible;
-    self.sponsorStartedEndedButton.imageView.hidden = !overlayVisible;
+
+    self.sponsorBlockButton.alpha = arg2 || arg1 ? 1:0;
+    self.sponsorStartedEndedButton.alpha = arg2 || arg1 ? 1:0;
     %orig;
 }
 
