@@ -244,16 +244,16 @@ NSString *modifiedTimeString;
     return %orig;
 }
 
--(void)setTopOverlayVisible:(BOOL)arg1 isAutonavCanceledState:(BOOL)arg2 {
+-(void)setTopOverlayVisible:(BOOL)visible isAutonavCanceledState:(BOOL)canceledState {
     if (self.isDisplayingSponsorBlockViewController) {
-        %orig(NO, arg2);
+        %orig(NO, canceledState);
         self.sponsorBlockButton.imageView.hidden = YES;
         self.sponsorStartedEndedButton.imageView.hidden = YES;
         return;
     }
 
-    self.sponsorBlockButton.alpha = arg2 || arg1 ? 1:0;
-    self.sponsorStartedEndedButton.alpha = arg2 || arg1 ? 1:0;
+    self.sponsorBlockButton.alpha = canceledState || !visible ? 0:1;
+    self.sponsorStartedEndedButton.alpha = canceledState || !visible ? 0:1;
     %orig;
 }
 
