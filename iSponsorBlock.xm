@@ -94,7 +94,7 @@ NSString *modifiedTimeString;
         }
     }
     if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
-        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
         
         [playerBarView maybeCreateMarkerViewsISB];
         
@@ -156,7 +156,7 @@ NSString *modifiedTimeString;
     if(!self.isPlayingAd) {
         id overlayView = self.view.overlayView;
         if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
-            YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
+            YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
             [playerBarView maybeCreateMarkerViewsISB];
         }
     }
@@ -197,14 +197,14 @@ NSString *modifiedTimeString;
 -(void)setPlayerViewLayout:(NSInteger)arg1 {
     %orig;
     if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
-        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
         [playerBarView maybeCreateMarkerViewsISB];
     }
 }
 -(void)updateViewportSizeProvider {
     %orig;
     if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.playerBar ?: self.view.overlayView.playerBar.segmentablePlayerBar;
+        YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
         [playerBarView maybeCreateMarkerViewsISB];
     }
 }
@@ -215,10 +215,9 @@ NSString *modifiedTimeString;
 %property (strong, nonatomic) YTQTMButton *sponsorStartedEndedButton;
 %property (strong, nonatomic) YTPlayerViewController *playerViewController;
 %property (nonatomic, assign) BOOL isDisplayingSponsorBlockViewController;
--(NSArray *)topControls {
-    NSArray <UIView *> *topControls = %orig;
+-(NSMutableArray *)topControls {
+    NSMutableArray <UIView *> *topControls = %orig;
     if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer){
-        NSMutableArray *mutableArray = topControls.mutableCopy;
 		NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
         if (tweakBundlePath) {
             NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
@@ -250,31 +249,22 @@ NSString *modifiedTimeString;
             [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         }
         
-        [mutableArray insertObject:self.sponsorBlockButton atIndex:0];
-        [mutableArray insertObject:self.sponsorStartedEndedButton atIndex:0];
-        return mutableArray.copy;
+        [topControls insertObject:self.sponsorBlockButton atIndex:0];
+        [topControls insertObject:self.sponsorStartedEndedButton atIndex:0];
+        return topControls;
     }
     return %orig;
 }
--(void)setTopOverlayVisible:(BOOL)arg1 isAutonavCanceledState:(BOOL)arg2 {
+-(void)setTopOverlayVisible:(BOOL)visible isAutonavCanceledState:(BOOL)canceledState {
     if(self.isDisplayingSponsorBlockViewController) {
-        %orig(NO, arg2);
+        %orig(NO, canceledState);
         self.sponsorBlockButton.imageView.hidden = YES;
         self.sponsorStartedEndedButton.imageView.hidden = YES;
         return;
     }
-    BOOL overlayVisible;
-    if([self respondsToSelector:@selector(isOverlayVisible)]) {
-        overlayVisible = self.overlayVisible;
-    }
-    else {
-        overlayVisible = [[self valueForKey:@"_isOverlayVisible"] boolValue];
-    }
-    self.sponsorBlockButton.hidden = !overlayVisible;
-    self.sponsorStartedEndedButton.hidden = !overlayVisible;
-    
-    self.sponsorBlockButton.imageView.hidden = !overlayVisible;
-    self.sponsorStartedEndedButton.imageView.hidden = !overlayVisible;
+
+    self.sponsorBlockButton.alpha = canceledState || !visible ? 0:1;
+    self.sponsorStartedEndedButton.alpha = canceledState || !visible ? 0:1;
     %orig;
 }
 
