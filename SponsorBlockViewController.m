@@ -1,5 +1,9 @@
 #import "SponsorBlockViewController.h"
 
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
+extern NSBundle *iSponsorBlockBundle();
+
 @implementation SponsorBlockViewController
 -(void)viewDidLoad {
     [super viewDidLoad];
@@ -21,9 +25,10 @@
         self.startEndSegmentButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.startEndSegmentButton.backgroundColor = UIColor.systemBlueColor;
         [self.startEndSegmentButton addTarget:self action:@selector(startEndSegmentButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        NSBundle *tweakBundle = iSponsorBlockBundle();
         
-        if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.startEndSegmentButton setTitle:@"Segment Starts Now" forState:UIControlStateNormal];
-        else [self.startEndSegmentButton setTitle:@"Segment Ends Now" forState:UIControlStateNormal];
+        if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.startEndSegmentButton setTitle:LOC(@"Segment_Starts_Now") forState:UIControlStateNormal];
+        else [self.startEndSegmentButton setTitle:LOC(@"Segment_Ends_Now") forState:UIControlStateNormal];
         self.startEndSegmentButton.titleLabel.adjustsFontSizeToFitWidth = YES;
         
         [self.playerViewController.view addSubview:self.startEndSegmentButton];
@@ -40,7 +45,8 @@
     }
     
     self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    self.whitelistChannelLabel.text = @"Whitelist Channel";
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    self.whitelistChannelLabel.text = LOC(@"Whitelist_Channel");
     [self.playerViewController.view addSubview:self.whitelistChannelLabel];
     self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.whitelistChannelLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
@@ -68,8 +74,9 @@
     if([self.playerViewController.view.overlayView.playerBar.playerBar skipSegments].count > 0 || self.playerViewController.view.overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.segmentsInDatabaseLabel.userInteractionEnabled = YES;
+        NSBundle *tweakBundle = iSponsorBlockBundle();
         
-        self.segmentsInDatabaseLabel.text = @"There are already segments in the database:";
+        self.segmentsInDatabaseLabel.text = LOC(@"There_are_already_segments_in_the_database:");
         self.segmentsInDatabaseLabel.numberOfLines = 1;
         self.segmentsInDatabaseLabel.adjustsFontSizeToFitWidth = YES;
         self.segmentsInDatabaseLabel.textAlignment = NSTextAlignmentCenter;
@@ -118,8 +125,9 @@
     if(self.playerViewController.userSkipSegments.count > 0){
         self.userSegmentsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.userSegmentsLabel.userInteractionEnabled = YES;
+        NSBundle *tweakBundle = iSponsorBlockBundle();
         
-        self.userSegmentsLabel.text = @"Your Segments:";
+        self.userSegmentsLabel.text = LOC(@"Your_Segments:");
         
         self.userSponsorSegmentViews = [self segmentViewsForSegments:self.playerViewController.userSkipSegments editable:YES];
         for(int i = 0; i < self.userSponsorSegmentViews.count; i++){
@@ -161,7 +169,7 @@
         self.submitSegmentsButton.backgroundColor = UIColor.systemBlueColor;
         
         [self.submitSegmentsButton addTarget:self action:@selector(submitSegmentsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [self.submitSegmentsButton setTitle:@"Submit Segments" forState:UIControlStateNormal];
+        [self.submitSegmentsButton setTitle:LOC(@"Submit_Segments") forState:UIControlStateNormal];
         
         [self.playerViewController.view addSubview:self.submitSegmentsButton];
         self.submitSegmentsButton.layer.cornerRadius = 12;
@@ -212,30 +220,32 @@
 }
 
 -(void)startEndSegmentButtonPressed:(UIButton *)sender {
-    if([sender.titleLabel.text isEqualToString:@"Segment Starts Now"]){
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    if([sender.titleLabel.text isEqualToString:LOC(@"Segment_Starts_Now")]){
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-        [sender setTitle:@"Segment Ends Now" forState:UIControlStateNormal];
+        [sender setTitle:LOC(@"Segment_Ends_Now") forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
         if(self.playerViewController.userSkipSegments.lastObject.endTime != self.playerViewController.currentVideoMediaTime) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"End Time That You Set Was Less Than the Start Time, Please Select a Time After %ld:%02ld",lroundf(self.playerViewController.userSkipSegments.lastObject.startTime)/60, lroundf(self.playerViewController.userSkipSegments.lastObject.startTime)%60] preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Error") message:[NSString stringWithFormat:LOC(@"End_Time_That_You_Set_Was_Less_Than_the_Start_Time,_Please_Select_a_Time_After_%ld:%02ld"),lroundf(self.playerViewController.userSkipSegments.lastObject.startTime)/60, lroundf(self.playerViewController.userSkipSegments.lastObject.startTime)%60] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
             handler:^(UIAlertAction * action) {}];
             [alert addAction:defaultAction];
             [self presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [sender setTitle:@"Segment Starts Now" forState:UIControlStateNormal];
+        [sender setTitle:LOC(@"Segment_Starts_Now") forState:UIControlStateNormal];
     }
     [self setupViews];
 }
 
 -(void)submitSegmentsButtonPressed:(UIButton *)sender {
     for(SponsorSegment *segment in self.playerViewController.userSkipSegments) {
+        NSBundle *tweakBundle = iSponsorBlockBundle();
         if(segment.endTime == -1 || !segment.category) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"You Have Unfinished Segments\n Please Add a Category and/or End Time to Your Segments" preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Error") message:LOC(@"Unfinished_Segments_Msg") preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
             handler:^(UIAlertAction * action) {}];
             [alert addAction:defaultAction];
             [self presentViewController:alert animated:YES completion:nil];
@@ -275,7 +285,8 @@
     previewProvider:nil
     actionProvider:^UIMenu* _Nullable(NSArray<UIMenuElement*>* _Nonnull suggestedActions) {
         NSMutableArray *categoryActions = [NSMutableArray array];
-        [categoryActions addObject:[UIAction actionWithTitle:@"Sponsor" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        NSBundle *tweakBundle = iSponsorBlockBundle();
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Sponsor") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"sponsor";
                 [self setupViews];
@@ -284,7 +295,7 @@
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"sponsor" withViewController:self];
         }]];
         
-        [categoryActions addObject:[UIAction actionWithTitle:@"Intermission/Intro Animation" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Intermission/Intro_Animation") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"intro";
                 [self setupViews];
@@ -293,7 +304,7 @@
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"intro" withViewController:self];
         }]];
         
-        [categoryActions addObject:[UIAction actionWithTitle:@"Outro" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Outro") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"outro";
                 [self setupViews];
@@ -302,7 +313,7 @@
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"outro" withViewController:self];
         }]];
         
-        [categoryActions addObject:[UIAction actionWithTitle:@"Interaction Reminder (Subcribe/Like)" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Interaction_SubLike") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"interaction";
                 [self setupViews];
@@ -311,7 +322,7 @@
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"interaction" withViewController:self];
         }]];
         
-        [categoryActions addObject:[UIAction actionWithTitle:@"Unpaid/Self Promotion" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Unpaid/Self_Promotion") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"selfpromo";
                 [self setupViews];
@@ -320,7 +331,7 @@
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"selfpromo" withViewController:self];
         }]];
         
-        [categoryActions addObject:[UIAction actionWithTitle:@"Music: Non-Music Section" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Music:_Non-Music_Section") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
             if(sponsorSegmentView.editable) {
                 sponsorSegmentView.sponsorSegment.category = @"music_offtopic";
                 [self setupViews];
@@ -331,9 +342,9 @@
         NSMutableArray* actions = [NSMutableArray array];
         if (sponsorSegmentView.editable)
         {
-            [actions addObject:[UIAction actionWithTitle:@"Edit Start Time" image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Edit" message:@"Edit Start Time: (ex. type 1:15)" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+            [actions addObject:[UIAction actionWithTitle:LOC(@"Edit_Start_Time") image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Edit") message:LOC(@"Edit_Start_Time:_(ex._type_1:15)") preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction * action) {
                     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
                     f.numberStyle = NSNumberFormatterDecimalStyle;
@@ -348,7 +359,7 @@
                     sponsorSegmentView.sponsorSegment.startTime = (minutes*60)+seconds;
                     [self setupViews];
                 }];
-                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:LOC(@"Cancel") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                     
                 }];
                 [alert addAction:defaultAction];
@@ -357,9 +368,9 @@
                 [self presentViewController:alert animated:YES completion:nil];
             }]];
             
-            [actions addObject:[UIAction actionWithTitle:@"Edit End Time" image:[UIImage systemImageNamed:@"arrow.right.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Edit" message:@"Edit End Time:" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+            [actions addObject:[UIAction actionWithTitle:LOC(@"Edit_End_Time") image:[UIImage systemImageNamed:@"arrow.right.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Edit") message:LOC(@"Edit_End_Time:") preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction * action) {
                     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
                     f.numberStyle = NSNumberFormatterDecimalStyle;
@@ -374,7 +385,7 @@
                     sponsorSegmentView.sponsorSegment.endTime = (minutes*60)+seconds;
                     [self setupViews];
                 }];
-                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:LOC(@"Cancel") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                     
                 }];
                 [alert addAction:defaultAction];
@@ -383,27 +394,27 @@
                 [self presentViewController:alert animated:YES completion:nil];
             }]];
             
-            UIMenu *categoriesMenu = [UIMenu menuWithTitle:@"Edit Category" image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];
+            UIMenu *categoriesMenu = [UIMenu menuWithTitle:LOC(@"Edit_Category") image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];
             [actions addObject:categoriesMenu];
-            [actions addObject:[UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            [actions addObject:[UIAction actionWithTitle:LOC(@"Delete") image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
                 [self.playerViewController.userSkipSegments removeObject:sponsorSegmentView.sponsorSegment];
                 [self setupViews];
             }]];
             
-            UIMenu* menu = [UIMenu menuWithTitle:@"Edit Segment" children:actions];
+            UIMenu* menu = [UIMenu menuWithTitle:LOC(@"Edit_Segment") children:actions];
             return menu;
         }
         else {
-            [actions addObject:[UIAction actionWithTitle:@"Upvote" image:[UIImage systemImageNamed:@"hand.thumbsup.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            [actions addObject:[UIAction actionWithTitle:LOC(@"Upvote") image:[UIImage systemImageNamed:@"hand.thumbsup.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
                 [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:YES withViewController:self];
             }]];
             
-            [actions addObject:[UIAction actionWithTitle:@"Downvote" image:[UIImage systemImageNamed:@"hand.thumbsdown.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            [actions addObject:[UIAction actionWithTitle:LOC(@"Downvote") image:[UIImage systemImageNamed:@"hand.thumbsdown.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
                 [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:NO withViewController:self];
             }]];
             
-            UIMenu *categoriesMenu = [UIMenu menuWithTitle:@"Vote to Change Cateogory" image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];
-            UIMenu* menu = [UIMenu menuWithTitle:@"Vote on Segment" children:[actions arrayByAddingObject:categoriesMenu]];
+            UIMenu *categoriesMenu = [UIMenu menuWithTitle:LOC(@"Vote_to_Change_Category") image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];
+            UIMenu* menu = [UIMenu menuWithTitle:LOC(@"Vote_on_Segment") children:[actions arrayByAddingObject:categoriesMenu]];
             return menu;
         }
     }];
