@@ -1,0 +1,67 @@
+"Enabled" = "Активировать iSponsorBlock";
+"Restart_YouTube_for_changes_to_take_effect" = "Для применения настроек перезапустите YouTube";
+"Disable" = "Выкл";
+"Auto_Skip" = "Перематывать";
+"Show_in_Seek_Bar" = "Предупреждать";
+"Manual_Skip" = "Вручную";
+"Set_Color_To_Show_in_Seek_Bar" = "Цвет сегмента, отображаемый в плеере";
+"Sponsor" = "Спонсорская реклама";
+"Intermission/Intro_Animation" = "Вступление/Интервалы";
+"Endcards/Credits" = "Концовки/Каст";
+"Outro" = "Каст";
+"Interaction_Reminder_(Subscribe)" = "Взаимодействие (Подписаться)";
+"Interaction_SubLike" = "Взаимодействие (Лайк/Подписка)";
+"Unpaid/Self_Promotion" = "Бесплатная самореклама";
+"Music:_Non-Music_Section" = "Перемотка музыкальных вставок";
+"Set_Minimum_Segment_Duration:" = "Минимальная длина рекламы:";
+"Set_How_Long_Skip_Notice_Will_Appear:" = "Длительность уведомлений:";
+"Show_Skip_Notice" = "Отображать уведомления о перемотке";
+"Show_iSponsorBlock_Buttons_in_Video_Player" = "Отображать кнопки твика в плеере";
+"Show_Modified_Time_in_Seek_Bar" = "Отображать сокращенное время в плеере";
+"Enable_Skip_Count_Tracking" = "Включить счетчик пропущенной рекламы";
+
+"Donate_on_Venmo!" = "Задонатить в Venmo";
+"Donate_on_PayPal!" = "Задонатить в PayPal";
+
+"Your_Segments:" = "Ваши сегменты:";
+"Submit_Segments" = "Отправить";
+
+"Segment_Starts_Now1" = "Начало сегмента";
+"Segment_Ends_Now1" = "Конец сегмента";
+"Segment_Starts_Now2" = "Начало сегмента";
+"Segment_Ends_Now2" = "Конец сегмента";
+"Edit_Segment" = "Редактирование";
+"Edit_Start_Time" = "Время начала";
+"Edit_End_Time" = "Время окончания";
+"Edit_Category" = "Категория";
+"Delete" = "Удалить";
+"Edit" = "Изменить";
+"Edit_Start_Time:_(ex._type_1:15)" = "Время начала: (прим. 1:15)";
+"Edit_End_Time:" = "Время окончания:";
+"Whitelist_Channel" = "В белый список";
+"Success" = "Готово";
+"Successfully_Submitted_Segments" = "Сегменты были успешно отправлены";
+"Error" = "Ошибка";
+"Unfinished_Segments_Msg" = "Имеются незавершенные сегменты.\nДобавьте категорию и/или время окончания сегментов";
+"There_are_already_segments_in_the_database:" = "Сегменты уже имеющиеся в базе данных:";
+"End_Time_That_You_Set_Was_Less_Than_the_Start_Time,_Please_Select_a_Time_After_%ld:%02ld" = "Время окончания, указанное вами, не должно быть раньше времени начала сегмента. Укажите время после %ld:%02ld";
+
+"Vote_to_Change_Category" = "Проголосовать за смену категории";
+"Vote_on_Segment" = "Проголосовать за сегмент";
+"Upvote" = "За";
+"Downvote" = "Против";
+
+"SKIPPED_SEGMENT" = "Реклама перемотана";
+"UNSKIP_SEGMENT" = "Вернуть";
+"Manually_Skip_%@_from_%ld:%02ld_to_%ld:%02ld" = "Перемотать рекламу с %ld:%02ld до %ld:%02ld?";
+"Skip" = "Да";
+"OK" = "ОК";
+"Cancel" = "Отмена";
+
+"Sponsor_segment" = "Спонсорский";
+"Intermission_segment" = "Вступление";
+"Outro_segment" = "Каст";
+"Interaction_segment" = "Взаимодействие";
+"Self_Promo_segment" = "Самореклама";
+"Non-Music_segment" = "Муз. вставка";
+"%@_to_%@" = "С %@ по %@";

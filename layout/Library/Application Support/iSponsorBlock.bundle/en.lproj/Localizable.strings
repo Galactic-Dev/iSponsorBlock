@@ -1,0 +1,67 @@
+"Enabled" = "Enabled";
+"Restart_YouTube_for_changes_to_take_effect" = "Restart YouTube for changes to take effect;
+"Disable" = "Disable";
+"Auto_Skip" = "Auto Skip";
+"Show_in_Seek_Bar" = "Show in Seek Bar";
+"Manual_Skip" = "Manual Skip";
+"Set_Color_To_Show_in_Seek_Bar" = "Set Color To Show in Seek Bar";
+"Sponsor" = "Sponsor";
+"Intermission/Intro_Animation" = "Intermission/Intro_Animation";
+"Endcards/Credits" = "Endcards/Credits";
+"Outro" = "Outro";
+"Interaction_Reminder_(Subscribe)" = "Interaction Reminder (Subscribe)";
+"Interaction_SubLike" = "Interaction Reminder (Subscribe/Like)";
+"Unpaid/Self_Promotion" = "Unpaid/Self Promotion";
+"Music:_Non-Music_Section" = "Music: Non-Music Section";
+"Set_Minimum_Segment_Duration:" = "Set Minimum Segment Duration:";
+"Set_How_Long_Skip_Notice_Will_Appear:" = "Set How Long Skip Notice Will Appear:";
+"Show_Skip_Notice" = "Show Skip Notice";
+"Show_iSponsorBlock_Buttons_in_Video_Player" = "Show iSponsorBlock Buttons in Video Player";
+"Show_Modified_Time_in_Seek_Bar" = "Show Modified Time in Seek Bar";
+"Enable_Skip_Count_Tracking" = "Enable Skip Count Tracking;
+
+"Donate_on_Venmo!" = "Donate on Venmo!";
+"Donate_on_PayPal!" = "Donate on PayPal!";
+
+"Your_Segments:" = "Your Segments:";
+"Submit_Segments" = "Submit Segments";
+
+"Segment_Starts_Now1" = "Segment Starts Now";
+"Segment_Ends_Now1" = "Segment Ends Now";
+"Segment_Starts_Now2" = "Segment Starts Now";
+"Segment_Ends_Now2" = "Segment Ends Now";
+"Edit_Segment" = "Edit Segment";
+"Edit_Start_Time" = "Edit Start Time";
+"Edit_End_Time" = "Edit End Time";
+"Edit_Category" = "Edit Category";
+"Delete" = "Delete";
+"Edit" = "Edit";
+"Edit_Start_Time:_(ex._type_1:15)" = "Edit Start Time: (ex. type 1:15)";
+"Edit_End_Time:" = "Edit End Time:";
+"Whitelist_Channel" = "Whitelist Channel";
+"Success" = "Success";
+"Successfully_Submitted_Segments" = "Successfully Submitted Segments";
+"Error" = "Error";
+"Unfinished_Segments_Msg" = "You Have Unfinished Segments\n Please Add a Category and/or End Time to Your Segments";
+"There_are_already_segments_in_the_database:" = "There are already segments in the database:";
+"End_Time_That_You_Set_Was_Less_Than_the_Start_Time,_Please_Select_a_Time_After_%ld:%02ld" = "End Time That You Set Was Less Than the Start Time, Please Select a Time After %ld:%02ld";
+
+"Vote_to_Change_Category" = "Vote to Change Category";
+"Vote_on_Segment" = "Vote on Segment";
+"Upvote" = "Upvote";
+"Downvote" = "Downvote";
+
+"SKIPPED_SEGMENT" = "Skipped Segment";
+"UNSKIP_SEGMENT" = "Unskip Segment";
+"Manually_Skip_%@_from_%ld:%02ld_to_%ld:%02ld" = "Manually Skip %@ from %ld:%02ld to %ld:%02ld";
+"Skip" = "Skip";
+"OK" = "OK";
+"Cancel" = "Отмена";
+
+"Sponsor_segment" = "Sponsor";
+"Intermission_segment" = "Intermission";
+"Outro_segment" = "Outro";
+"Interaction_segment" = "Interaction";
+"Self_Promo_segment" = "Self Promo";
+"Non-Music_segment" = "Non-Music";
+"%@_to_%@" = "%@ to %@";
