@@ -54,7 +54,7 @@
 "Manually_Skip_%@_from_%ld:%02ld_to_%ld:%02ld" = "Detected %@ from %ld:%02ld to %ld:%02ld";
 "Skip" = "Skip";
 "OK" = "OK";
-"Cancel" = "Отмена";
+"Cancel" = "Cancel";
 
 "Sponsor_segment" = "Sponsor";
 "Intermission_segment" = "Intermission";
