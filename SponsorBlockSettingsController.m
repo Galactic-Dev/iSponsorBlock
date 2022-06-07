@@ -1,7 +1,24 @@
 #import "SponsorBlockSettingsController.h"
 #import "colorFunctions.h"
 
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
+extern NSBundle *iSponsorBlockBundle();
+
 static NSString *LogoSponsorBlockerPath;
+
+NSBundle *iSponsorBlockBundle() {
+    static NSBundle *bundle = nil;
+    static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+        NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+        if (tweakBundlePath)
+            bundle = [NSBundle bundleWithPath:tweakBundlePath];
+        else
+            bundle = [NSBundle bundleWithPath:@"/Library/Application Support/iSponsorBlock.bundle"];
+    });
+    return bundle;
+}
 
 @implementation SponsorBlockTableCell
 -(void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
@@ -63,14 +80,14 @@ static NSString *LogoSponsorBlockerPath;
     [self.tableView.widthAnchor constraintEqualToAnchor:self.view.widthAnchor].active = YES;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
-    // NSBundle *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
-        NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+ 
+    //NSString *pathToImage = [resourcesBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+    NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
     if (tweakBundlePath) {
-        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
-        LogoSponsorBlockerPath = [tweakBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
+    NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
+    LogoSponsorBlockerPath = [tweakBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"];
     } else {
-        LogoSponsorBlockerPath = @"/Library/Application Support/iSponsorBlock.bundle/LogoSponsorBlocker128px.png";
+    LogoSponsorBlockerPath = @"/Library/Application Support/iSponsorBlock.bundle/LogoSponsorBlocker128px.png";
     }
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:LogoSponsorBlockerPath]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
@@ -91,8 +108,9 @@ static NSString *LogoSponsorBlockerPath;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self.view action:@selector(endEditing:)];
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     
-    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section"];
+    self.sectionTitles = @[LOC(@"Sponsor"), LOC(@"Intermission/Intro_Animation"), LOC(@"Endcards/Credits"), LOC(@"Interaction_Reminder_(Subscribe)"), LOC(@"Unpaid/Self_Promotion"), LOC(@"Music:_Non-Music_Section")];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 14;
@@ -106,11 +124,12 @@ static NSString *LogoSponsorBlockerPath;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SponsorBlockCell"];
+    NSBundle *tweakBundle = iSponsorBlockBundle();
      if (!cell) {
          cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlocKCell"];
      }
     if(indexPath.section == 0) {
-        cell.textLabel.text = @"Enabled";
+        cell.textLabel.text = LOC(@"Enabled");
         UISwitch *enabledSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         cell.accessoryView = enabledSwitch;
         [enabledSwitch addTarget:self action:@selector(enabledSwitchToggled:) forControlEvents:UIControlEventValueChanged];
@@ -126,7 +145,7 @@ static NSString *LogoSponsorBlockerPath;
     if(indexPath.section <= 6) {
         SponsorBlockTableCell *tableCell = [[SponsorBlockTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell2"];
         NSDictionary *categorySettings = [self.settings objectForKey:@"categorySettings"];
-        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Disable", @"Auto Skip", @"Show in Seek Bar", @"Manual Skip"]];
+        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[LOC(@"Disable"), LOC(@"Auto_Skip"), LOC(@"Show_in_Seek_Bar"), LOC(@"Manual_Skip")]];
         
         //make it so "Show in Seek Bar" text won't be cut off on certain devices
         NSMutableArray *segments = [segmentedControl valueForKey:@"_segments"];
@@ -172,7 +191,7 @@ static NSString *LogoSponsorBlockerPath;
             [segmentedControl.widthAnchor constraintEqualToAnchor:tableCell.contentView.widthAnchor].active = YES;
         }
         else {
-            tableCell.textLabel.text = @"Set Color To Show in Seek Bar";
+            tableCell.textLabel.text = LOC(@"Set_Color_To_Show_in_Seek_Bar");
             tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
             HBColorWell *colorWell = [[objc_getClass("HBColorWell") alloc] initWithFrame:CGRectMake(0,0,32,32)];
             [colorWell addTarget:tableCell action:@selector(presentColorPicker:) forControlEvents:UIControlEventTouchUpInside];
@@ -186,7 +205,7 @@ static NSString *LogoSponsorBlockerPath;
     }
     if(indexPath.section == 7) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"Set Minimum Segment Duration:";
+        textCell.textLabel.text = LOC(@"Set_Minimum_Segment_Duration:");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"minimumDuration"] floatValue]];
         [textCell editableTextField].keyboardType = UIKeyboardTypeDecimalPad;
@@ -195,7 +214,7 @@ static NSString *LogoSponsorBlockerPath;
     }
     if(indexPath.section == 8) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"Set How Long Skip Notice Will Appear:";
+        textCell.textLabel.text = LOC(@"Set_How_Long_Skip_Notice_Will_Appear:");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"skipNoticeDuration"] floatValue]];
         [textCell editableTextField].keyboardType = UIKeyboardTypeDecimalPad;
@@ -203,7 +222,7 @@ static NSString *LogoSponsorBlockerPath;
         return textCell;
     }
     else if(indexPath.section >= 9 && indexPath.section < 13) {
-        NSArray *titles = @[@"Show Skip Notice", @"Show iSponsorBlock Buttons in Video Player", @"Show Modified Time in Seek Bar", @"Enable Skip Count Tracking"];
+        NSArray *titles = @[LOC(@"Show_Skip_Notice"), LOC(@"Show_iSponsorBlock_Buttons_in_Video_Player"), LOC(@"Show_Modified_Time_in_Seek_Bar"), LOC(@"Enable_Skip_Count_Tracking")];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
         tableCell.textLabel.text = titles[indexPath.section-9];
@@ -223,8 +242,8 @@ static NSString *LogoSponsorBlockerPath;
     }
     else if(indexPath.section == 13) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
-        if(indexPath.row == 0) cell.textLabel.text = @"Donate on Venmo!";
-        else cell.textLabel.text = @"Donate on PayPal!";
+        if(indexPath.row == 0) cell.textLabel.text = LOC(@"Donate_on_Venmo!");
+        else cell.textLabel.text = LOC(@"Donate_on_PayPal!");
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
         return cell;
     }
@@ -238,7 +257,8 @@ static NSString *LogoSponsorBlockerPath;
 }
 
 -(NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if(section == 0) return @"Restart YouTube for changes to take effect";
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    if(section == 0) return LOC(@"Restart_YouTube_for_changes_to_take_effect");
     return nil;
 }
 
@@ -284,7 +304,8 @@ static NSString *LogoSponsorBlockerPath;
     UITableViewCell *cell = (UITableViewCell *)textField.superview.superview;
     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
     f.numberStyle = NSNumberFormatterDecimalStyle;
-    if([cell.textLabel.text isEqualToString:@"Set Minimum Segment Duration:"]) {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    if([cell.textLabel.text isEqualToString:LOC(@"Set_Minimum_Segment_Duration:")]) {
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"minimumDuration"];
         [self writeSettings:self.settings];
     }
