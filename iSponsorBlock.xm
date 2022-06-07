@@ -3,11 +3,14 @@
 #import "SponsorBlockSettingsController.h"
 #import "SponsorBlockRequest.h"
 #import "SponsorBlockViewController.h"
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
+extern NSBundle *iSponsorBlockBundle();
 
 static NSString *PlayerInfoIconSponsorBlockerPath;
-static NSString *sponsorblockstartPath;
-static NSString *sponsorblockendPath;
-static NSString *sponsorblocksettingsPath;
+static NSString *SponsorblockstartPath;
+static NSString *SponsorblockendPath;
+static NSString *SponsorblocksettingsPath;
 
 %group Main
 NSString *modifiedTimeString;
@@ -19,6 +22,7 @@ NSString *modifiedTimeString;
 %property (nonatomic, assign) NSInteger unskippedSegment;
 %property (strong, nonatomic) NSMutableArray *userSkipSegments;
 %property (strong, nonatomic) NSString *channelID;
+NSBundle *tweakBundle = iSponsorBlockBundle();
 -(void)singleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
     %orig;
     id overlayView = self.view.overlayView;
@@ -46,8 +50,8 @@ NSString *modifiedTimeString;
                 if(self.hud.superview != self.view) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                     self.hud.mode = MBProgressHUDModeCustomView;
-                    self.hud.label.text = [NSString stringWithFormat:@"Manually Skip %@ from %ld:%02ld to %ld:%02ld", sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
-                    [self.hud.button setTitle:@"Skip" forState:UIControlStateNormal];
+                    self.hud.label.text = [NSString stringWithFormat:LOC(@"Manually_Skip_%@_from_%ld:%02ld_to_%ld:%02ld"), sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
+                    [self.hud.button setTitle:LOC(@"Skip") forState:UIControlStateNormal];
                     [self.hud.button addTarget:self action:@selector(manuallySkipSegment:) forControlEvents:UIControlEventTouchUpInside];
                     self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
                     [self.hud hideAnimated:YES afterDelay:(sponsorSegment.endTime - sponsorSegment.startTime)];
@@ -66,8 +70,8 @@ NSString *modifiedTimeString;
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                 self.hud.mode = MBProgressHUDModeCustomView;
-                self.hud.label.text = @"Skipped Segment";
-                [self.hud.button setTitle:@"Unskip Segment" forState:UIControlStateNormal];
+                self.hud.label.text = LOC(@"SKIPPED_SEGMENT");
+                [self.hud.button setTitle:LOC(@"UNSKIP_SEGMENT") forState:UIControlStateNormal];
                 [self.hud.button addTarget:self action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                 self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
                 [self.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
@@ -218,13 +222,6 @@ NSString *modifiedTimeString;
 -(NSMutableArray *)topControls {
     NSMutableArray <UIView *> *topControls = %orig;
     if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer){
-		NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
-        if (tweakBundlePath) {
-            NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
-            PlayerInfoIconSponsorBlockerPath = [tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"];
-        } else {
-            PlayerInfoIconSponsorBlockerPath = @"/Library/Application Support/iSponsorBlock.bundle/PlayerInfoIconSponsorBlocker256px-20@2x.png";
-        }
         if(!self.sponsorBlockButton){
             self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
             self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
@@ -232,8 +229,8 @@ NSString *modifiedTimeString;
             
             self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
             self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockstartPath] forState:UIControlStateNormal];
-            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockendPath] forState:UIControlStateNormal];
+            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:SponsorblockstartPath] forState:UIControlStateNormal];
+            else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:SponsorblockendPath] forState:UIControlStateNormal];
 
             if(topControls[0].superview == self){
                 [self addSubview:self.sponsorBlockButton];
@@ -280,18 +277,9 @@ NSString *modifiedTimeString;
 }
 %new
 -(void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
-	NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
-    if (tweakBundlePath) {
-        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
-		sponsorblockstartPath = [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"];
-		sponsorblockendPath = [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
-    } else {
-		sponsorblockstartPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblockstart-20@2x.png";
-		sponsorblockendPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblockend-20@2x.png";
-    }
     if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockendPath] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:SponsorblockendPath] forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
@@ -303,7 +291,7 @@ NSString *modifiedTimeString;
             [[[UIApplication sharedApplication] delegate].window.rootViewController  presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:sponsorblockstartPath] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:SponsorblockstartPath] forState:UIControlStateNormal];
     }
 }
 %new
@@ -654,8 +642,8 @@ AVQueuePlayer *queuePlayer;
                     if(weakSelf.hud.superview != weakSelf.playerViewController.view) {
                         weakSelf.hud = [MBProgressHUD showHUDAddedTo:weakSelf.playerViewController.view animated:YES];
                         weakSelf.hud.mode = MBProgressHUDModeCustomView;
-                        weakSelf.hud.label.text = [NSString stringWithFormat:@"Manually Skip %@ from %ld:%02ld to %ld:%02ld", sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
-                        [weakSelf.hud.button setTitle:@"Skip" forState:UIControlStateNormal];
+                        weakSelf.hud.label.text = [NSString stringWithFormat:LOC(@"Manually_Skip_%@_from_%ld:%02ld_to_%ld:%02ld"), sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
+                        [weakSelf.hud.button setTitle:LOC(@"Skip") forState:UIControlStateNormal];
                         [weakSelf.hud.button addTarget:weakSelf action:@selector(manuallySkipSegment:) forControlEvents:UIControlEventTouchUpInside];
                         weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
                         [weakSelf.hud hideAnimated:YES afterDelay:(sponsorSegment.endTime - sponsorSegment.startTime)];
@@ -719,13 +707,6 @@ NSInteger pageStyle = 0;
 %hook YTRightNavigationButtons
 %property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
 -(NSMutableArray *)buttons {
-	NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
-    if (tweakBundlePath) {
-        NSBundle *tweakBundle = [NSBundle bundleWithPath:tweakBundlePath];
-		sponsorblocksettingsPath = [tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"];
-    } else {
-		sponsorblocksettingsPath = @"/Library/Application Support/iSponsorBlock.bundle/sponsorblocksettings-20@2x.png";
-    }
     NSMutableArray *retVal = %orig.mutableCopy;
     [self.sponsorBlockButton removeFromSuperview];
     [self addSubview:self.sponsorBlockButton];
@@ -734,10 +715,10 @@ NSInteger pageStyle = 0;
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if([%c(YTPageStyleController) pageStyle]) { //dark mode
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:sponsorblocksettingsPath] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:SponsorblocksettingsPath] forState:UIControlStateNormal];
         }
         else { //light mode
-            UIImage *image = [UIImage imageWithContentsOfFile:sponsorblocksettingsPath];
+            UIImage *image = [UIImage imageWithContentsOfFile:SponsorblocksettingsPath];
             image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
             [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
             [self.sponsorBlockButton setTintColor:UIColor.blackColor];
@@ -820,7 +801,25 @@ static void prefsChanged(CFNotificationCenterRef center, void *observer, CFStrin
     loadPrefs();
 }
 
+NSBundle *iSponsorBlockBundle() {
+    static NSBundle *bundle = nil;
+    static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+        NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+        if (tweakBundlePath)
+            bundle = [NSBundle bundleWithPath:tweakBundlePath];
+        else
+            bundle = [NSBundle bundleWithPath:@"/Library/Application Support/iSponsorBlock.bundle"];
+    });
+    return bundle;
+}
+
 %ctor {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    PlayerInfoIconSponsorBlockerPath = [tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"];
+    SponsorblockstartPath = [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"];
+    SponsorblockendPath = [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
+    SponsorblocksettingsPath = [tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"];
     loadPrefs();
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)prefsChanged, CFSTR("com.galacticdev.isponsorblockprefs.changed"), NULL, CFNotificationSuspensionBehaviorCoalesce);
     if(kIsEnabled) {
