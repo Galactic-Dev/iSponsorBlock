@@ -1,5 +1,10 @@
 #import "SponsorSegmentView.h"
 #include "RemoteLog.h"
+
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
+extern NSBundle *iSponsorBlockBundle();
+
 @implementation SponsorSegmentView
 -(instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable {
     self = [super initWithFrame:frame];
@@ -8,23 +13,24 @@
         self.editable = editable;
         
         NSString *category;
+        NSBundle *tweakBundle = iSponsorBlockBundle();
         if([segment.category isEqualToString:@"sponsor"]){
-            category = @"Sponsor";
+            category = LOC(@"Sponsor_segment");
         }
         else if([segment.category isEqualToString:@"intro"]) {
-            category = @"Intermission";
+            category = LOC(@"Intermission_segment");
         }
         else if([segment.category isEqualToString:@"outro"]) {
-            category = @"Outro";
+            category = LOC(@"Outro_segment");
         }
         else if([segment.category isEqualToString:@"interaction"]) {
-            category = @"Interaction";
+            category = LOC(@"Interaction_segment");
         }
         else if([segment.category isEqualToString:@"selfpromo"]) {
-            category = @"Self Promo";
+            category = LOC(@"Self_Promo_segment");
         }
         else if([segment.category isEqualToString:@"music_offtopic"]) {
-            category = @"Non-Music";
+            category = LOC(@"Non-Music_segment");
         }
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.segmentLabel = [[UILabel alloc] initWithFrame:self.frame];
@@ -54,7 +60,7 @@
             endTime = [NSString stringWithFormat:@"%ld:%02ld", endMinutes, endSeconds];
         }
         
-        self.segmentLabel.text = [NSString stringWithFormat:@"%@ to %@", startTime, endTime];
+        self.segmentLabel.text = [NSString stringWithFormat:LOC(@"%@_to_%@"), startTime, endTime];
         
         [self addSubview:self.categoryLabel];
         self.categoryLabel.adjustsFontSizeToFitWidth = YES;
