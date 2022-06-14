@@ -13,6 +13,7 @@ extern NSBundle *iSponsorBlockBundle();
     [self setupViews];
 }
 -(void)setupViews {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     [self.segmentsInDatabaseLabel removeFromSuperview];
     [self.userSegmentsLabel removeFromSuperview];
     [self.submitSegmentsButton removeFromSuperview];
@@ -25,7 +26,6 @@ extern NSBundle *iSponsorBlockBundle();
         self.startEndSegmentButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.startEndSegmentButton.backgroundColor = UIColor.systemBlueColor;
         [self.startEndSegmentButton addTarget:self action:@selector(startEndSegmentButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        NSBundle *tweakBundle = iSponsorBlockBundle();
         
         if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.startEndSegmentButton setTitle:LOC(@"Segment_Starts_Now") forState:UIControlStateNormal];
         else [self.startEndSegmentButton setTitle:LOC(@"Segment_Ends_Now") forState:UIControlStateNormal];
@@ -45,7 +45,6 @@ extern NSBundle *iSponsorBlockBundle();
     }
     
     self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    NSBundle *tweakBundle = iSponsorBlockBundle();
     self.whitelistChannelLabel.text = LOC(@"Whitelist_Channel");
     [self.playerViewController.view addSubview:self.whitelistChannelLabel];
     self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -74,7 +73,6 @@ extern NSBundle *iSponsorBlockBundle();
     if([self.playerViewController.view.overlayView.playerBar.playerBar skipSegments].count > 0 || self.playerViewController.view.overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.segmentsInDatabaseLabel.userInteractionEnabled = YES;
-        NSBundle *tweakBundle = iSponsorBlockBundle();
         
         self.segmentsInDatabaseLabel.text = LOC(@"There_are_already_segments_in_the_database:");
         self.segmentsInDatabaseLabel.numberOfLines = 1;
@@ -125,7 +123,6 @@ extern NSBundle *iSponsorBlockBundle();
     if(self.playerViewController.userSkipSegments.count > 0){
         self.userSegmentsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.userSegmentsLabel.userInteractionEnabled = YES;
-        NSBundle *tweakBundle = iSponsorBlockBundle();
         
         self.userSegmentsLabel.text = LOC(@"Your_Segments:");
         
@@ -241,8 +238,8 @@ extern NSBundle *iSponsorBlockBundle();
 }
 
 -(void)submitSegmentsButtonPressed:(UIButton *)sender {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     for(SponsorSegment *segment in self.playerViewController.userSkipSegments) {
-        NSBundle *tweakBundle = iSponsorBlockBundle();
         if(segment.endTime == -1 || !segment.category) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Error") message:LOC(@"Unfinished_Segments_Msg") preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
