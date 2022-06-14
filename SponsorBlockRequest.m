@@ -1,5 +1,10 @@
 #import "SponsorBlockRequest.h"
 #import <objc/runtime.h>
+
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
+extern NSBundle *iSponsorBlockBundle();
+
 @implementation SponsorBlockRequest
 +(void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel {
     __block NSMutableArray *skipSegments = [NSMutableArray array];
@@ -62,6 +67,7 @@
     [dataTask resume];
 }
 +(void)postSponsorTimes:(NSString *)videoID sponsorSegments:(NSArray <SponsorSegment *> *)segments userID:(NSString *)userID withViewController:(UIViewController *)viewController {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     for(SponsorSegment *segment in segments){
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
         [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/skipSegments?videoID=%@&startTime=%f&endTime=%f&category=%@&userID=%@", videoID, segment.startTime, segment.endTime, segment.category, userID]]];
@@ -70,8 +76,8 @@
             NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
             if(URLResponse.statusCode != 200) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error Code: %ld %@", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]] preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Error") message:[NSString stringWithFormat:LOC(@"Error_Code:_%ld_%@"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]] preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
                     handler:^(UIAlertAction * action) {}];
                     [alert addAction:defaultAction];
                     [viewController presentViewController:alert animated:YES completion:nil];
@@ -80,7 +86,7 @@
             }
             else {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success" message:@"Successfully Submitted Segments" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Success") message:LOC(@"Successfully_Submitted_Segments") preferredStyle:UIAlertControllerStyleAlert];
                     UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                     handler:^(UIAlertAction * action) {}];
                     [alert addAction:defaultAction];
@@ -92,6 +98,7 @@
     }
 }
 +(void)normalVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID type:(BOOL)type withViewController:(UIViewController *)viewController {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&type=%d", segment.UUID, userID, type]]];
     request.HTTPMethod = @"POST";
@@ -100,11 +107,11 @@
         NSString *title;
         CGFloat delay;
         if(URLResponse.statusCode != 200) {
-            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            title = [NSString stringWithFormat:LOC(@"Error_voting:_(%ld_%@)"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
             delay = 3.0f;
         }
         else {
-            title = @"Successfully Voted";
+            title = LOC(@"Successfully_Voted");
             delay = 1.0f;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -118,6 +125,7 @@
     [dataTask resume];
 }
 +(void)categoryVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID category:(NSString *)category withViewController:(UIViewController *)viewController {
+    NSBundle *tweakBundle = iSponsorBlockBundle();
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&category=%@", segment.UUID, userID, category]]];
     request.HTTPMethod = @"POST";
@@ -126,11 +134,11 @@
         NSString *title;
         CGFloat delay;
         if(URLResponse.statusCode != 200) {
-            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            title = [NSString stringWithFormat:LOC(@"Error_voting:_(%ld_%@)"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
             delay = 3.0f;
         }
         else {
-            title = @"Successfully Voted";
+            title = LOC(@"Successfully_Voted");
             delay = 1.0f;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
