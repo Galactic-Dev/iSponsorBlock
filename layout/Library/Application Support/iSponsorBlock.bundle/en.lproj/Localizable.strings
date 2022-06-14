@@ -48,6 +48,9 @@
 "Vote_on_Segment" = "Vote on Segment";
 "Upvote" = "Upvote";
 "Downvote" = "Downvote";
+"Error_Code:_%ld_%@" = "Error Code: %ld %@";
+"Error_voting:_(%ld_%@)" = "Error voting: (%ld %@)";
+"Successfully_Voted" = "Successfully Voted";
 
 "SKIPPED_SEGMENT" = "Skipped Segment";
 "UNSKIP_SEGMENT" = "Unskip Segment";
