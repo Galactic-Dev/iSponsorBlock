@@ -48,6 +48,9 @@
 "Vote_on_Segment" = "Проголосовать за сегмент";
 "Upvote" = "За";
 "Downvote" = "Против";
+"Error_Code:_%ld_%@" = "Код ошибки: %ld %@";
+"Error_voting:_(%ld_%@)" = "Ошибка голосования: (%ld %@)";
+"Successfully_Voted" = "Голосование отправлено";
 
 "SKIPPED_SEGMENT" = "Реклама перемотана";
 "UNSKIP_SEGMENT" = "Вернуть";
