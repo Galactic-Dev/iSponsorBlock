@@ -14,24 +14,29 @@ NSString *modifiedTimeString;
 %property (nonatomic, assign) NSInteger unskippedSegment;
 %property (strong, nonatomic) NSMutableArray *userSkipSegments;
 %property (strong, nonatomic) NSString *channelID;
+
+// used to keep support for older versions, as seekToTime is new
+%new
+-(void)isb_scrubToTime:(CGFloat)time {
+    // YT v17.30.1 switched scrubToTime to seekToTime
+    [self respondsToSelector:@selector(scrubToTime:)] ? [self scrubToTime:time] : [self seekToTime:time];
+}
+
 -(void)singleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
     %orig;
     id overlayView = self.view.overlayView;
-    if(!self.channelID) {
-        self.channelID = @"";
-    }
-    if(self.skipSegments.count > 0 && [overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)] && ![kWhitelistedChannels containsObject:self.channelID]){
-        if(kShowModifiedTime){
+    if (!self.channelID) self.channelID = @"";
+    if (self.skipSegments.count > 0 && [overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)] && ![kWhitelistedChannels containsObject:self.channelID]) {
+        if (kShowModifiedTime) {
             UILabel *durationLabel = self.view.overlayView.playerBar.durationLabel;
             if(![durationLabel.text containsString:modifiedTimeString]) durationLabel.text = [NSString stringWithFormat:@"%@ (%@)", durationLabel.text, modifiedTimeString];
             [durationLabel sizeToFit];
         }
         
         SponsorSegment *sponsorSegment = [[SponsorSegment alloc] initWithStartTime:-1 endTime:-1 category:nil UUID:nil];
-        if(self.currentSponsorSegment <= self.skipSegments.count-1){
+        if (self.currentSponsorSegment <= self.skipSegments.count-1) {
             sponsorSegment = self.skipSegments[self.currentSponsorSegment];
-        }
-        else if (self.unskippedSegment != self.currentSponsorSegment-1) {
+        } else if (self.unskippedSegment != self.currentSponsorSegment-1) {
             sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
         }
         
@@ -50,11 +55,11 @@ NSString *modifiedTimeString;
             }
             //edge case where segment end time is longer than the video
             else if(sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
-                [self scrubToTime:self.currentVideoTotalMediaTime];
+                [self isb_scrubToTime:self.currentVideoTotalMediaTime];
                 if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
             }
             else {
-                [self scrubToTime:sponsorSegment.endTime];
+                [self isb_scrubToTime:sponsorSegment.endTime];
                 if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
             }
             if(self.hud.superview != self.view && kShowSkipNotice) {
@@ -88,13 +93,13 @@ NSString *modifiedTimeString;
             }
         }
     }
-    if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+    if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
         YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
         
         [playerBarView maybeCreateMarkerViewsISB];
         
-        for(UIView *markerView in playerBarView.subviews){
-            if(![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
+        for (UIView *markerView in playerBarView.subviews) {
+            if (![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
                 [playerBarView maybeCreateMarkerViewsISB];
                 return;
             }
@@ -103,7 +108,7 @@ NSString *modifiedTimeString;
 }
 -(void)playbackController:(id)arg1 didActivateVideo:(id)arg2 withPlaybackData:(id)arg3{
     %orig;
-    if(!self.isPlayingAd && [self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+    if (!self.isPlayingAd && [self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
         [MBProgressHUD hideHUDForView:self.view animated:YES]; //fix manual skip popup not disappearing when changing videos
 
         self.skipSegments = [NSMutableArray array];
@@ -116,28 +121,22 @@ NSString *modifiedTimeString;
         
         YTSingleVideoController *activeVideo = self.activeVideo;
         if([activeVideo isKindOfClass:%c(YTSingleVideoController)]) {
-            if([self.activeVideo.singleVideo respondsToSelector:@selector(video)]) {
-                self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
-            }
-            else {
-                self.channelID = self.activeVideo.singleVideo.playbackData.video.videoDetails.channelId;
-            }
+            if ([self.activeVideo.singleVideo respondsToSelector:@selector(video)]) self.channelID = self.activeVideo.singleVideo.video.videoDetails.channelId;
+            else self.channelID = self.activeVideo.singleVideo.playbackData.video.videoDetails.channelId;
         }
     }
 }
 -(void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
     %orig;
     NSInteger totalSavedTime = 0;
-    for(SponsorSegment *segment in arg1) {
-        totalSavedTime += lroundf(segment.endTime) - lroundf(segment.startTime);
-    }
-    if(arg1.count > 0) {
+    for (SponsorSegment *segment in arg1) totalSavedTime += lroundf(segment.endTime) - lroundf(segment.startTime);
+    if (arg1.count > 0) {
         NSInteger seconds = lroundf(self.currentVideoTotalMediaTime - totalSavedTime);
         NSInteger hours = seconds / 3600;
         NSInteger  minutes = (seconds - (hours * 3600)) / 60;
         seconds = seconds %60;
         
-        if(hours >= 1) modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld:%02ld",hours, minutes, seconds];
+        if (hours >= 1) modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld:%02ld",hours, minutes, seconds];
         else modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld", minutes, seconds];
     }
 
@@ -145,25 +144,35 @@ NSString *modifiedTimeString;
         modifiedTimeString = nil;
     }
 }
--(void)scrubToTime:(CGFloat)arg1 {
-    %orig;
-    //fixes visual glitch
-    if(!self.isPlayingAd) {
+
+%new
+-(void)isb_fixVisualGlitch {
+    if (!self.isPlayingAd) {
         id overlayView = self.view.overlayView;
-        if([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+        if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
             YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
             [playerBarView maybeCreateMarkerViewsISB];
         }
     }
 }
+
+-(void)scrubToTime:(CGFloat)arg1 {
+    %orig;
+    [self isb_fixVisualGlitch];
+}
+
+-(void)seekToTime:(CGFloat)arg1 {
+    %orig;
+    [self isb_fixVisualGlitch];
+}
+
 %new
 -(void)unskipSegment:(UIButton *)sender {
-    if(self.currentSponsorSegment > 0){
-        [self scrubToTime:self.skipSegments[self.currentSponsorSegment-1].startTime];
+    if (self.currentSponsorSegment > 0) {
+        [self isb_scrubToTime:self.skipSegments[self.currentSponsorSegment-1].startTime];
         self.unskippedSegment = self.currentSponsorSegment-1;
-    }
-    else {
-        [self scrubToTime:self.skipSegments[self.currentSponsorSegment].startTime];
+    } else {
+        [self isb_scrubToTime:self.skipSegments[self.currentSponsorSegment].startTime];
         self.unskippedSegment = self.currentSponsorSegment;
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -171,19 +180,18 @@ NSString *modifiedTimeString;
 %new
 -(void)manuallySkipSegment:(UIButton *)sender {
     SponsorSegment *sponsorSegment = [[SponsorSegment alloc] initWithStartTime:-1 endTime:-1 category:nil UUID:nil];
-    if(self.currentSponsorSegment <= self.skipSegments.count-1){
+    if (self.currentSponsorSegment <= self.skipSegments.count-1) {
         sponsorSegment = self.skipSegments[self.currentSponsorSegment];
-    }
-    else if (self.unskippedSegment != self.currentSponsorSegment-1) {
+    } else if (self.unskippedSegment != self.currentSponsorSegment-1) {
         sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
     }
     
     if(sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
-        [self scrubToTime:self.currentVideoTotalMediaTime];
+        [self isb_scrubToTime:self.currentVideoTotalMediaTime];
         if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
     }
     else {
-        [self scrubToTime:sponsorSegment.endTime];
+        [self isb_scrubToTime:sponsorSegment.endTime];
         if(kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -191,7 +199,7 @@ NSString *modifiedTimeString;
 }
 -(void)setPlayerViewLayout:(NSInteger)arg1 {
     %orig;
-    if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]){
+    if([self.view.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
         YTInlinePlayerBarView *playerBarView = self.view.overlayView.playerBar.segmentablePlayerBar;
         [playerBarView maybeCreateMarkerViewsISB];
     }
@@ -212,22 +220,21 @@ NSString *modifiedTimeString;
 %property (nonatomic, assign) BOOL isDisplayingSponsorBlockViewController;
 -(NSMutableArray *)topControls {
     NSMutableArray <UIView *> *topControls = %orig;
-    if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer){
-        if(!self.sponsorBlockButton){
+    if(![topControls containsObject:self.sponsorBlockButton] && kShowButtonsInPlayer) {
+        if(!self.sponsorBlockButton) {
             self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
             self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
             [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png"] forState:UIControlStateNormal];
             
             self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
             self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-            if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
+            if (self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
             else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
 
-            if(topControls[0].superview == self){
+            if(topControls[0].superview == self) {
                 [self addSubview:self.sponsorBlockButton];
                 [self addSubview:self.sponsorStartedEndedButton];
-            }
-            else {
+            } else {
                 UIView *containerView = [self valueForKey:@"_topControlsAccessibilityContainerView"];
                 [containerView addSubview:self.sponsorBlockButton];
                 [containerView addSubview:self.sponsorStartedEndedButton];
@@ -262,9 +269,7 @@ NSString *modifiedTimeString;
     self.isDisplayingSponsorBlockViewController = YES;
     self.sponsorBlockButton.hidden = YES;
     self.sponsorStartedEndedButton.hidden = YES;
-    if([self.playerViewController playerViewLayout] == 3){
-        [self.playerViewController didPressToggleFullscreen];
-    }
+    if ([self.playerViewController playerViewLayout] == 3) [self.playerViewController didPressToggleFullscreen];
     [self presentSponsorBlockViewController];
 }
 %new
@@ -429,7 +434,7 @@ NSString *modifiedTimeString;
 
 -(void)setPeekableViewVisible:(BOOL)arg1 {
     %orig;
-    if(kShowModifiedTime && modifiedTimeString && ![self.durationLabel.text containsString:modifiedTimeString]){
+    if (kShowModifiedTime && modifiedTimeString && ![self.durationLabel.text containsString:modifiedTimeString]) {
         NSString *text = [NSString stringWithFormat:@"%@ (%@)", self.durationLabel.text, modifiedTimeString];
         self.durationLabel.text = text;
         [self.durationLabel sizeToFit];
@@ -682,11 +687,10 @@ AVQueuePlayer *queuePlayer;
 }
 %new
 -(void)unskipSegment:(UIButton *)sender {
-    if(self.currentSponsorSegment > 0){
+    if (self.currentSponsorSegment > 0) {
         [self seekToTime:CMTimeMake(self.skipSegments[self.currentSponsorSegment-1].startTime,1)];
         self.unskippedSegment = self.currentSponsorSegment-1;
-    }
-    else {
+    } else {
         [self seekToTime:CMTimeMake(self.skipSegments[self.currentSponsorSegment].startTime,1)];
         self.unskippedSegment = self.currentSponsorSegment;
     }
