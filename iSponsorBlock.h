@@ -53,11 +53,11 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTIVideoDetails : NSObject
-@property (strong, nonatomic) NSString *channelId;
+@property (nonatomic, copy, readwrite) NSString *channelId;
 @end
 
 @interface MLVideo : NSObject
-@property (strong, nonatomic) YTIVideoDetails *videoDetails;
+- (YTIVideoDetails *)videoDetails;
 @end
 
 @interface YTPlaybackData : NSObject
@@ -106,9 +106,9 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 -(void)presentSponsorBlockViewController;
 -(NSArray *)topControls;
 - (void)setOverlayVisible:(BOOL)arg1;
-@property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
-@property (strong, nonatomic) YTQTMButton *sponsorStartedEndedButton;
-@property (strong, nonatomic) YTPlayerViewController *playerViewController;
+@property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
+@property (retain, nonatomic) YTQTMButton *sponsorStartedEndedButton;
+@property (retain, nonatomic) YTPlayerViewController *playerViewController;
 @property (nonatomic, assign) BOOL isDisplayingSponsorBlockViewController;
 @property (nonatomic, assign, getter=isOverlayVisible) BOOL overlayVisible;
 @end
@@ -164,7 +164,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTRightNavigationButtons : UIView
-@property (strong, nonatomic) YTQTMButton *sponsorBlockButton;
+@property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
 -(void)setLeadingPadding:(CGFloat)arg1;
 @end
 
