@@ -252,11 +252,15 @@ NSString *modifiedTimeString;
         NSString *buttonImagePath = [tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"];
         UIImage *buttonImage = [UIImage imageWithContentsOfFile:buttonImagePath];
         self.sponsorBlockButton = [self buttonWithImage:buttonImage accessibilityLabel:nil verticalContentPadding:padding];
+        self.sponsorBlockButton.alpha = 0;
+        self.sponsorBlockButton.hidden = YES;
         
         BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
         NSString *endedButtonImagePath = [tweakBundle pathForResource:[NSString stringWithFormat:@"sponsorblock%@-20@2x", isStart ? @"start" : @"end"] ofType:@"png"];
         UIImage *endedButtonImage = [UIImage imageWithContentsOfFile:endedButtonImagePath];
         self.sponsorStartedEndedButton = [self buttonWithImage:endedButtonImage accessibilityLabel:nil verticalContentPadding:padding];
+        self.sponsorStartedEndedButton.alpha = 0;
+        self.sponsorStartedEndedButton.hidden = YES;
 
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
