@@ -213,6 +213,19 @@ NSString *modifiedTimeString;
 }
 %end
 
+%hook YTMainAppVideoPlayerOverlayViewController
+
+- (void)updateTopRightButtonAvailability {
+    %orig;
+    YTMainAppVideoPlayerOverlayView *v = [self videoPlayerOverlayView];
+    YTMainAppControlsOverlayView *c = [v valueForKey:@"_controlsOverlayView"];
+    c.sponsorBlockButton.hidden = !kShowButtonsInPlayer;
+    c.sponsorStartedEndedButton.hidden = !kShowButtonsInPlayer;
+    [c setNeedsLayout];
+}
+
+%end
+
 %hook YTMainAppControlsOverlayView
 %property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
 %property (retain, nonatomic) YTQTMButton *sponsorStartedEndedButton;
@@ -221,14 +234,13 @@ NSString *modifiedTimeString;
 -(id)initWithDelegate:(id)delegate {
     self = %orig;
     if (kShowButtonsInPlayer) {
-        self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
-        // self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
-        [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png"] forState:UIControlStateNormal];
+        CGFloat padding = [[self class] topButtonAdditionalPadding];
+        UIImage *buttonImage = [UIImage imageWithContentsOfFile:@"/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png"];
+        self.sponsorBlockButton = [self buttonWithImage:buttonImage accessibilityLabel:nil verticalContentPadding:padding];
         
-        self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
-        // self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-        if (self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
-        else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+        BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
+        UIImage *endedButtonImage = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"/Library/Application Support/iSponsorBlock/sponsorblock%@-20@2x.png", isStart ? @"start" : @"end"]];
+        self.sponsorStartedEndedButton = [self buttonWithImage:endedButtonImage accessibilityLabel:nil verticalContentPadding:padding];
 
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -251,7 +263,7 @@ NSString *modifiedTimeString;
         [topControls insertObject:self.sponsorBlockButton atIndex:0];
         [topControls insertObject:self.sponsorStartedEndedButton atIndex:0];
     }
-    return %orig;
+    return topControls;
 }
 
 -(void)setTopOverlayVisible:(BOOL)visible isAutonavCanceledState:(BOOL)canceledState {
@@ -279,7 +291,7 @@ NSString *modifiedTimeString;
 -(void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
     if(self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-       [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png"] forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
@@ -291,7 +303,7 @@ NSString *modifiedTimeString;
             [[[UIApplication sharedApplication] delegate].window.rootViewController  presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png"] forState:UIControlStateNormal];
     }
 }
 %new
@@ -470,21 +482,21 @@ NSString *modifiedTimeString;
 %end
 
 
-%hook YTPlayerView
-//https://stackoverflow.com/questions/11770743/capturing-touches-on-a-subview-outside-the-frame-of-its-superview-using-hittest
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if (self.clipsToBounds || self.hidden || self.alpha == 0) {
-        return nil;
-    }
+// %hook YTPlayerView
+// //https://stackoverflow.com/questions/11770743/capturing-touches-on-a-subview-outside-the-frame-of-its-superview-using-hittest
+// - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+//     if (self.clipsToBounds || self.hidden || self.alpha == 0) {
+//         return nil;
+//     }
     
-    for (UIView *subview in self.subviews.reverseObjectEnumerator) {
-        CGPoint subPoint = [subview convertPoint:point fromView:self];
-        UIView *result = [subview hitTest:subPoint withEvent:event];
-        if (result) return result;
-    }
-    return nil;
-}
-%end
+//     for (UIView *subview in self.subviews.reverseObjectEnumerator) {
+//         CGPoint subPoint = [subview convertPoint:point fromView:self];
+//         UIView *result = [subview hitTest:subPoint withEvent:event];
+//         if (result) return result;
+//     }
+//     return nil;
+// }
+// %end
 %end
 
 %group Cercube
@@ -714,10 +726,10 @@ NSInteger pageStyle = 0;
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if([%c(YTPageStyleController) pageStyle]) { //dark mode
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"] forState:UIControlStateNormal];
         }
         else { //light mode
-            UIImage *image = [UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"];
+            UIImage *image = [UIImage imageWithContentsOfFile:@"/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png"];
             image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
             [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
             [self.sponsorBlockButton setTintColor:UIColor.blackColor];

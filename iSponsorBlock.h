@@ -41,11 +41,17 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTMainAppControlsOverlayView : UIView
++ (CGFloat)topButtonAdditionalPadding;
+- (YTQTMButton *)buttonWithImage:(UIImage *)image accessibilityLabel:(NSString *)accessibilityLabel verticalContentPadding:(CGFloat)verticalContentPadding;
 @end
 
 @interface YTMainAppVideoPlayerOverlayView : UIView
 @property (strong, nonatomic) YTInlinePlayerBarContainerView *playerBar;
 @property (strong, nonatomic) YTMainAppControlsOverlayView *controlsOverlayView;
+@end
+
+@interface YTMainAppVideoPlayerOverlayViewController : UIViewController
+- (YTMainAppVideoPlayerOverlayView *)videoPlayerOverlayView;
 @end
 
 @interface YTPlayerView : UIView
