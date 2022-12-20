@@ -1,6 +1,8 @@
 #import "SponsorBlockSettingsController.h"
 #import "colorFunctions.h"
 
+extern NSBundle *iSBBundle();
+
 @implementation SponsorBlockTableCell
 -(void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
     self.colorWell.color = color;
@@ -62,7 +64,8 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/LogoSponsorBlocker128px.png"]];
+    NSBundle *tweakBundle = iSBBundle();
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"]]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
     label.text = @"iSponsorBlock";
     label.font = [UIFont boldSystemFontOfSize:48];
