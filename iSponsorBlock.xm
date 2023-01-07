@@ -246,19 +246,19 @@ NSString *modifiedTimeString;
 %property (nonatomic, assign) BOOL isDisplayingSponsorBlockViewController;
 -(id)initWithDelegate:(id)delegate {
     self = %orig;
-    if (kShowButtonsInPlayer) {
+    if (self && kShowButtonsInPlayer) {
         NSBundle *tweakBundle = iSBBundle();
         CGFloat padding = [[self class] topButtonAdditionalPadding];
         NSString *buttonImagePath = [tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"];
         UIImage *buttonImage = [UIImage imageWithContentsOfFile:buttonImagePath];
-        self.sponsorBlockButton = [self buttonWithImage:buttonImage accessibilityLabel:nil verticalContentPadding:padding];
+        self.sponsorBlockButton = [self buttonWithImage:buttonImage accessibilityLabel:@"sponsor block" verticalContentPadding:padding];
         self.sponsorBlockButton.alpha = 0;
         self.sponsorBlockButton.hidden = YES;
         
         BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
         NSString *endedButtonImagePath = [tweakBundle pathForResource:[NSString stringWithFormat:@"sponsorblock%@-20@2x", isStart ? @"start" : @"end"] ofType:@"png"];
         UIImage *endedButtonImage = [UIImage imageWithContentsOfFile:endedButtonImagePath];
-        self.sponsorStartedEndedButton = [self buttonWithImage:endedButtonImage accessibilityLabel:nil verticalContentPadding:padding];
+        self.sponsorStartedEndedButton = [self buttonWithImage:endedButtonImage accessibilityLabel:@"sponsor block start end" verticalContentPadding:padding];
         self.sponsorStartedEndedButton.alpha = 0;
         self.sponsorStartedEndedButton.hidden = YES;
 
@@ -289,13 +289,15 @@ NSString *modifiedTimeString;
 -(void)setTopOverlayVisible:(BOOL)visible isAutonavCanceledState:(BOOL)canceledState {
     if (self.isDisplayingSponsorBlockViewController) {
         %orig(NO, canceledState);
-        self.sponsorBlockButton.imageView.hidden = YES;
-        self.sponsorStartedEndedButton.imageView.hidden = YES;
+        self.sponsorBlockButton.hidden = YES;
+        self.sponsorStartedEndedButton.hidden = YES;
         return;
     }
 
-    self.sponsorBlockButton.alpha = canceledState || !visible ? 0:1;
-    self.sponsorStartedEndedButton.alpha = canceledState || !visible ? 0:1;
+    self.sponsorBlockButton.alpha = canceledState || !visible ? 0 : 1;
+    self.sponsorStartedEndedButton.alpha = canceledState || !visible ? 0 : 1;
+    if (self.sponsorBlockButton.alpha) self.sponsorBlockButton.hidden = NO;
+    if (self.sponsorStartedEndedButton.alpha) self.sponsorStartedEndedButton.hidden = NO;
     %orig;
 }
 
