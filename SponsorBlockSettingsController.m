@@ -1,3 +1,4 @@
+#import <rootless.h>
 #import "SponsorBlockSettingsController.h"
 #import "colorFunctions.h"
 
@@ -62,7 +63,7 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/var/mobile/Library/Application Support/iSponsorBlock/LogoSponsorBlocker128px.png"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/LogoSponsorBlocker128px.png")]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
     label.text = @"iSponsorBlock";
     label.font = [UIFont boldSystemFontOfSize:48];
