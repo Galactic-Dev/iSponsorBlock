@@ -214,6 +214,19 @@ NSString *modifiedTimeString;
 }
 %end
 
+%hook YTMainAppVideoPlayerOverlayViewController
+
+- (void)updateTopRightButtonAvailability {
+    %orig;
+    YTMainAppVideoPlayerOverlayView *v = [self videoPlayerOverlayView];
+    YTMainAppControlsOverlayView *c = [v valueForKey:@"_controlsOverlayView"];
+    c.sponsorBlockButton.hidden = !kShowButtonsInPlayer;
+    c.sponsorStartedEndedButton.hidden = !kShowButtonsInPlayer;
+    [c setNeedsLayout];
+}
+
+%end
+
 %hook YTMainAppControlsOverlayView
 %property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
 %property (retain, nonatomic) YTQTMButton *sponsorStartedEndedButton;
@@ -223,16 +236,18 @@ NSString *modifiedTimeString;
 - (id)initWithDelegate:(id)delegate {
     self = %orig;
     if (kShowButtonsInPlayer) {
-        self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
-        // self.sponsorBlockButton.frame = CGRectMake(0, 0, 24, 36);
-        [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png")] forState:UIControlStateNormal];
-
-        self.sponsorStartedEndedButton = [%c(YTQTMButton) iconButton];
-        // self.sponsorStartedEndedButton.frame = CGRectMake(0,0,24,36);
-        if (self.playerViewController.userSkipSegments.lastObject.endTime != -1) [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png")] forState:UIControlStateNormal];
-        else [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png")] forState:UIControlStateNormal];
+        CGFloat padding = [[self class] topButtonAdditionalPadding];
+        self.sponsorBlockButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png")] accessibilityLabel:@"iSponsorBlock" verticalContentPadding:padding];
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        self.sponsorBlockButton.hidden = YES;
+        self.sponsorBlockButton.alpha = 0;
+
+        BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
+        NSString *startedEndedImagePath = isStart ? ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png") : ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png");
+        self.sponsorStartedEndedButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:startedEndedImagePath] accessibilityLabel:isStart ? @"iSponsorBlock start" : @"iSponsorBlock end" verticalContentPadding:padding];
         [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        self.sponsorStartedEndedButton.hidden = YES;
+        self.sponsorStartedEndedButton.alpha = 0;
 
         @try {
             UIView *containerView = [self valueForKey:@"_topControlsAccessibilityContainerView"];

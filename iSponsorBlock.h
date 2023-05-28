@@ -41,6 +41,9 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTMainAppControlsOverlayView : UIView
++ (CGFloat)topButtonAdditionalPadding;
+- (NSArray *)topControls;
+- (YTQTMButton *)buttonWithImage:(UIImage *)image accessibilityLabel:(NSString *)accessibilityLabel verticalContentPadding:(CGFloat)verticalContentPadding;
 @end
 
 @interface YTMainAppVideoPlayerOverlayView : UIView
@@ -97,6 +100,10 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (nonatomic, assign, getter=isMDXActive) BOOL MDXActive;
 @end
 
+@interface YTMainAppVideoPlayerOverlayViewController : UIViewController
+- (YTMainAppVideoPlayerOverlayView *)videoPlayerOverlayView;
+@end
+
 //ik i'm redefining it im just lazy and dont feel like fixing this header
 @interface YTMainAppControlsOverlayView ()
 -(void)sponsorBlockButtonPressed:(YTQTMButton *)sender;
@@ -104,8 +111,6 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 -(void)sponsorEndedButtonPressed:(YTQTMButton *)sender;
 -(void)setOverlayVisible:(BOOL)arg1;
 -(void)presentSponsorBlockViewController;
--(NSArray *)topControls;
-- (void)setOverlayVisible:(BOOL)arg1;
 @property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
 @property (retain, nonatomic) YTQTMButton *sponsorStartedEndedButton;
 @property (retain, nonatomic) YTPlayerViewController *playerViewController;
