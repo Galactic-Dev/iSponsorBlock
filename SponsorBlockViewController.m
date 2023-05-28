@@ -1,4 +1,4 @@
-#import "SponsorBlockViewController.h"
+#import "Headers/SponsorBlockViewController.h"
 
 @implementation SponsorBlockViewController
 

@@ -1,5 +1,5 @@
-#import "SponsorBlockRequest.h"
-#import <objc/runtime.h>
+#import "Headers/SponsorBlockRequest.h"
+
 @implementation SponsorBlockRequest
 + (void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel {
     __block NSMutableArray *skipSegments = [NSMutableArray array];

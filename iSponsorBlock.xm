@@ -1,9 +1,9 @@
+#import "Headers/iSponsorBlock.h"
 #import <rootless.h>
-#import "iSponsorBlock.h"
-#import "colorFunctions.h"
-#import "SponsorBlockSettingsController.h"
-#import "SponsorBlockRequest.h"
-#import "SponsorBlockViewController.h"
+#import "Headers/colorFunctions.h"
+#import "Headers/SponsorBlockSettingsController.h"
+#import "Headers/SponsorBlockRequest.h"
+#import "Headers/SponsorBlockViewController.h"
 
 %group Main
 NSString *modifiedTimeString;
@@ -795,7 +795,7 @@ static void loadPrefs() {
     kUserID = [settings objectForKey:@"userID"] ? [settings objectForKey:@"userID"] : [[NSUUID UUID] UUIDString];
     // reset to uuid if user set to an empty string
     if ([kUserID isEqualToString:@""]) kUserID = [[NSUUID UUID] UUIDString];
-    
+
     kCategorySettings = [settings objectForKey:@"categorySettings"] ? [settings objectForKey:@"categorySettings"] : @{
         @"sponsor" : @1,
         @"sponsorColor" : hexFromUIColor(UIColor.greenColor),

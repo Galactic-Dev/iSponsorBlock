@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "iSponsorBlock.h"
+#import <objc/runtime.h>
+
 @interface SponsorBlockRequest : NSObject
 +(void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel;
 +(void)postSponsorTimes:(NSString *)videoID sponsorSegments:(NSArray <SponsorSegment *> *)segments userID:(NSString *)userID withViewController:(UIViewController *)viewController;

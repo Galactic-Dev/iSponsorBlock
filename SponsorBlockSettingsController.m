@@ -1,6 +1,4 @@
-#import <rootless.h>
-#import "SponsorBlockSettingsController.h"
-#import "colorFunctions.h"
+#import "Headers/SponsorBlockSettingsController.h"
 
 @implementation SponsorBlockTableCell
 - (void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
