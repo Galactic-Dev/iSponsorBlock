@@ -1,5 +1,4 @@
 #import "SponsorSegmentView.h"
-#include "RemoteLog.h"
 @implementation SponsorSegmentView
 -(instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable {
     self = [super initWithFrame:frame];

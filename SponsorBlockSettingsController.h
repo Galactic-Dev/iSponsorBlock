@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#include <RemoteLog.h>
 #import <objc/runtime.h>
 
 @protocol HBColorPickerDelegate <NSObject>
