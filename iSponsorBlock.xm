@@ -58,11 +58,11 @@ NSString *modifiedTimeString;
             //edge case where segment end time is longer than the video
             else if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
                 [self isb_scrubToTime:self.currentVideoTotalMediaTime];
-                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
             }
             else {
                 [self isb_scrubToTime:sponsorSegment.endTime];
-                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
             }
             if (self.hud.superview != self.view && kShowSkipNotice) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -118,7 +118,7 @@ NSString *modifiedTimeString;
 
         self.skipSegments = [NSMutableArray array];
         self.userSkipSegments = [NSMutableArray array];
-        [SponsorBlockRequest getSponsorTimes:self.currentVideoID completionTarget:self completionSelector:@selector(setSkipSegments:)];
+        [SponsorBlockRequest getSponsorTimes:self.currentVideoID completionTarget:self completionSelector:@selector(setSkipSegments:) apiInstance:kAPIInstance];
         self.currentSponsorSegment = 0;
         self.unskippedSegment = -1;
         overlayView.controlsOverlayView.playerViewController = self;
@@ -194,11 +194,11 @@ NSString *modifiedTimeString;
     
     if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
         [self isb_scrubToTime:self.currentVideoTotalMediaTime];
-        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
     }
     else {
         [self isb_scrubToTime:sponsorSegment.endTime];
-        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     self.currentSponsorSegment++;
@@ -531,7 +531,7 @@ AVQueuePlayer *queuePlayer;
 %hook CADownloadObject
 + (id)modelWithMetadata:(id)arg1 format:(id)arg2 context:(id)arg3 type:(id)arg4 audioOnly:(_Bool)arg5 directory:(id)arg6 {
     CADownloadObject *downloadObject = %orig;
-    [SponsorBlockRequest getSponsorTimes:downloadObject.videoId completionTarget:downloadObject completionSelector:@selector(setSkipSegments:)];
+    [SponsorBlockRequest getSponsorTimes:downloadObject.videoId completionTarget:downloadObject completionSelector:@selector(setSkipSegments:) apiInstance:kAPIInstance];
     return downloadObject;
 }
 
@@ -795,6 +795,10 @@ static void loadPrefs() {
     kUserID = [settings objectForKey:@"userID"] ? [settings objectForKey:@"userID"] : [[NSUUID UUID] UUIDString];
     // reset to uuid if user set to an empty string
     if ([kUserID isEqualToString:@""]) kUserID = [[NSUUID UUID] UUIDString];
+
+    kAPIInstance =  [settings objectForKey:@"apiInstance"] ? [settings objectForKey:@"apiInstance"] : @"https://sponsorblock.hankmccord.dev/api";
+    // reset to official if user set to an empty string
+    if ([kAPIInstance isEqualToString:@""]) kAPIInstance = @"https://sponsorblock.hankmccord.dev/api";
 
     kCategorySettings = [settings objectForKey:@"categorySettings"] ? [settings objectForKey:@"categorySettings"] : @{
         @"sponsor" : @1,

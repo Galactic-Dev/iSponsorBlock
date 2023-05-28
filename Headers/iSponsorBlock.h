@@ -22,6 +22,7 @@
 // prefs
 BOOL kIsEnabled;
 NSString *kUserID;
+NSString *kAPIInstance;
 NSDictionary *kCategorySettings;
 CGFloat kMinimumDuration;
 BOOL kShowSkipNotice;
