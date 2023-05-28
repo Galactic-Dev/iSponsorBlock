@@ -1,28 +1,28 @@
 #import "SponsorSegmentView.h"
 @implementation SponsorSegmentView
--(instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable {
+- (instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable {
     self = [super initWithFrame:frame];
-    if(self){
+    if (self) {
         self.sponsorSegment = segment;
         self.editable = editable;
         
         NSString *category;
-        if([segment.category isEqualToString:@"sponsor"]){
+        if ([segment.category isEqualToString:@"sponsor"]) {
             category = @"Sponsor";
         }
-        else if([segment.category isEqualToString:@"intro"]) {
+        else if ([segment.category isEqualToString:@"intro"]) {
             category = @"Intermission";
         }
-        else if([segment.category isEqualToString:@"outro"]) {
+        else if ([segment.category isEqualToString:@"outro"]) {
             category = @"Outro";
         }
-        else if([segment.category isEqualToString:@"interaction"]) {
+        else if ([segment.category isEqualToString:@"interaction"]) {
             category = @"Interaction";
         }
-        else if([segment.category isEqualToString:@"selfpromo"]) {
+        else if ([segment.category isEqualToString:@"selfpromo"]) {
             category = @"Self Promo";
         }
-        else if([segment.category isEqualToString:@"music_offtopic"]) {
+        else if ([segment.category isEqualToString:@"music_offtopic"]) {
             category = @"Non-Music";
         }
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
@@ -34,7 +34,7 @@
         NSInteger  startMinutes = (startSeconds - (startHours * 3600)) / 60;
         startSeconds = startSeconds %60;
         NSString *startTime;
-        if(startHours >= 1) {
+        if (startHours >= 1) {
             startTime = [NSString stringWithFormat:@"%ld:%02ld:%02ld", startHours, startMinutes, startSeconds];
         }
         else {
@@ -46,7 +46,7 @@
         NSInteger  endMinutes = (endSeconds - (endHours * 3600)) / 60;
         endSeconds = endSeconds %60;
         NSString *endTime;
-        if(endHours >= 1) {
+        if (endHours >= 1) {
             endTime = [NSString stringWithFormat:@"%ld:%02ld:%02ld", endHours, endMinutes, endSeconds];
         }
         else {

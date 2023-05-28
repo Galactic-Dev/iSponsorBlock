@@ -7,5 +7,5 @@
 @property (nonatomic, assign) BOOL editable;
 @property (strong, nonatomic) UILabel *segmentLabel;
 @property (strong, nonatomic) UILabel *categoryLabel;
--(instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable;
+- (instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable;
 @end

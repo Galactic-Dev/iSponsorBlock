@@ -804,9 +804,9 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
 #endif
 }
 
--(id)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+- (id)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     id hitView = [super hitTest:point withEvent:event];
-    if (hitView != self && ![hitView isKindOfClass:[MBBackgroundView class]]){
+    if (hitView != self && ![hitView isKindOfClass:[MBBackgroundView class]]) {
         return hitView;
     }
     return nil;
