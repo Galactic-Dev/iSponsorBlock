@@ -83,15 +83,15 @@
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
     
-    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section"];
+    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID"];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 14;
+    return 15;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) return 1;
-    else if (section <= 6 || section == 13) return 2;
+    else if (section <= 6 || section == 14) return 2;
     return 1;
 }
 
@@ -177,6 +177,14 @@
     }
     if (indexPath.section == 7) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
+        textCell.textLabel.text = @"User ID:";
+        textCell.textLabel.adjustsFontSizeToFitWidth = YES;
+        [textCell editableTextField].text = [self.settings valueForKey:@"userID"];
+        [textCell editableTextField].delegate = self;
+        return textCell;
+    }
+    if (indexPath.section == 8) {
+        UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = @"Set Minimum Segment Duration:";
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"minimumDuration"] floatValue]];
@@ -184,7 +192,7 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section == 8) {
+    if (indexPath.section == 9) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = @"Set How Long Skip Notice Will Appear:";
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -193,29 +201,28 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    else if (indexPath.section >= 9 && indexPath.section < 13) {
+    if (indexPath.section >= 10 && indexPath.section < 14) {
         NSArray *titles = @[@"Show Skip Notice", @"Show iSponsorBlock Buttons in Video Player", @"Show Modified Time in Seek Bar", @"Enable Skip Count Tracking"];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
-        tableCell.textLabel.text = titles[indexPath.section-9];
+
+        tableCell.textLabel.text = titles[indexPath.section-10];
         tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
 
         UISwitch *toggleSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         tableCell.accessoryView = toggleSwitch;
         [toggleSwitch addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
-        if ([self.settings valueForKey:titlesNames[indexPath.section-9]]) {
-            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-9]] boolValue] animated:NO];
-        }
-        else {
+        if ([self.settings valueForKey:titlesNames[indexPath.section-10]]) {
+            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-10]] boolValue] animated:NO];
+        } else {
             [toggleSwitch setOn:YES animated:NO];
             [self switchToggled:toggleSwitch];
         }
         return tableCell;
     }
-    else if (indexPath.section == 13) {
+    if (indexPath.section == 14) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
-        if (indexPath.row == 0) cell.textLabel.text = @"Donate on Venmo!";
-        else cell.textLabel.text = @"Donate on PayPal!";
+        cell.textLabel.text = indexPath.row == 0 ? @"Donate on Venmo" : @"Donate on PayPal";
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
         return cell;
     }
@@ -224,27 +231,26 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) return nil;
-    if (section <= 6) return self.sectionTitles[section-1];
+    if (section <= 7) return self.sectionTitles[section-1];
     return nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == 0) return @"Restart YouTube for changes to take effect";
+    if (section == 7) return @"If you want to use a custom SponsorBlock user ID, you can enter it here. If you don't know what this is, leave it as default.";
     return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 13) {
+    if (indexPath.section == 14) {
         if (indexPath.row == 0) {
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"venmo://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];
-            }
-            else {
+            } else {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];
             }
 
-        }
-        else {
+        } else {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://paypal.me/DBrett684"] options:@{} completionHandler:nil];
         }
     }
@@ -252,15 +258,15 @@
 
 - (void)enabledSwitchToggled:(UISwitch *)sender {
     [self.settings setValue:@(sender.on) forKey:@"enabled"];
-    [self writeSettings:self.settings];
+    [self writeSettings];
 }
 
 - (void)switchToggled:(UISwitch *)sender {
     UITableViewCell *cell = (UITableViewCell *)sender.superview;
     NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-9]];
-    [self writeSettings:self.settings];
+    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-10]];
+    [self writeSettings];
 }
 
 - (void)categorySegmentSelected:(UISegmentedControl *)segmentedControl {
@@ -268,7 +274,7 @@
     [categorySettings setValue:@(segmentedControl.selectedSegmentIndex) forKey:[(SponsorBlockTableCell *)segmentedControl.superview.superview category]];
 
     [self.settings setValue:categorySettings forKey:@"categorySettings"];
-    [self writeSettings:self.settings];
+    [self writeSettings];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -277,16 +283,16 @@
     f.numberStyle = NSNumberFormatterDecimalStyle;
     if ([cell.textLabel.text isEqualToString:@"Set Minimum Segment Duration:"]) {
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"minimumDuration"];
-        [self writeSettings:self.settings];
-    }
-    else {
+    } else if ([cell.textLabel.text isEqualToString:@"Set How Long Skip Notice Will Appear:"]) {
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"skipNoticeDuration"];
-        [self writeSettings:self.settings];
+    } else if ([cell.textLabel.text isEqualToString:@"User ID:"]) {
+        [self.settings setValue:textField.text forKey:@"userID"];
     }
+    [self writeSettings];
 }
 
-- (void)writeSettings:(NSDictionary *)settings {
-    [settings writeToURL:[NSURL fileURLWithPath:self.settingsPath isDirectory:NO] error:nil];
+- (void)writeSettings {
+    [self.settings writeToURL:[NSURL fileURLWithPath:self.settingsPath isDirectory:NO] error:nil];
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.galacticdev.isponsorblockprefs.changed"), NULL, NULL, YES);
 }
 @end

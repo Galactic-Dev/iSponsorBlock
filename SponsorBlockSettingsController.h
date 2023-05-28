@@ -46,5 +46,4 @@
 - (void)enabledSwitchToggled:(UISwitch *)sender;
 - (void)switchToggled:(UISwitch *)sender;
 - (void)categorySegmentSelected:(UISegmentedControl *)segmentedControl;
-- (void)writeSettings:(NSDictionary *)settings;
 @end

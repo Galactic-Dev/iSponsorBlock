@@ -791,7 +791,11 @@ static void loadPrefs() {
     NSMutableDictionary *settings = [NSMutableDictionary dictionary];
     [settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:path]];
     kIsEnabled = [settings objectForKey:@"enabled"] ? [[settings objectForKey:@"enabled"] boolValue] : YES;
+
     kUserID = [settings objectForKey:@"userID"] ? [settings objectForKey:@"userID"] : [[NSUUID UUID] UUIDString];
+    // reset to uuid if user set to an empty string
+    if ([kUserID isEqualToString:@""]) kUserID = [[NSUUID UUID] UUIDString];
+    
     kCategorySettings = [settings objectForKey:@"categorySettings"] ? [settings objectForKey:@"categorySettings"] : @{
         @"sponsor" : @1,
         @"sponsorColor" : hexFromUIColor(UIColor.greenColor),
