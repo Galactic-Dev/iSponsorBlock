@@ -13,7 +13,7 @@
 @property (strong, nonatomic) NSMutableArray <SponsorSegmentView *> *sponsorSegmentViews;
 @property (strong, nonatomic) NSMutableArray <SponsorSegmentView *> *userSponsorSegmentViews;
 @property (strong, nonatomic) UILabel *whitelistChannelLabel;
--(void)startEndSegmentButtonPressed:(UIButton *)sender;
--(NSMutableArray *)segmentViewsForSegments:(NSArray <SponsorSegment *> *)segments editable:(BOOL)editable;
--(void)setupViews;
+- (void)startEndSegmentButtonPressed:(UIButton *)sender;
+- (NSMutableArray *)segmentViewsForSegments:(NSArray <SponsorSegment *> *)segments editable:(BOOL)editable;
+- (void)setupViews;
 @end
