@@ -796,9 +796,9 @@ static void loadPrefs() {
     // reset to uuid if user set to an empty string
     if ([kUserID isEqualToString:@""]) kUserID = [[NSUUID UUID] UUIDString];
 
-    kAPIInstance =  [settings objectForKey:@"apiInstance"] ? [settings objectForKey:@"apiInstance"] : @"https://sponsorblock.hankmccord.dev/api";
+    kAPIInstance =  [settings objectForKey:@"apiInstance"] ? [settings objectForKey:@"apiInstance"] : @"https://sponsor.ajay.app/api";
     // reset to official if user set to an empty string
-    if ([kAPIInstance isEqualToString:@""]) kAPIInstance = @"https://sponsorblock.hankmccord.dev/api";
+    if ([kAPIInstance isEqualToString:@""]) kAPIInstance = @"https://sponsor.ajay.app/api";
 
     kCategorySettings = [settings objectForKey:@"categorySettings"] ? [settings objectForKey:@"categorySettings"] : @{
         @"sponsor" : @1,
@@ -825,6 +825,7 @@ static void loadPrefs() {
     NSDictionary *newSettings = @{
       @"enabled" : @(kIsEnabled),
       @"userID" : kUserID,
+      @"apiInstance" : kAPIInstance,
       @"categorySettings" : kCategorySettings,
       @"minimumDuration" : @(kMinimumDuration),
       @"showSkipNotice" : @(kShowSkipNotice),

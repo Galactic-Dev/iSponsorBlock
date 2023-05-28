@@ -81,15 +81,15 @@
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
     
-    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID"];
+    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID", @"SponsorBlock API Instance"];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 15;
+    return 16;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) return 1;
-    else if (section <= 6 || section == 14) return 2;
+    else if (section <= 6 || section == 15) return 2;
     return 1;
 }
 
@@ -183,6 +183,14 @@
     }
     if (indexPath.section == 8) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
+        textCell.textLabel.text = @"API URL:";
+        textCell.textLabel.adjustsFontSizeToFitWidth = YES;
+        [textCell editableTextField].text = [self.settings valueForKey:@"apiInstance"];
+        [textCell editableTextField].delegate = self;
+        return textCell;
+    }
+    if (indexPath.section == 9) {
+        UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = @"Set Minimum Segment Duration:";
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"minimumDuration"] floatValue]];
@@ -190,7 +198,7 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section == 9) {
+    if (indexPath.section == 10) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = @"Set How Long Skip Notice Will Appear:";
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -199,26 +207,26 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section >= 10 && indexPath.section < 14) {
+    if (indexPath.section >= 11 && indexPath.section < 15) {
         NSArray *titles = @[@"Show Skip Notice", @"Show iSponsorBlock Buttons in Video Player", @"Show Modified Time in Seek Bar", @"Enable Skip Count Tracking"];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
 
-        tableCell.textLabel.text = titles[indexPath.section-10];
+        tableCell.textLabel.text = titles[indexPath.section-11];
         tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
 
         UISwitch *toggleSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         tableCell.accessoryView = toggleSwitch;
         [toggleSwitch addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
-        if ([self.settings valueForKey:titlesNames[indexPath.section-10]]) {
-            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-10]] boolValue] animated:NO];
+        if ([self.settings valueForKey:titlesNames[indexPath.section-11]]) {
+            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-11]] boolValue] animated:NO];
         } else {
             [toggleSwitch setOn:YES animated:NO];
             [self switchToggled:toggleSwitch];
         }
         return tableCell;
     }
-    if (indexPath.section == 14) {
+    if (indexPath.section == 15) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
         cell.textLabel.text = indexPath.row == 0 ? @"Donate on Venmo" : @"Donate on PayPal";
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
@@ -229,18 +237,19 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) return nil;
-    if (section <= 7) return self.sectionTitles[section-1];
+    if (section <= 8) return self.sectionTitles[section-1];
     return nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == 0) return @"Restart YouTube for changes to take effect";
     if (section == 7) return @"If you want to use a custom SponsorBlock user ID, you can enter it here. If you don't know what this is, leave it as default.";
+    if (section == 8) return @"If you want to use a custom SponsorBlock API instance, you can enter it here. If you don't know what this is, leave it as default. Example: https://sponsor.ajay.app/api";
     return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 14) {
+    if (indexPath.section == 15) {
         if (indexPath.row == 0) {
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"venmo://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];
@@ -263,7 +272,7 @@
     UITableViewCell *cell = (UITableViewCell *)sender.superview;
     NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-10]];
+    [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-11]];
     [self writeSettings];
 }
 
@@ -285,6 +294,8 @@
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"skipNoticeDuration"];
     } else if ([cell.textLabel.text isEqualToString:@"User ID:"]) {
         [self.settings setValue:textField.text forKey:@"userID"];
+    } else if ([cell.textLabel.text isEqualToString:@"API URL:"]) {
+        [self.settings setValue:textField.text forKey:@"apiInstance"];
     }
     [self writeSettings];
 }
