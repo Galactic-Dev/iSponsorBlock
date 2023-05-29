@@ -252,7 +252,7 @@
     NSMutableDictionary *settings = [NSMutableDictionary dictionary];
     [settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:settingsPath]];
 
-    [SponsorBlockRequest postSponsorTimes:self.playerViewController.currentVideoID sponsorSegments:self.playerViewController.userSkipSegments userID:kUserID withViewController:self.previousParentViewController apiInstance:[settings objectForKey:@"apiInstance"]];
+    [SponsorBlockRequest postSponsorTimes:self.playerViewController.currentVideoID sponsorSegments:self.playerViewController.userSkipSegments userID:kUserID withViewController:self.previousParentViewController];
     [self.previousParentViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -291,7 +291,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"sponsor" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"sponsor" withViewController:self];
         }]];
         
         [categoryActions addObject:[UIAction actionWithTitle:@"Intermission/Intro Animation" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
@@ -300,7 +300,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"intro" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"intro" withViewController:self];
         }]];
         
         [categoryActions addObject:[UIAction actionWithTitle:@"Outro" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
@@ -309,7 +309,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"outro" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"outro" withViewController:self];
         }]];
         
         [categoryActions addObject:[UIAction actionWithTitle:@"Interaction Reminder (Subcribe/Like)" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
@@ -318,7 +318,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"interaction" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"interaction" withViewController:self];
         }]];
         
         [categoryActions addObject:[UIAction actionWithTitle:@"Unpaid/Self Promotion" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
@@ -327,7 +327,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"selfpromo" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"selfpromo" withViewController:self];
         }]];
         
         [categoryActions addObject:[UIAction actionWithTitle:@"Music: Non-Music Section" image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
@@ -336,7 +336,7 @@
                 [self setupViews];
                 return;
             }
-            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"music_offtopic" withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"music_offtopic" withViewController:self];
         }]];
         NSMutableArray* actions = [NSMutableArray array];
         if (sponsorSegmentView.editable)
@@ -405,11 +405,11 @@
         }
         else {
             [actions addObject:[UIAction actionWithTitle:@"Upvote" image:[UIImage systemImageNamed:@"hand.thumbsup.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:YES withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+                [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:YES withViewController:self];
             }]];
             
             [actions addObject:[UIAction actionWithTitle:@"Downvote" image:[UIImage systemImageNamed:@"hand.thumbsdown.fill"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
-                [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:NO withViewController:self apiInstance:[settings objectForKey:@"apiInstance"]];
+                [SponsorBlockRequest normalVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] type:NO withViewController:self];
             }]];
             
             UIMenu *categoriesMenu = [UIMenu menuWithTitle:@"Vote to Change Cateogory" image:[UIImage systemImageNamed:@"square.grid.2x2"] identifier:nil options:0 children:categoryActions];

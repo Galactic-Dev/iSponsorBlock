@@ -62,10 +62,10 @@
     }];
     [dataTask resume];
 }
-+ (void)postSponsorTimes:(NSString *)videoID sponsorSegments:(NSArray <SponsorSegment *> *)segments userID:(NSString *)userID withViewController:(UIViewController *)viewController apiInstance:(NSString *)apiInstance {
++ (void)postSponsorTimes:(NSString *)videoID sponsorSegments:(NSArray <SponsorSegment *> *)segments userID:(NSString *)userID withViewController:(UIViewController *)viewController {
     for (SponsorSegment *segment in segments) {
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/skipSegments?videoID=%@&startTime=%f&endTime=%f&category=%@&userID=%@", apiInstance, videoID, segment.startTime, segment.endTime, segment.category, userID]]];
+        [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/skipSegments?videoID=%@&startTime=%f&endTime=%f&category=%@&userID=%@", videoID, segment.startTime, segment.endTime, segment.category, userID]]];
         request.HTTPMethod = @"POST";
         NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
@@ -92,9 +92,9 @@
         [dataTask resume];
     }
 }
-+ (void)normalVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID type:(BOOL)type withViewController:(UIViewController *)viewController apiInstance:(NSString *)apiInstance {
++ (void)normalVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID type:(BOOL)type withViewController:(UIViewController *)viewController {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/voteOnSponsorTime?UUID=%@&userID=%@&type=%d", apiInstance, segment.UUID, userID, type]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&type=%d", segment.UUID, userID, type]]];
     request.HTTPMethod = @"POST";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
@@ -118,9 +118,9 @@
     }];
     [dataTask resume];
 }
-+ (void)categoryVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID category:(NSString *)category withViewController:(UIViewController *)viewController apiInstance:(NSString *)apiInstance {
++ (void)categoryVoteForSegment:(SponsorSegment *)segment userID:(NSString *)userID category:(NSString *)category withViewController:(UIViewController *)viewController {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/voteOnSponsorTime?UUID=%@&userID=%@&category=%@", apiInstance, segment.UUID, userID, category]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/voteOnSponsorTime?UUID=%@&userID=%@&category=%@", segment.UUID, userID, category]]];
     request.HTTPMethod = @"POST";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
@@ -144,9 +144,9 @@
     }];
     [dataTask resume];
 }
-+ (void)viewedVideoSponsorTime:(SponsorSegment *)segment apiInstance:(NSString *)apiInstance {
++ (void)viewedVideoSponsorTime:(SponsorSegment *)segment {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/viewedVideoSponsorTime?UUID=%@", apiInstance, segment.UUID]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://sponsor.ajay.app/api/viewedVideoSponsorTime?UUID=%@", segment.UUID]]];
     request.HTTPMethod = @"POST";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
     }];

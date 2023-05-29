@@ -58,11 +58,11 @@ NSString *modifiedTimeString;
             //edge case where segment end time is longer than the video
             else if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
                 [self isb_scrubToTime:self.currentVideoTotalMediaTime];
-                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
+                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
             }
             else {
                 [self isb_scrubToTime:sponsorSegment.endTime];
-                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
+                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
             }
             if (self.hud.superview != self.view && kShowSkipNotice) {
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -194,11 +194,11 @@ NSString *modifiedTimeString;
     
     if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
         [self isb_scrubToTime:self.currentVideoTotalMediaTime];
-        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
+        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
     }
     else {
         [self isb_scrubToTime:sponsorSegment.endTime];
-        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment apiInstance:kAPIInstance];
+        if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
     }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     self.currentSponsorSegment++;
