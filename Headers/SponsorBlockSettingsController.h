@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 #import <rootless.h>
-#import "colorFunctions.h"
+#import "ColorFunctions.h"
 
 @protocol HBColorPickerDelegate <NSObject>
 @optional -(void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color;

@@ -1,6 +1,6 @@
 #import "Headers/iSponsorBlock.h"
 #import <rootless.h>
-#import "Headers/colorFunctions.h"
+#import "Headers/ColorFunctions.h"
 #import "Headers/SponsorBlockSettingsController.h"
 #import "Headers/SponsorBlockRequest.h"
 #import "Headers/SponsorBlockViewController.h"
