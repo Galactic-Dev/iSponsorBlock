@@ -5,6 +5,21 @@
 #import "Headers/SponsorBlockRequest.h"
 #import "Headers/SponsorBlockViewController.h"
 
+extern "C" NSBundle *iSponsorBlockBundle() {
+    static NSBundle *bundle = nil;
+    static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+        NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
+        if (tweakBundlePath)
+            bundle = [NSBundle bundleWithPath:tweakBundlePath];
+        else
+            bundle = [NSBundle bundleWithPath:ROOT_PATH_NS("/Library/Application Support/iSponsorBlock.bundle")];
+    });
+    return bundle;
+}
+
+NSBundle *tweakBundle = iSponsorBlockBundle();
+
 %group Main
 NSString *modifiedTimeString;
 
@@ -248,13 +263,13 @@ NSString *modifiedTimeString;
     self = %orig;
     if (kShowButtonsInPlayer) {
         CGFloat padding = [[self class] topButtonAdditionalPadding];
-        self.sponsorBlockButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/PlayerInfoIconSponsorBlocker256px-20@2x.png")] accessibilityLabel:@"iSponsorBlock" verticalContentPadding:padding];
+        self.sponsorBlockButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"PlayerInfoIconSponsorBlocker256px-20@2x" ofType:@"png"]] accessibilityLabel:@"iSponsorBlock" verticalContentPadding:padding];
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         self.sponsorBlockButton.hidden = YES;
         self.sponsorBlockButton.alpha = 0;
 
         BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
-        NSString *startedEndedImagePath = isStart ? ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png") : ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png");
+        NSString *startedEndedImagePath = isStart ? [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"] : [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
         self.sponsorStartedEndedButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:startedEndedImagePath] accessibilityLabel:isStart ? @"iSponsorBlock start" : @"iSponsorBlock end" verticalContentPadding:padding];
         [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         self.sponsorStartedEndedButton.hidden = YES;
@@ -306,7 +321,7 @@ NSString *modifiedTimeString;
 - (void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
     if (self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockend-20@2x.png")] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
     }
     else {
         self.playerViewController.userSkipSegments.lastObject.endTime = self.playerViewController.currentVideoMediaTime;
@@ -318,7 +333,7 @@ NSString *modifiedTimeString;
             [[[UIApplication sharedApplication] delegate].window.rootViewController presentViewController:alert animated:YES completion:nil];
             return;
         }
-        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblockstart-20@2x.png")] forState:UIControlStateNormal];
+        [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
     }
 }
 %new
@@ -750,10 +765,10 @@ NSInteger pageStyle = 0;
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if ([%c(YTPageStyleController) pageStyle]) { //dark mode
-            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png")] forState:UIControlStateNormal];
+            [self.sponsorBlockButton setImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
         }
         else { //light mode
-            UIImage *image = [UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/sponsorblocksettings-20@2x.png")];
+            UIImage *image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
             image = [image imageWithTintColor:UIColor.blackColor renderingMode:UIImageRenderingModeAlwaysTemplate];
             [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
             [self.sponsorBlockButton setTintColor:UIColor.blackColor];

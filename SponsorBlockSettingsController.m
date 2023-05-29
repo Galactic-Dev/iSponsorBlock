@@ -1,22 +1,25 @@
 #import "Headers/SponsorBlockSettingsController.h"
 
+extern NSBundle *iSponsorBlockBundle();
+
 @implementation SponsorBlockTableCell
 - (void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
     self.colorWell.color = color;
     NSString *hexString = hexFromUIColor(color);
-    
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *settingsPath = [documentsDirectory stringByAppendingPathComponent:@"iSponsorBlock.plist"];
     NSMutableDictionary *settings = [NSMutableDictionary dictionary];
     [settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:settingsPath]];
     NSDictionary *categorySettings = [settings objectForKey:@"categorySettings"];
-    
+
     [categorySettings setValue:hexString forKey:[NSString stringWithFormat:@"%@Color", self.category]];
     [settings setValue:categorySettings forKey:@"categorySettings"];
     [settings writeToURL:[NSURL fileURLWithPath:settingsPath isDirectory:NO] error:nil];
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.galacticdev.isponsorblockprefs.changed"), NULL, NULL, YES);
 }
+
 - (void)presentColorPicker:(UITableViewCell *)sender {
     HBColorPickerViewController *viewController = [[objc_getClass("HBColorPickerViewController") alloc] init];
     viewController.delegate = self;
@@ -37,15 +40,15 @@
 @implementation SponsorBlockSettingsController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     self.settingsPath = [documentsDirectory stringByAppendingPathComponent:@"iSponsorBlock.plist"];
     self.settings = [NSMutableDictionary dictionary];
     [self.settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:self.settingsPath]];
-    
+
     self.view.backgroundColor = UIColor.systemBackgroundColor;
-    
+
     //detects if device is an se gen 1 or not, crude fix for text getting cut off
     if ([UIScreen mainScreen].bounds.size.width > 320) {
         self.tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStyleInsetGrouped];
@@ -53,36 +56,38 @@
     else {
         self.tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStyleGrouped];
     }
-    
+
     [self.view addSubview:self.tableView];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.tableView.heightAnchor constraintEqualToAnchor:self.view.heightAnchor].active = YES;
     [self.tableView.widthAnchor constraintEqualToAnchor:self.view.widthAnchor].active = YES;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock/LogoSponsorBlocker128px.png")]];
+
+    NSBundle *tweakBundle = iSponsorBlockBundle();
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"LogoSponsorBlocker128px" ofType:@"png"]]];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
     label.text = @"iSponsorBlock";
     label.font = [UIFont boldSystemFontOfSize:48];
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0,0,0,200)];
     [self.tableView.tableHeaderView addSubview:imageView];
     [self.tableView.tableHeaderView addSubview:label];
-    
+
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     [imageView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
     [imageView.topAnchor constraintEqualToAnchor:self.tableView.tableHeaderView.topAnchor constant:5].active = YES;
     [label.centerXAnchor constraintEqualToAnchor:imageView.centerXAnchor].active = YES;
     [label.topAnchor constraintEqualToAnchor:imageView.bottomAnchor constant:5].active = YES;
-    
+
     //for dismissing num pad when tapping anywhere on the string
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self.view action:@selector(endEditing:)];
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
-    
+
     self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID", @"SponsorBlock API Instance"];
 }
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 16;
 }
@@ -95,9 +100,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SponsorBlockCell"];
-     if (!cell) {
-         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlocKCell"];
-     }
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlocKCell"];
+    }
+
     if (indexPath.section == 0) {
         cell.textLabel.text = @"Enabled";
         UISwitch *enabledSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
@@ -112,17 +118,18 @@
         }
         return cell;
     }
+
     if (indexPath.section <= 6) {
         SponsorBlockTableCell *tableCell = [[SponsorBlockTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell2"];
         NSDictionary *categorySettings = [self.settings objectForKey:@"categorySettings"];
         UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Disable", @"Auto Skip", @"Show in Seek Bar", @"Manual Skip"]];
-        
+
         //make it so "Show in Seek Bar" text won't be cut off on certain devices
         NSMutableArray *segments = [segmentedControl valueForKey:@"_segments"];
         UISegment *segment = segments[2];
         UILabel *label = [segment valueForKey:@"_info"];
         label.adjustsFontSizeToFitWidth = YES;
-        
+
         switch (indexPath.section) {
             case 1:
                 segmentedControl.selectedSegmentIndex = [[categorySettings objectForKey:@"sponsor"] intValue];
