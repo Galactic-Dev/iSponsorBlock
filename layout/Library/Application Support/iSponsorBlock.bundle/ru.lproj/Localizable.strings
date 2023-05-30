@@ -4,16 +4,16 @@
 
 "Sponsor" = "Спонсорская реклама";
 "Intermission/IntroAnimation" = "Вступление/Интервалы";
-"Intermission" = "Intermission";
-"Endcards/Credits" = "Концовки/Каст";
+"Intermission" = "Вступление";
+"Endcards/Credits" = "Конечные заставки/Титры";
 "Outro" = "Концовка";
 "InteractionReminder" = "Взаимодействие (Подписаться)";
 "InteractionReminder_Subcribe/Like" = "Взаимодействие (Лайк/Подписка)";
-"Interaction" = "Interaction";
+"Interaction" = "Взаимодействие";
 "Unpaid/SelfPromotion" = "Самореклама";
 "SelfPromo" = "Самореклама";
-"Non-MusicSection" = "Музыкальные Вставки";
-"Non-Music" = "Муз. вставка";
+"Non-MusicSection" = "Музыка: Сегмент без музыки";
+"Non-Music" = "Сегмент без музыки";
 "SponsorBlockUserID" = "Идентификатор SponsorBlock";
 "SponsorBlockAPIInstance" = "Используемый API";
 
