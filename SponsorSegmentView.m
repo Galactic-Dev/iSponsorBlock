@@ -1,4 +1,5 @@
 #import "Headers/SponsorSegmentView.h"
+#import "Headers/Localization.h"
 
 @implementation SponsorSegmentView
 - (instancetype)initWithFrame:(CGRect)frame sponsorSegment:(SponsorSegment *)segment editable:(BOOL)editable {
@@ -9,22 +10,22 @@
         
         NSString *category;
         if ([segment.category isEqualToString:@"sponsor"]) {
-            category = @"Sponsor";
+            category = LOC(@"Sponsor");
         }
         else if ([segment.category isEqualToString:@"intro"]) {
-            category = @"Intermission";
+            category = LOC(@"Intermission");
         }
         else if ([segment.category isEqualToString:@"outro"]) {
-            category = @"Outro";
+            category = LOC(@"Outro");
         }
         else if ([segment.category isEqualToString:@"interaction"]) {
-            category = @"Interaction";
+            category = LOC(@"Interaction");
         }
         else if ([segment.category isEqualToString:@"selfpromo"]) {
-            category = @"Self Promo";
+            category = LOC(@"SelfPromo");
         }
         else if ([segment.category isEqualToString:@"music_offtopic"]) {
-            category = @"Non-Music";
+            category = LOC(@"Non-Music");
         }
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.segmentLabel = [[UILabel alloc] initWithFrame:self.frame];
@@ -54,7 +55,7 @@
             endTime = [NSString stringWithFormat:@"%ld:%02ld", endMinutes, endSeconds];
         }
         
-        self.segmentLabel.text = [NSString stringWithFormat:@"%@ to %@", startTime, endTime];
+        self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@", LOC(@"From"), startTime, LOC(@"to"), endTime];
         
         [self addSubview:self.categoryLabel];
         self.categoryLabel.adjustsFontSizeToFitWidth = YES;

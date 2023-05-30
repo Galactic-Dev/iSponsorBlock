@@ -5,6 +5,8 @@
 #import "Headers/SponsorBlockRequest.h"
 #import "Headers/SponsorBlockViewController.h"
 
+#define LOC(x) [tweakBundle localizedStringForKey:x value:nil table:nil]
+
 extern "C" NSBundle *iSponsorBlockBundle() {
     static NSBundle *bundle = nil;
     static dispatch_once_t onceToken;
@@ -63,8 +65,11 @@ NSString *modifiedTimeString;
                 if (self.hud.superview != self.view) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                     self.hud.mode = MBProgressHUDModeCustomView;
-                    self.hud.label.text = [NSString stringWithFormat:@"Manually Skip %@ from %ld:%02ld to %ld:%02ld", sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
-                    [self.hud.button setTitle:@"Skip" forState:UIControlStateNormal];
+                    NSString *localizedManualSkip = LOC(@"ManuallySkipReminder");
+                    NSString *formattedManualSkip = [NSString stringWithFormat:localizedManualSkip, sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60, lroundf(sponsorSegment.endTime)/60, lroundf(sponsorSegment.endTime)%60];
+                    self.hud.label.text = formattedManualSkip;
+                    self.hud.label.numberOfLines = 0;
+                    [self.hud.button setTitle:LOC(@"Skip") forState:UIControlStateNormal];
                     [self.hud.button addTarget:self action:@selector(manuallySkipSegment:) forControlEvents:UIControlEventTouchUpInside];
                     self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
                     [self.hud hideAnimated:YES afterDelay:(sponsorSegment.endTime - sponsorSegment.startTime)];
@@ -83,8 +88,8 @@ NSString *modifiedTimeString;
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                 self.hud.mode = MBProgressHUDModeCustomView;
-                self.hud.label.text = @"Skipped Segment";
-                [self.hud.button setTitle:@"Unskip Segment" forState:UIControlStateNormal];
+                self.hud.label.text = LOC(@"SkippedSegment");
+                [self.hud.button setTitle:LOC(@"Unskip") forState:UIControlStateNormal];
                 [self.hud.button addTarget:self action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                 self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
                 [self.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
@@ -693,8 +698,11 @@ AVQueuePlayer *queuePlayer;
                     if (weakSelf.hud.superview != weakSelf.playerViewController.view) {
                         weakSelf.hud = [MBProgressHUD showHUDAddedTo:weakSelf.playerViewController.view animated:YES];
                         weakSelf.hud.mode = MBProgressHUDModeCustomView;
-                        weakSelf.hud.label.text = [NSString stringWithFormat:@"Manually Skip %@ from %ld:%02ld to %ld:%02ld", sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60,lroundf(sponsorSegment.endTime)/60,lroundf(sponsorSegment.endTime)%60];
-                        [weakSelf.hud.button setTitle:@"Skip" forState:UIControlStateNormal];
+                        NSString *localizedManualSkip = LOC(@"ManuallySkipReminder");
+                        NSString *formattedManualSkip = [NSString stringWithFormat:localizedManualSkip, sponsorSegment.category, lroundf(sponsorSegment.startTime)/60, lroundf(sponsorSegment.startTime)%60, lroundf(sponsorSegment.endTime)/60, lroundf(sponsorSegment.endTime)%60];
+                        weakSelf.hud.label.text = formattedManualSkip;
+                        weakSelf.hud.label.numberOfLines = 0;
+                        [weakSelf.hud.button setTitle:LOC(@"Skip") forState:UIControlStateNormal];
                         [weakSelf.hud.button addTarget:weakSelf action:@selector(manuallySkipSegment:) forControlEvents:UIControlEventTouchUpInside];
                         weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
                         [weakSelf.hud hideAnimated:YES afterDelay:(sponsorSegment.endTime - sponsorSegment.startTime)];
@@ -712,8 +720,8 @@ AVQueuePlayer *queuePlayer;
                     [MBProgressHUD hideHUDForView:weakSelf.playerViewController.view animated:YES];
                     weakSelf.hud = [MBProgressHUD showHUDAddedTo:weakSelf.playerViewController.view animated:YES];
                     weakSelf.hud.mode = MBProgressHUDModeCustomView;
-                    weakSelf.hud.label.text = @"Skipped Segment";
-                    [weakSelf.hud.button setTitle:@"Unskip Segment" forState:UIControlStateNormal];
+                    weakSelf.hud.label.text = LOC(@"SkippedSegment");
+                    [weakSelf.hud.button setTitle:LOC(@"Unskip") forState:UIControlStateNormal];
                     [weakSelf.hud.button addTarget:weakSelf action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                     weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
                     [weakSelf.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];

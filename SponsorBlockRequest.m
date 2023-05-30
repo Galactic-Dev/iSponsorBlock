@@ -1,4 +1,5 @@
 #import "Headers/SponsorBlockRequest.h"
+#import "Headers/Localization.h"
 
 @implementation SponsorBlockRequest
 + (void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel apiInstance:(NSString *)apiInstance {
@@ -71,8 +72,8 @@
             NSHTTPURLResponse *URLResponse = (NSHTTPURLResponse *)response;
             if (URLResponse.statusCode != 200) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error Code: %ld %@", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]] preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Error") message:[NSString stringWithFormat:@"%@: %ld %@", LOC(@"ErrorCode"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]] preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
                     handler:^(UIAlertAction * action) {}];
                     [alert addAction:defaultAction];
                     [viewController presentViewController:alert animated:YES completion:nil];
@@ -81,8 +82,8 @@
             }
             else {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success" message:@"Successfully Submitted Segments" preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"Success") message:LOC(@"SuccessfullySubmittedSegments") preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:LOC(@"OK") style:UIAlertActionStyleDefault
                     handler:^(UIAlertAction * action) {}];
                     [alert addAction:defaultAction];
                     [viewController presentViewController:alert animated:YES completion:nil];
@@ -101,11 +102,11 @@
         NSString *title;
         CGFloat delay;
         if (URLResponse.statusCode != 200) {
-            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            title = [NSString stringWithFormat:@"%@: (%ld %@)", LOC(@"ErrorVoting"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
             delay = 3.0f;
         }
         else {
-            title = @"Successfully Voted";
+            title = LOC(@"SuccessfullyVoted");
             delay = 1.0f;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -127,11 +128,11 @@
         NSString *title;
         CGFloat delay;
         if (URLResponse.statusCode != 200) {
-            title = [NSString stringWithFormat:@"Error voting: (%ld %@)", URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
+            title = [NSString stringWithFormat:@"%@: (%ld %@)", LOC(@"ErrorVoting"), URLResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:URLResponse.statusCode]];
             delay = 3.0f;
         }
         else {
-            title = @"Successfully Voted";
+            title = LOC(@"SuccessfullyVoted");
             delay = 1.0f;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
