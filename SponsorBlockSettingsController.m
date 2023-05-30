@@ -41,6 +41,16 @@ extern NSBundle *iSponsorBlockBundle();
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    UIBarButtonItem *dismissButton;
+
+    dismissButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"]
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(dismissButtonTapped:)];
+
+    dismissButton.tintColor = [UIColor blackColor];
+    self.navigationItem.leftBarButtonItem = dismissButton;
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     self.settingsPath = [documentsDirectory stringByAppendingPathComponent:@"iSponsorBlock.plist"];
@@ -73,6 +83,8 @@ extern NSBundle *iSponsorBlockBundle();
     [self.tableView.tableHeaderView addSubview:imageView];
     [self.tableView.tableHeaderView addSubview:label];
 
+    self.tweakTitle = label.text;
+
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     [imageView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
@@ -86,6 +98,27 @@ extern NSBundle *iSponsorBlockBundle();
     [self.view addGestureRecognizer:tap];
 
     self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID", @"SponsorBlock API Instance"];
+}
+
+//Add iSponsorBlock text to Navbar label if header text out of screen
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGRect labelCellRect = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    CGRect visibleRect = CGRectMake(self.tableView.contentOffset.x,
+                                    self.tableView.contentOffset.y + self.navigationController.navigationBar.frame.size.height,
+                                    self.tableView.bounds.size.width,
+                                    self.tableView.bounds.size.height - self.navigationController.navigationBar.frame.size.height);
+
+    if (!CGRectContainsRect(visibleRect, labelCellRect)) {
+        self.title = self.tweakTitle;
+        [UIView animateWithDuration:0.3 animations:^{
+            self.navigationItem.titleView.alpha = 1.0;
+        }];
+    } else {
+        self.title = nil;
+        [UIView animateWithDuration:0.3 animations:^{
+            self.navigationItem.titleView.alpha = 0.0;
+        }];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -255,6 +288,19 @@ extern NSBundle *iSponsorBlockBundle();
     return nil;
 }
 
+//To allow highlights only for certain sections
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 15) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void)dismissButtonTapped:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 15) {
         if (indexPath.row == 0) {
@@ -268,6 +314,7 @@ extern NSBundle *iSponsorBlockBundle();
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://paypal.me/DBrett684"] options:@{} completionHandler:nil];
         }
     }
+    [tableView deselectRowAtIndexPath:indexPath animated:YES]; //To prevent highlight sticking after pressing on buttons
 }
 
 - (void)enabledSwitchToggled:(UISwitch *)sender {

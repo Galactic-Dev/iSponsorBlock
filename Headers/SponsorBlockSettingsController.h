@@ -41,6 +41,7 @@
 @end
 
 @interface SponsorBlockSettingsController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
+@property (nonatomic, strong) NSString *tweakTitle;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSArray *sectionTitles;
 @property (strong, nonatomic) NSMutableDictionary *settings;
