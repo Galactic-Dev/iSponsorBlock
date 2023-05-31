@@ -1,6 +1,5 @@
 #import "Headers/SponsorBlockSettingsController.h"
-
-extern NSBundle *iSponsorBlockBundle();
+#import "Headers/Localization.h"
 
 @implementation SponsorBlockTableCell
 - (void)colorPicker:(id)colorPicker didSelectColor:(UIColor *)color {
@@ -85,7 +84,7 @@ extern NSBundle *iSponsorBlockBundle();
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
 
-    self.sectionTitles = @[@"Sponsor", @"Intermission/Intro Animation", @"Endcards/Credits", @"Interaction Reminder (Subscribe)", @"Unpaid/Self Promotion", @"Music: Non-Music Section", @"SponsorBlock User ID", @"SponsorBlock API Instance"];
+    self.sectionTitles = @[LOC(@"Sponsor"), LOC(@"Intermission/IntroAnimation"), LOC(@"Endcards/Credits"), LOC(@"InteractionReminder"), LOC(@"Unpaid/SelfPromotion"), LOC(@"Non-MusicSection"), LOC(@"SponsorBlockUserID"), LOC(@"SponsorBlockAPIInstance")];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -105,7 +104,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
 
     if (indexPath.section == 0) {
-        cell.textLabel.text = @"Enabled";
+        cell.textLabel.text = LOC(@"Enabled");
         UISwitch *enabledSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         cell.accessoryView = enabledSwitch;
         [enabledSwitch addTarget:self action:@selector(enabledSwitchToggled:) forControlEvents:UIControlEventValueChanged];
@@ -122,7 +121,7 @@ extern NSBundle *iSponsorBlockBundle();
     if (indexPath.section <= 6) {
         SponsorBlockTableCell *tableCell = [[SponsorBlockTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell2"];
         NSDictionary *categorySettings = [self.settings objectForKey:@"categorySettings"];
-        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Disable", @"Auto Skip", @"Show in Seek Bar", @"Manual Skip"]];
+        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[LOC(@"Disable"), LOC(@"AutoSkip"), LOC(@"ShowInSeekBar"), LOC(@"ManualSkip")]];
 
         //make it so "Show in Seek Bar" text won't be cut off on certain devices
         NSMutableArray *segments = [segmentedControl valueForKey:@"_segments"];
@@ -168,7 +167,7 @@ extern NSBundle *iSponsorBlockBundle();
             [segmentedControl.widthAnchor constraintEqualToAnchor:tableCell.contentView.widthAnchor].active = YES;
         }
         else {
-            tableCell.textLabel.text = @"Set Color To Show in Seek Bar";
+            tableCell.textLabel.text = LOC(@"SetColorToShowInSeekBar");
             tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
             HBColorWell *colorWell = [[objc_getClass("HBColorWell") alloc] initWithFrame:CGRectMake(0,0,32,32)];
             [colorWell addTarget:tableCell action:@selector(presentColorPicker:) forControlEvents:UIControlEventTouchUpInside];
@@ -182,7 +181,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
     if (indexPath.section == 7) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"User ID:";
+        textCell.textLabel.text = LOC(@"UserID");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [self.settings valueForKey:@"userID"];
         [textCell editableTextField].delegate = self;
@@ -190,7 +189,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
     if (indexPath.section == 8) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"API URL:";
+        textCell.textLabel.text = LOC(@"API_URL");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [self.settings valueForKey:@"apiInstance"];
         [textCell editableTextField].delegate = self;
@@ -198,7 +197,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
     if (indexPath.section == 9) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"Set Minimum Segment Duration:";
+        textCell.textLabel.text = LOC(@"MinimumSegmentDuration");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"minimumDuration"] floatValue]];
         [textCell editableTextField].keyboardType = UIKeyboardTypeDecimalPad;
@@ -207,7 +206,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
     if (indexPath.section == 10) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
-        textCell.textLabel.text = @"Set How Long Skip Notice Will Appear:";
+        textCell.textLabel.text = LOC(@"HowLongNoticeWillAppear");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
         [textCell editableTextField].text = [NSString stringWithFormat:@"%.1f", [[self.settings valueForKey:@"skipNoticeDuration"] floatValue]];
         [textCell editableTextField].keyboardType = UIKeyboardTypeDecimalPad;
@@ -215,7 +214,7 @@ extern NSBundle *iSponsorBlockBundle();
         return textCell;
     }
     if (indexPath.section >= 11 && indexPath.section < 15) {
-        NSArray *titles = @[@"Show Skip Notice", @"Show iSponsorBlock Buttons in Video Player", @"Show Modified Time in Seek Bar", @"Enable Skip Count Tracking"];
+        NSArray *titles = @[LOC(@"ShowSkipNotice"), LOC(@"ShowButtonsInPlayer"), LOC(@"ShowModifiedTime"), LOC(@"EnableSkipCountTracking")];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
 
@@ -235,7 +234,7 @@ extern NSBundle *iSponsorBlockBundle();
     }
     if (indexPath.section == 15) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
-        cell.textLabel.text = indexPath.row == 0 ? @"Donate on Venmo" : @"Donate on PayPal";
+        cell.textLabel.text = indexPath.row == 0 ? LOC(@"DonateOnVenmo") : LOC(@"DonateOnPayPal");
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
         return cell;
     }
@@ -249,9 +248,9 @@ extern NSBundle *iSponsorBlockBundle();
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == 0) return @"Restart YouTube for changes to take effect";
-    if (section == 7) return @"If you want to use a custom SponsorBlock user ID, you can enter it here. If you don't know what this is, leave it as default.";
-    if (section == 8) return @"If you want to use a custom SponsorBlock API instance, you can enter it here. If you don't know what this is, leave it as default. Example: https://sponsor.ajay.app/api";
+    if (section == 0) return LOC(@"RestartFooter");
+    if (section == 7) return LOC(@"UserIDFooter");
+    if (section == 8) return LOC(@"APIFooter");
     return nil;
 }
 
@@ -295,13 +294,19 @@ extern NSBundle *iSponsorBlockBundle();
     UITableViewCell *cell = (UITableViewCell *)textField.superview.superview;
     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
     f.numberStyle = NSNumberFormatterDecimalStyle;
-    if ([cell.textLabel.text isEqualToString:@"Set Minimum Segment Duration:"]) {
+
+    NSString *minimumDurationTitle = LOC(@"MinimumSegmentDuration");
+    NSString *skipNoticeDurationTitle = LOC(@"HowLongNoticeWillAppear");
+    NSString *userIDTitle = LOC(@"UserID");
+    NSString *apiURLTitle = LOC(@"API_URL");
+
+    if ([cell.textLabel.text isEqualToString:minimumDurationTitle]) {
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"minimumDuration"];
-    } else if ([cell.textLabel.text isEqualToString:@"Set How Long Skip Notice Will Appear:"]) {
+    } else if ([cell.textLabel.text isEqualToString:skipNoticeDurationTitle]) {
         [self.settings setValue:[f numberFromString:textField.text] forKey:@"skipNoticeDuration"];
-    } else if ([cell.textLabel.text isEqualToString:@"User ID:"]) {
+    } else if ([cell.textLabel.text isEqualToString:userIDTitle]) {
         [self.settings setValue:textField.text forKey:@"userID"];
-    } else if ([cell.textLabel.text isEqualToString:@"API URL:"]) {
+    } else if ([cell.textLabel.text isEqualToString:apiURLTitle]) {
         [self.settings setValue:textField.text forKey:@"apiInstance"];
     }
     [self writeSettings];
