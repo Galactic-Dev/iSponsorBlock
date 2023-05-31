@@ -69,8 +69,15 @@
 "ErrorVoting" = "Ошибка голосования";
 
 /* Pop-ups*/
-"ManuallySkipReminder" = "Перемотать %@\nс %ld:%02ld до %ld:%02ld?";
+"ManuallySkipReminder" = "Перемотать %@ с %ld:%02ld до %ld:%02ld?";
 "Skip" = "Да";
-"SkippedSegment" = "Реклама перемотана";
+"SkippedSegment" = "Перемотан\n%@";
 "Unskip" = "Отмена";
 
+/* Segments in pop-ups*/
+"sponsor" = "спонсорский\nсегмент";
+"intro" = "сегмент со\nвступлением";
+"outro" = "сегмент\nс титрами";
+"interaction" = "сегмент со\nвзаимодействием";
+"selfpromo" = "сегмент с\nсаморекламой";
+"music_offtopic" = "сегмент\nбез музыки";

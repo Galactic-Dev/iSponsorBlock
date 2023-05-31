@@ -69,8 +69,15 @@
 "ErrorVoting" = "Error Voting";
 
 /* Pop-ups*/
-"ManuallySkipReminder" = "Manually Skip %@\nfrom %ld:%02ld to %ld:%02ld?";
+"ManuallySkipReminder" = "Manually Skip %@ segment\nfrom %ld:%02ld to %ld:%02ld?";
 "Skip" = "Skip";
-"SkippedSegment" = "Skipped Segment";
+"SkippedSegment" = "Skipped %@ Segment";
 "Unskip" = "Unskip";
 
+/* Segments in pop-ups*/
+"sponsor" = "sponsor";
+"intro" = "intro";
+"outro" = "outro";
+"interaction" = "interaction";
+"selfpromo" = "self promo";
+"music_offtopic" = "non-music";
