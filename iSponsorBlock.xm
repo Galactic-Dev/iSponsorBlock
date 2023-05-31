@@ -75,7 +75,7 @@ NSString *modifiedTimeString;
             if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3) {
                 if (self.hud.superview != self.view && self.hudDisplayed == NO) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-                    self.hudDisplayed = YES; // Set yes to make HUD less obtrusive (Issue #34)
+                    self.hudDisplayed = YES; // Set yes to make sure that HUD is not persistent (Issue #62)
                     self.hud.mode = MBProgressHUDModeCustomView;
                     NSString *localizedSegment = categoryLocalization[sponsorSegment.category] ?: sponsorSegment.category;
                     NSString *localizedManualSkip = LOC(@"ManuallySkipReminder");
@@ -754,7 +754,7 @@ AVQueuePlayer *queuePlayer;
                 if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3) {
                     if (weakSelf.hud.superview != weakSelf.playerViewController.view && weakSelf.hudDisplayed == NO) {
                         weakSelf.hud = [MBProgressHUD showHUDAddedTo:weakSelf.playerViewController.view animated:YES];
-                        weakSelf.hudDisplayed = YES; // Set yes to make HUD less obtrusive (Issue #34)
+                        weakSelf.hudDisplayed = YES; // Set yes to make sure that HUD is not persistent (Issue #62)
                         weakSelf.hud.mode = MBProgressHUDModeCustomView;
                         NSString *localizedSegment = categoryLocalization[sponsorSegment.category] ?: sponsorSegment.category;
                         NSString *localizedManualSkip = LOC(@"ManuallySkipReminder");
