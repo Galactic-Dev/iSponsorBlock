@@ -802,7 +802,9 @@ NSInteger pageStyle = 0;
 }
 %new
 - (void)sponsorBlockButtonPressed:(UIButton *)sender {
-    [[[UIApplication sharedApplication] delegate].window.rootViewController presentViewController:[[SponsorBlockSettingsController alloc] init] animated:YES completion:nil];
+    SponsorBlockSettingsController *settingsController = [[SponsorBlockSettingsController alloc] init];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:settingsController];
+    [[[UIApplication sharedApplication] delegate].window.rootViewController presentViewController:navigationController animated:YES completion:nil];
 }
 %end
 %end
