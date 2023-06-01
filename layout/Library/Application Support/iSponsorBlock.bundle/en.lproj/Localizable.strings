@@ -31,7 +31,10 @@
 "HowLongNoticeWillAppear" = "Set How Long Skip Notice Will Appear:";
 "ShowSkipNotice" = "Show Skip Notice";
 "ShowButtonsInPlayer" = "Show iSponsorBlock Buttons in Video Player";
+"HideStartEndButtonInPlayer" = "Hide Start/End Button in Video Player";
 "ShowModifiedTime" = "Show Modified Time in Seek Bar";
+"AudioNotificationOnSkip" = "Audio Notification on Skip";
+"AudioFooter" = "Unavailable in silent mode";
 "EnableSkipCountTracking" = "Enable Skip Count Tracking";
 "DonateOnVenmo" = "Donate on Venmo";
 "DonateOnPayPal" = "Donate on PayPal";

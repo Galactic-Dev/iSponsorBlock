@@ -31,7 +31,10 @@
 "HowLongNoticeWillAppear" = "Длительность уведомлений:";
 "ShowSkipNotice" = "Отображать уведомления о перемотке";
 "ShowButtonsInPlayer" = "Отображать кнопки твика в плеере";
+"HideStartEndButtonInPlayer" = "Скрыть кнопку создания меток";
 "ShowModifiedTime" = "Отображать сокращенное время в плеере";
+"AudioNotificationOnSkip" = "Аудиоуведомление о перемотке";
+"AudioFooter" = "Недоступно в беззвучном режиме";
 "EnableSkipCountTracking" = "Включить подсчет пропущенной рекламы";
 "DonateOnVenmo" = "Задонатить в Venmo";
 "DonateOnPayPal" = "Задонатить в PayPal";
