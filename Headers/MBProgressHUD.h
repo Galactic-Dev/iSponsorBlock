@@ -304,6 +304,7 @@ NS_ASSUME_NONNULL_BEGIN
  * A button that is placed below the labels. Visible only if a target / action is added and a title is assigned..
  */
 @property (strong, nonatomic, readonly) UIButton *button;
+@property (strong, nonatomic, readonly) UIButton *cancelButton;
 
 @end
 

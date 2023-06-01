@@ -38,6 +38,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) MBProgressHUD *hud;
 @property (nonatomic, assign) NSInteger unskippedSegment;
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *userSkipSegments;
+@property (nonatomic, assign) BOOL hudDisplayed;
 - (void)isb_scrubToTime:(CGFloat)time;
 - (void)isb_fixVisualGlitch;
 @end
@@ -111,6 +112,7 @@ NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (strong, nonatomic) id timeObserver;
 @property (strong, nonatomic) AVPlayerViewController *playerViewController;
 @property (strong, nonatomic) NSMutableArray *markerViews;
+@property (nonatomic, assign) BOOL hudDisplayed;
 - (void)sponsorBlockSetup;
 - (void)updateMarkerViews;
 @end
