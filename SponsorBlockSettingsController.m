@@ -121,12 +121,12 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 16;
+    return 18;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) return 1;
-    else if (section <= 6 || section == 15) return 2;
+    else if (section <= 6 || section == 17) return 2;
     return 1;
 }
 
@@ -246,9 +246,9 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section >= 11 && indexPath.section < 15) {
-        NSArray *titles = @[LOC(@"ShowSkipNotice"), LOC(@"ShowButtonsInPlayer"), LOC(@"ShowModifiedTime"), LOC(@"EnableSkipCountTracking")];
-        NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
+    if (indexPath.section >= 11 && indexPath.section < 17) {
+        NSArray *titles = @[LOC(@"ShowSkipNotice"), LOC(@"ShowButtonsInPlayer"), LOC(@"HideStartEndButtonInPlayer"), LOC(@"ShowModifiedTime"), LOC(@"AudioNotificationOnSkip"), LOC(@"EnableSkipCountTracking")];
+        NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"hideStartEndButtonInPlayer", @"showModifiedTime", @"skipAudioNotification", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
 
         tableCell.textLabel.text = titles[indexPath.section-11];
@@ -265,7 +265,7 @@
         }
         return tableCell;
     }
-    if (indexPath.section == 15) {
+    if (indexPath.section == 17) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
         cell.textLabel.text = indexPath.row == 0 ? LOC(@"DonateOnVenmo") : LOC(@"DonateOnPayPal");
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
@@ -284,12 +284,13 @@
     if (section == 0) return LOC(@"RestartFooter");
     if (section == 7) return LOC(@"UserIDFooter");
     if (section == 8) return LOC(@"APIFooter");
+    if (section == 15) return LOC(@"AudioFooter");
     return nil;
 }
 
 //To allow highlights only for certain sections
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 15) {
+    if (indexPath.section == 17) {
         return YES;
     } else {
         return NO;
@@ -301,7 +302,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 15) {
+    if (indexPath.section == 17) {
         if (indexPath.row == 0) {
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"venmo://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];
@@ -323,7 +324,7 @@
 
 - (void)switchToggled:(UISwitch *)sender {
     UITableViewCell *cell = (UITableViewCell *)sender.superview;
-    NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"showModifiedTime", @"enableSkipCountTracking"];
+    NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"hideStartEndButtonInPlayer", @"showModifiedTime", @"skipAudioNotification", @"enableSkipCountTracking"];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     [self.settings setValue:@(sender.on) forKey:titlesNames[indexPath.section-11]];
     [self writeSettings];

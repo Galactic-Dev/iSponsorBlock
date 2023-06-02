@@ -1,4 +1,5 @@
 #import "Headers/iSponsorBlock.h"
+#import <AudioToolbox/AudioToolbox.h>
 #import <rootless.h>
 #import "Headers/ColorFunctions.h"
 #import "Headers/SponsorBlockSettingsController.h"
@@ -21,6 +22,15 @@ extern "C" NSBundle *iSponsorBlockBundle() {
 }
 
 NSBundle *tweakBundle = iSponsorBlockBundle();
+
+// Sound effect for skip segments
+static void playSponsorAudio() {
+    NSString *audioFilePath = [tweakBundle pathForResource:@"SponsorAudio" ofType:@"m4a"];
+    NSURL *audioFileURL = [NSURL fileURLWithPath:audioFilePath];
+    SystemSoundID soundID;
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)audioFileURL, &soundID);
+    AudioServicesPlaySystemSound(soundID);
+}
 
 // Check and translate segment title for HUD
 NSDictionary *categoryLocalization = @{
@@ -133,6 +143,11 @@ NSString *modifiedTimeString;
                     [self.hud.button addTarget:self action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                     self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
                     [self.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
+
+                    // Play sound effect if option enabled
+                    if (kSkipAudioNotification) {
+                        playSponsorAudio();
+                    }
                 }
             }
                                                                                                          
@@ -273,6 +288,11 @@ NSString *modifiedTimeString;
     if (self.hudDisplayed != NO) {
         self.hudDisplayed = NO;
     }
+
+    // Play sound effect if option enabled
+    if (kSkipAudioNotification) {
+        playSponsorAudio();
+    }
 }
 
 %new
@@ -308,7 +328,7 @@ NSString *modifiedTimeString;
     YTMainAppVideoPlayerOverlayView *v = [self videoPlayerOverlayView];
     YTMainAppControlsOverlayView *c = [v valueForKey:@"_controlsOverlayView"];
     c.sponsorBlockButton.hidden = !kShowButtonsInPlayer;
-    c.sponsorStartedEndedButton.hidden = !kShowButtonsInPlayer;
+    c.sponsorStartedEndedButton.hidden = !kShowButtonsInPlayer || kHideStartEndButtonInPlayer;
     [c setNeedsLayout];
 }
 
@@ -329,20 +349,26 @@ NSString *modifiedTimeString;
         self.sponsorBlockButton.hidden = YES;
         self.sponsorBlockButton.alpha = 0;
 
-        BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
-        NSString *startedEndedImagePath = isStart ? [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"] : [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
-        self.sponsorStartedEndedButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:startedEndedImagePath] accessibilityLabel:isStart ? @"iSponsorBlock start" : @"iSponsorBlock end" verticalContentPadding:padding];
-        [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        self.sponsorStartedEndedButton.hidden = YES;
-        self.sponsorStartedEndedButton.alpha = 0;
+        if (!kHideStartEndButtonInPlayer) {
+            BOOL isStart = self.playerViewController.userSkipSegments.lastObject.endTime != -1;
+            NSString *startedEndedImagePath = isStart ? [tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"] : [tweakBundle pathForResource:@"sponsorblockend-20@2x" ofType:@"png"];
+            self.sponsorStartedEndedButton = [self buttonWithImage:[UIImage imageWithContentsOfFile:startedEndedImagePath] accessibilityLabel:isStart ? @"iSponsorBlock start" : @"iSponsorBlock end" verticalContentPadding:padding];
+            [self.sponsorStartedEndedButton addTarget:self action:@selector(sponsorStartedEndedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            self.sponsorStartedEndedButton.hidden = YES;
+            self.sponsorStartedEndedButton.alpha = 0;
+        }
 
         @try {
             UIView *containerView = [self valueForKey:@"_topControlsAccessibilityContainerView"];
             [containerView addSubview:self.sponsorBlockButton];
-            [containerView addSubview:self.sponsorStartedEndedButton];
+            if (!kHideStartEndButtonInPlayer) {
+                [containerView addSubview:self.sponsorStartedEndedButton];
+            }
         } @catch (id ex) {
             [self addSubview:self.sponsorBlockButton];
-            [self addSubview:self.sponsorStartedEndedButton];
+            if (!kHideStartEndButtonInPlayer) {
+                [self addSubview:self.sponsorStartedEndedButton];
+            }
         }
     }
     return self;
@@ -352,7 +378,9 @@ NSString *modifiedTimeString;
     NSMutableArray <UIView *> *topControls = %orig;
     if (kShowButtonsInPlayer) {
         [topControls insertObject:self.sponsorBlockButton atIndex:0];
-        [topControls insertObject:self.sponsorStartedEndedButton atIndex:0];
+        if (!kHideStartEndButtonInPlayer) {
+            [topControls insertObject:self.sponsorStartedEndedButton atIndex:0];
+        }
     }
     return topControls;
 }
@@ -811,6 +839,11 @@ AVQueuePlayer *queuePlayer;
                         [weakSelf.hud.button addTarget:weakSelf action:@selector(unskipSegment:) forControlEvents:UIControlEventTouchUpInside];
                         weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
                         [weakSelf.hud hideAnimated:YES afterDelay:kSkipNoticeDuration];
+
+                        // Play sound effect if option enabled
+                        if (kSkipAudioNotification) {
+                            playSponsorAudio();
+                        }
                     }
                 }
                 
@@ -929,7 +962,9 @@ static void loadPrefs() {
     kMinimumDuration = [settings objectForKey:@"minimumDuration"] ? [[settings objectForKey:@"minimumDuration"] floatValue] : 0.0f;
     kShowSkipNotice = [settings objectForKey:@"showSkipNotice"] ? [[settings objectForKey:@"showSkipNotice"] boolValue] : YES;
     kShowButtonsInPlayer = [settings objectForKey:@"showButtonsInPlayer"] ? [[settings objectForKey:@"showButtonsInPlayer"] boolValue] : YES;
+    kHideStartEndButtonInPlayer = [settings objectForKey:@"hideStartEndButtonInPlayer"] ? [[settings objectForKey:@"hideStartEndButtonInPlayer"] boolValue] : NO;
     kShowModifiedTime = [settings objectForKey:@"showModifiedTime"] ? [[settings objectForKey:@"showModifiedTime"] boolValue] : YES;
+    kSkipAudioNotification = [settings objectForKey:@"skipAudioNotification"] ? [[settings objectForKey:@"skipAudioNotification"] boolValue] : NO;
     kEnableSkipCountTracking = [settings objectForKey:@"enableSkipCountTracking"] ? [[settings objectForKey:@"enableSkipCountTracking"] boolValue] : YES;
     kSkipNoticeDuration = [settings objectForKey:@"skipNoticeDuration"] ? [[settings objectForKey:@"skipNoticeDuration"] floatValue] : 3.0f;
     kWhitelistedChannels = [settings objectForKey:@"whitelistedChannels"] ? [(NSArray *)[settings objectForKey:@"whitelistedChannels"] mutableCopy] : [NSMutableArray array];
@@ -942,7 +977,9 @@ static void loadPrefs() {
       @"minimumDuration" : @(kMinimumDuration),
       @"showSkipNotice" : @(kShowSkipNotice),
       @"showButtonsInPlayer" : @(kShowButtonsInPlayer),
+      @"hideStartEndButtonInPlayer" : @(kHideStartEndButtonInPlayer),
       @"showModifiedTime" : @(kShowModifiedTime),
+      @"skipAudioNotification" : @(kSkipAudioNotification),
       @"enableSkipCountTracking" : @(kEnableSkipCountTracking),
       @"skipNoticeDuration" : @(kSkipNoticeDuration),
       @"whitelistedChannels" : kWhitelistedChannels
