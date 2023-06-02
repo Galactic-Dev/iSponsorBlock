@@ -216,7 +216,7 @@ NSString *modifiedTimeString;
         NSInteger seconds = lroundf(self.currentVideoTotalMediaTime - totalSavedTime);
         NSInteger hours = seconds / 3600;
         NSInteger  minutes = (seconds - (hours * 3600)) / 60;
-        seconds = seconds %60;
+        seconds = seconds % 60;
         
         if (hours >= 1) modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld:%02ld",hours, minutes, seconds];
         else modifiedTimeString = [NSString stringWithFormat:@"%ld:%02ld", minutes, seconds];
@@ -460,9 +460,7 @@ NSString *modifiedTimeString;
         CGFloat endTime = segment.endTime;
         CGFloat beginX = (startTime * self.frame.size.width) / self.totalTime;
         CGFloat endX = (endTime * self.frame.size.width) / self.totalTime;
-        CGFloat markerWidth;
-        if (endX >= beginX) markerWidth = endX - beginX;
-            else markerWidth = 0;
+        CGFloat markerWidth = MAX(endX - beginX, 0);
         
         UIColor *color;
         if ([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
@@ -482,7 +480,6 @@ NSString *modifiedTimeString;
         [newMarkerView.heightAnchor constraintEqualToConstant:2].active = YES;
         [newMarkerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:beginX].active = YES;
         [newMarkerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
-        
 
         [self.sponsorMarkerViews addObject:newMarkerView];
     }
@@ -522,9 +519,7 @@ NSString *modifiedTimeString;
         CGFloat endTime = segment.endTime;
         CGFloat beginX = (startTime * self.frame.size.width) / self.totalTime;
         CGFloat endX = (endTime * self.frame.size.width) / self.totalTime;
-        CGFloat markerWidth;
-        if (endX >= beginX) markerWidth = endX - beginX;
-        else markerWidth = 0;
+        CGFloat markerWidth = MAX(endX - beginX, 0);
         
         UIColor *color;
         if ([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
@@ -538,7 +533,7 @@ NSString *modifiedTimeString;
             return;
         }
 
-        UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectMake(beginX, originY, endX - beginX, 2)];
+        UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectMake(beginX, originY, markerWidth, 2)];
         newMarkerView.userInteractionEnabled = NO;
         newMarkerView.backgroundColor = color;
         [self insertSubview:newMarkerView belowSubview:scrubber];
