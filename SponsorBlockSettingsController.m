@@ -47,7 +47,12 @@
                                                     target:self
                                                     action:@selector(dismissButtonTapped:)];
 
-    dismissButton.tintColor = [UIColor blackColor];
+    if (UITraitCollection.currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) { // Set white color for dark mode
+        dismissButton.tintColor = [UIColor whiteColor];
+    } else {
+        dismissButton.tintColor = [UIColor blackColor];
+    }
+
     self.navigationItem.leftBarButtonItem = dismissButton;
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

@@ -98,19 +98,24 @@ NSString *modifiedTimeString;
                     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
                     UIImage *cancelImage = [[UIImage systemImageNamed:@"x.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                     [cancelButton setImage:cancelImage forState:UIControlStateNormal];
-                    [cancelButton setTintColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+                    if ([%c(YTPageStyleController) pageStyle]) { // Set white color for dark mode
+                        [cancelButton setTintColor:[[UIColor whiteColor] colorWithAlphaComponent:0.7]];
+                    } else {
+                        [cancelButton setTintColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+                    }
                     [cancelButton addTarget:self action:@selector(cancelHUD:) forControlEvents:UIControlEventTouchUpInside];
 
                     UIView *buttonSuperview = self.hud.button.superview;
                     [buttonSuperview addSubview:cancelButton];
 
-                    CGFloat buttonSpacing = 10.0;
                     cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
                     [NSLayoutConstraint activateConstraints:@[
-                        [cancelButton.topAnchor constraintEqualToAnchor:self.hud.button.topAnchor],
-                        [cancelButton.leadingAnchor constraintEqualToAnchor:self.hud.button.trailingAnchor constant:buttonSpacing],
-                        [cancelButton.heightAnchor constraintEqualToAnchor:self.hud.button.heightAnchor]
+                        [cancelButton.topAnchor constraintEqualToAnchor:buttonSuperview.topAnchor constant:5.0],
+                        [cancelButton.leadingAnchor constraintEqualToAnchor:buttonSuperview.leadingAnchor constant:5.0],
+                        [cancelButton.widthAnchor constraintEqualToConstant:17.0],
+                        [cancelButton.heightAnchor constraintEqualToConstant:17.0]
                     ]];
+
                     self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
 
                     // Use a delay equal to the length of the sponsored segment to avoid HUD call
@@ -790,19 +795,24 @@ AVQueuePlayer *queuePlayer;
                         UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
                         UIImage *cancelImage = [[UIImage systemImageNamed:@"x.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                         [cancelButton setImage:cancelImage forState:UIControlStateNormal];
-                        [cancelButton setTintColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+                        if ([%c(YTPageStyleController) pageStyle]) { // Set white color for dark mode
+                            [cancelButton setTintColor:[[UIColor whiteColor] colorWithAlphaComponent:0.7]];
+                        } else {
+                            [cancelButton setTintColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+                        }
                         [cancelButton addTarget:weakSelf action:@selector(cancelHUD:) forControlEvents:UIControlEventTouchUpInside];
 
                         UIView *buttonSuperview = weakSelf.hud.button.superview;
                         [buttonSuperview addSubview:cancelButton];
 
-                        CGFloat buttonSpacing = 10.0;
                         cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
                         [NSLayoutConstraint activateConstraints:@[
-                            [cancelButton.topAnchor constraintEqualToAnchor:weakSelf.hud.button.topAnchor],
-                            [cancelButton.leadingAnchor constraintEqualToAnchor:weakSelf.hud.button.trailingAnchor constant:buttonSpacing],
-                            [cancelButton.heightAnchor constraintEqualToAnchor:weakSelf.hud.button.heightAnchor]
+                            [cancelButton.topAnchor constraintEqualToAnchor:buttonSuperview.topAnchor constant:5.0],
+                            [cancelButton.leadingAnchor constraintEqualToAnchor:buttonSuperview.leadingAnchor constant:5.0],
+                            [cancelButton.widthAnchor constraintEqualToConstant:17.0],
+                            [cancelButton.heightAnchor constraintEqualToConstant:17.0]
                         ]];
+
                         weakSelf.hud.offset = CGPointMake(weakSelf.playerViewController.view.frame.size.width, -MBProgressMaxOffset);
                         double delayInSeconds = sponsorSegment.endTime - sponsorSegment.startTime;
 
