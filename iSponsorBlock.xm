@@ -159,7 +159,6 @@ NSString *modifiedTimeString;
         else if (self.currentSponsorSegment == 0 && self.unskippedSegment != -1) {
             self.currentSponsorSegment ++;
         }
-        // else if (self.currentSponsorSegment > 0 && lroundf(arg2.time) < self.skipSegments[self.currentSponsorSegment-1].endTime) {
         else if (self.currentSponsorSegment > 0 && lroundf(arg2.time) < self.skipSegments[self.currentSponsorSegment-1].startTime-0.01) {
             if ([self isMDXActive]) {
 
@@ -851,7 +850,6 @@ AVQueuePlayer *queuePlayer;
             else if (weakSelf.currentSponsorSegment == 0 && weakSelf.unskippedSegment != -1) {
                 weakSelf.currentSponsorSegment ++;
             }
-            // else if (weakSelf.currentSponsorSegment > 0 && lroundf(timeFloat) < weakSelf.skipSegments[weakSelf.currentSponsorSegment-1].endTime) {
             else if (weakSelf.currentSponsorSegment > 0 && lroundf(timeFloat) < weakSelf.skipSegments[weakSelf.currentSponsorSegment-1].startTime-0.01) {
                 if (weakSelf.unskippedSegment != weakSelf.currentSponsorSegment-1) {
                     weakSelf.currentSponsorSegment--;
