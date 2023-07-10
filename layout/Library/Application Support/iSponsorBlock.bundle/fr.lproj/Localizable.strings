@@ -1,0 +1,86 @@
+/* iSponsorBlock Settings */
+"Enabled" = "Activé";
+"RestartFooter" = "Redémarrez YouTube pour que les modifications prennent effet";
+
+"Sponsor" = "Sponsor";
+"Intermission/IntroAnimation" = "Intermission/Intro Animation";
+"Intermission" = "Intermission";
+"Endcards/Credits" = "Générique/Crédits";
+"Outro" = "Outro";
+"InteractionReminder" = "Rappel d'interaction (S'abonner)";
+"InteractionReminder_Subcribe/Like" = "Rappel d'interaction (S'abonner/Aimer)";
+"Interaction" = "Interaction";
+"Unpaid/SelfPromotion" = "Promotion non rémunérée/Auto-promotion";
+"SelfPromo" = "Auto-promo";
+"Non-MusicSection" = "Musique : Section non-musicale";
+"Non-Music" = "Non-Musique";
+"SponsorBlockUserID" = "ID d'utilisateur SponsorBlock";
+"SponsorBlockAPIInstance" = "Instance API SponsorBlock";
+
+"Disable" = "Désactiver";
+"AutoSkip" = "Saut automatique";
+"ShowInSeekBar" = "Afficher dans la barre de recherche";
+"ManualSkip" = "Saut manuel";
+"SetColorToShowInSeekBar" = "Définir la couleur pour l'affichage dans la barre de recherche";
+
+"UserID" = "ID d'utilisateur :";
+"UserIDFooter" = "Si vous souhaitez utiliser un identifiant utilisateur SponsorBlock personnalisé, vous pouvez le saisir ici. Si vous ne savez pas ce que c'est, laissez-le par défaut.";
+"API_URL" = "URL de l'API :";
+"APIFooter" = "Si vous souhaitez utiliser une instance API SponsorBlock personnalisée, vous pouvez la saisir ici. Si vous ne savez pas ce que c'est, laissez-le par défaut. Exemple : https://sponsor.ajay.app/api";
+"MinimumSegmentDuration" = "Définir la durée minimale du segment :";
+"HowLongNoticeWillAppear" = "Définir la durée d'affichage de l'avis de saut :";
+"ShowSkipNotice" = "Afficher l'avis de saut";
+"ShowButtonsInPlayer" = "Afficher les boutons iSponsorBlock dans le lecteur vidéo";
+"HideStartEndButtonInPlayer" = "Masquer le bouton Début/Fin dans le lecteur vidéo";
+"ShowModifiedTime" = "Afficher le temps modifié dans la barre de recherche";
+"AudioNotificationOnSkip" = "Notification audio lors du saut";
+"AudioFooter" = "Indisponible en mode silencieux";
+"EnableSkipCountTracking" = "Activer le suivi du nombre de sauts";
+"DonateOnVenmo" = "Faire un don sur Venmo";
+"DonateOnPayPal" = "Faire un don sur PayPal";
+
+/* Segments stuff */
+"SegmentStartsNow" = "Le segment commence maintenant";
+"SegmentEndsNow" = "Le segment se termine maintenant";
+"WhitelistChannel" = "Ajouter la chaîne à la liste blanche";
+"SegmentsInDatabase" = "Il y a déjà des segments dans la base de données :";
+"YourSegments" = "Vos segments :";
+"SubmitSegments" = "Soumettre les segments";
+"SuccessfullySubmittedSegments" = "Segments soumis avec succès";
+"EndTimeLessThanStartTime" = "Le temps de fin que vous avez défini était inférieur au temps de début, veuillez sélectionner un temps après"; //Exemple : ..., veuillez sélectionner un temps après 10:15
+"UnfinishedSegments" = "Vous avez des segments inachevés\n Veuillez ajouter une catégorie et/ou une heure de fin à vos segments";
+"EditStartTime" = "Modifier l'heure de début";
+"EditStartTime_Desc" = "Modifier l'heure de début : (ex. tapez 1:15)";
+"EditEndTime" = "Modifier l'heure de fin";
+"EditEndTime_Desc" = "Modifier l'heure de fin : (ex. tapez 1:15)";
+"From" = "De"; // Temps. Exemple : De 1:15 à 3:00. Si vous n'en avez pas besoin, laissez vide
+"to" = "à"; // Temps. Exemple : De 1:15 à 3:00
+"EditCategory" = "Modifier la catégorie";
+"EditSegment" = "Modifier le segment";
+"Edit" = "Éditer";
+"Error" = "Erreur";
+"ErrorCode" = "Code d'erreur";
+"Success" = "Succès";
+"OK" = "OK";
+"Cancel" = "Annuler";
+"Delete" = "Supprimer";
+"Upvote" = "Voter pour";
+"Downvote" = "Voter contre";
+"VoteToChangeCategory" = "Voter pour changer de catégorie";
+"VoteOnSegment" = "Voter sur le segment";
+"SuccessfullyVoted" = "Vote réussi";
+"ErrorVoting" = "Erreur lors du vote";
+
+/* Pop-ups*/
+"ManuallySkipReminder" = "Passer manuellement le segment %@\nde %ld:%02ld à %ld:%02ld ?";
+"Skip" = "Passer";
+"SkippedSegment" = "Segment %@ passé";
+"Unskip" = "Annuler le saut";
+
+/* Segments in pop-ups*/
+"sponsor" = "sponsor";
+"intro" = "intro";
+"outro" = "outro";
+"interaction" = "interaction";
+"selfpromo" = "auto-promo";
+"music_offtopic" = "hors-sujet musical";
