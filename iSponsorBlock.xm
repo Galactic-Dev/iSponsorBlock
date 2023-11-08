@@ -23,6 +23,20 @@ extern "C" NSBundle *iSponsorBlockBundle() {
 
 NSBundle *tweakBundle = iSponsorBlockBundle();
 
+BOOL kIsEnabled;
+NSString *kUserID;
+NSString *kAPIInstance;
+NSDictionary *kCategorySettings;
+CGFloat kMinimumDuration;
+BOOL kShowSkipNotice;
+BOOL kShowButtonsInPlayer;
+BOOL kHideStartEndButtonInPlayer;
+BOOL kShowModifiedTime;
+BOOL kSkipAudioNotification;
+BOOL kEnableSkipCountTracking;
+CGFloat kSkipNoticeDuration;
+NSMutableArray <NSString *> *kWhitelistedChannels;
+
 // Sound effect for skip segments
 static void playSponsorAudio() {
     NSString *audioFilePath = [tweakBundle pathForResource:@"SponsorAudio" ofType:@"m4a"];
