@@ -204,7 +204,6 @@
             tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
             HBColorWell *colorWell = [[objc_getClass("HBColorWell") alloc] initWithFrame:CGRectMake(0,0,32,32)];
             [colorWell addTarget:tableCell action:@selector(presentColorPicker:) forControlEvents:UIControlEventTouchUpInside];
-            [colorWell addTarget:tableCell action:@selector(colorWellValueChanged:) forControlEvents:UIControlEventValueChanged];
             UIColor *color = colorWithHexString([categorySettings objectForKey:[NSString stringWithFormat:@"%@Color", tableCell.category]]);
             colorWell.color = color;
             tableCell.accessoryView = colorWell;
