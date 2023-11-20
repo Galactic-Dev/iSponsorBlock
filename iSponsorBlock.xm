@@ -59,24 +59,7 @@ NSDictionary *categoryLocalization = @{
 %group Main
 NSString *modifiedTimeString;
 
-%hook YTPlayerViewController
-%property (strong, nonatomic) NSMutableArray *skipSegments;
-%property (nonatomic, assign) NSInteger currentSponsorSegment;
-%property (strong, nonatomic) MBProgressHUD *hud;
-%property (nonatomic, assign) NSInteger unskippedSegment;
-%property (strong, nonatomic) NSMutableArray *userSkipSegments;
-%property (strong, nonatomic) NSString *channelID;
-%property (nonatomic, assign) BOOL hudDisplayed;
-
-// used to keep support for older versions, as seekToTime is new
-%new
-- (void)isb_scrubToTime:(CGFloat)time {
-    // YT v17.30.1 switched scrubToTime to seekToTime
-    [self respondsToSelector:@selector(scrubToTime:)] ? [self scrubToTime:time] : [self seekToTime:time];
-}
-
-- (void)singleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
-    %orig;
+void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *arg2) {
     YTPlayerView *playerView = (YTPlayerView *)self.view;
     YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
     if (!self.channelID) self.channelID = @"";
@@ -198,6 +181,33 @@ NSString *modifiedTimeString;
         }
     }
 }
+
+%hook YTPlayerViewController
+%property (strong, nonatomic) NSMutableArray *skipSegments;
+%property (nonatomic, assign) NSInteger currentSponsorSegment;
+%property (strong, nonatomic) MBProgressHUD *hud;
+%property (nonatomic, assign) NSInteger unskippedSegment;
+%property (strong, nonatomic) NSMutableArray *userSkipSegments;
+%property (strong, nonatomic) NSString *channelID;
+%property (nonatomic, assign) BOOL hudDisplayed;
+
+// used to keep support for older versions, as seekToTime is new
+%new
+- (void)isb_scrubToTime:(CGFloat)time {
+    // YT v17.30.1 switched scrubToTime to seekToTime
+    [self respondsToSelector:@selector(scrubToTime:)] ? [self scrubToTime:time] : [self seekToTime:time];
+}
+
+- (void)singleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
+    %orig;
+    currentVideoTimeDidChange(self, arg2);
+}
+
+- (void)potentiallyMutatedSingleVideo:(id)arg1 currentVideoTimeDidChange:(YTSingleVideoTime *)arg2 {
+    %orig;
+    currentVideoTimeDidChange(self, arg2);
+}
+
 - (void)playbackController:(id)arg1 didActivateVideo:(id)arg2 withPlaybackData:(id)arg3 {
     %orig;
     if (self.isPlayingAd) return;
