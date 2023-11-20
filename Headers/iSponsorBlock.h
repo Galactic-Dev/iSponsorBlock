@@ -20,19 +20,19 @@
 #include <math.h>
 
 // prefs
-BOOL kIsEnabled;
-NSString *kUserID;
-NSString *kAPIInstance;
-NSDictionary *kCategorySettings;
-CGFloat kMinimumDuration;
-BOOL kShowSkipNotice;
-BOOL kShowButtonsInPlayer;
-BOOL kHideStartEndButtonInPlayer;
-BOOL kShowModifiedTime;
-BOOL kSkipAudioNotification;
-BOOL kEnableSkipCountTracking;
-CGFloat kSkipNoticeDuration;
-NSMutableArray <NSString *> *kWhitelistedChannels;
+extern BOOL kIsEnabled;
+extern NSString *kUserID;
+extern NSString *kAPIInstance;
+extern NSDictionary *kCategorySettings;
+extern CGFloat kMinimumDuration;
+extern BOOL kShowSkipNotice;
+extern BOOL kShowButtonsInPlayer;
+extern BOOL kHideStartEndButtonInPlayer;
+extern BOOL kShowModifiedTime;
+extern BOOL kSkipAudioNotification;
+extern BOOL kEnableSkipCountTracking;
+extern CGFloat kSkipNoticeDuration;
+extern NSMutableArray <NSString *> *kWhitelistedChannels;
 
 @interface YTPlayerViewController (iSB)
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *skipSegments;

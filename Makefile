@@ -12,6 +12,6 @@ TWEAK_NAME = iSponsorBlock
 
 iSponsorBlock_FILES = iSponsorBlock.xm $(wildcard *.m)
 iSponsorBlock_LIBRARIES = colorpicker
-iSponsorBlock_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
+iSponsorBlock_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-module-import-in-extern-c
 
 include $(THEOS_MAKE_PATH)/tweak.mk
