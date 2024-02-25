@@ -5,10 +5,12 @@
 + (void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel apiInstance:(NSString *)apiInstance {
     __block NSMutableArray *skipSegments = [NSMutableArray array];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *categories = @"[%22sponsor%22,%20%22intro%22,%20%22outro%22,%20%22interaction%22,%20%22selfpromo%22,%20%22music_offtopic%22]";
+    NSString *categories = @"[\"sponsor\",\"intro\",\"outro\",\"interaction\",\"selfpromo\",\"music_offtopic\",\"preview\",\"poi_highlight\",\"filler\"]";
+    NSString *encCategories = [categories stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
     //NSString *categories = @"[%22sponsor%22,%20%22intro%22,%20%22outro%22,%20%22interaction%22,%20%22selfpromo%22,%20%22music_offtopic%22,%20%22preview%22,%20%22filler%22]";
 
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/skipSegments?videoID=%@&categories=%@", apiInstance, videoID, categories]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/skipSegments?videoID=%@&categories=%@", apiInstance, videoID, encCategories]]];
     request.HTTPMethod = @"GET";
     NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (data != nil && error == nil) {
