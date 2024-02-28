@@ -23,9 +23,9 @@
 "ManualSkip" = "Manuell";
 "SetColorToShowInSeekBar" = "Farbe des Segments in der Zeitleiste";
 "UserID" = "Benutzer-ID:";
-"UserIDFooter" = "Wenn Sie eine benutzerdefinierte Benutzer-ID für iSponsorBlock verwenden möchten, können Sie diese hier einfügen. \nFalls Sie nicht wissen, was das sein soll, verändern Sie diesen Wert bitte nicht.";
+"UserIDFooter" = "Wenn Sie eine benutzerdefinierte Benutzer-ID für iSponsorBlock verwenden möchten, können Sie diese hier einfügen. Falls Sie nicht wissen, was das sein soll, verändern Sie diesen Wert bitte nicht.";
 "API_URL" = "API-URL:";
-"APIFooter" = "Wenn Sie eine benutzerdefinierte API-Instanz für iSponsorBlock verwenden möchten, können Sie diese hier einfügen. \nFalls Sie nicht wissen, was das sein soll, verändern Sie diesen Wert bitte nicht. \nBeispiel: https://sponsor.ajay.app/api";
+"APIFooter" = "Wenn Sie eine benutzerdefinierte API-Instanz für iSponsorBlock verwenden möchten, können Sie diese hier einfügen. Falls Sie nicht wissen, was das sein soll, verändern Sie diesen Wert bitte nicht. \nBeispiel: https://sponsor.ajay.app/api";
 "MinimumSegmentDuration" = "Minimale Segmentdauer festlegen:";
 "HowLongNoticeWillAppear" = "Anzeigedauer des Skip-Hinweises:";
 "ShowSkipNotice" = "Skip-Hinweis einblenden";
