@@ -16,7 +16,7 @@ extern "C" NSBundle *iSponsorBlockBundle() {
         if (tweakBundlePath)
             bundle = [NSBundle bundleWithPath:tweakBundlePath];
         else
-            bundle = [NSBundle bundleWithPath:ROOT_PATH_NS("/Library/Application Support/iSponsorBlock.bundle")];
+            bundle = [NSBundle bundleWithPath:ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock.bundle")];
     });
     return bundle;
 }
