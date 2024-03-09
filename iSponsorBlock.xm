@@ -13,10 +13,7 @@ extern "C" NSBundle *iSponsorBlockBundle() {
     static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
         NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
-        if (tweakBundlePath)
-            bundle = [NSBundle bundleWithPath:tweakBundlePath];
-        else
-            bundle = [NSBundle bundleWithPath:ROOT_PATH_NS("/Library/Application Support/iSponsorBlock.bundle")];
+        bundle = [NSBundle bundleWithPath:(tweakBundlePath ?: ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock.bundle"))];
     });
     return bundle;
 }
