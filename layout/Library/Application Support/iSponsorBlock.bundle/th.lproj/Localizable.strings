@@ -1,0 +1,86 @@
+/* iSponsorBlock การตั้งค่า */
+"Enabled" = "เปิดออก";
+"RestartFooter" = "โปรดรีสตาร์ท YouTube เพื่อใช้การเปลี่ยนแปลง";
+
+"Sponsor" = "ผู้สนับสนุนโฆษณา";
+"Intermission/IntroAnimation" = "มิดฟิลด์/เปิดแอนิเมชัน";
+"Intermission" = "การเปลี่ยนผ่าน";
+"Endcards/Credits" = "จบการ์ด/รายการ";
+"Outro" = "ตอนจบ";
+"InteractionReminder" = "ปฏิสัมพันธ์ของผู้ชม (การสมัครสมาชิก)";
+"InteractionReminder_Subcribe/Like" = "ปฏิสัมพันธ์ของผู้ชม (การสมัครสมาชิก/ชอบ)";
+"Interaction" = "เชิงโต้ตอบ";
+"Unpaid/SelfPromotion" = "ฟรี/self -propaganda";
+"SelfPromo" = "ตนเอง";
+"Non-MusicSection" = "มิวสิกวิดีโอ: ช่วงเวลาที่ไม่ใช่ดนตรี";
+"Non-Music" = "เวลาที่ไม่ใช่ดนตรี";
+"SponsorBlockUserID" = "SponsorBlock ผู้ใช้ ID";
+"SponsorBlockAPIInstance" = "SponsorBlock API";
+
+"Disable" = "ไม่ข้าม";
+"AutoSkip" = "ข้ามโดยอัตโนมัติ";
+"ShowInSeekBar" = "แสดงในแถบความคืบหน้า";
+"ManualSkip" = "ด้วยตนเอง";
+"SetColorToShowInSeekBar" = "สีแถบแบบก้าวหน้า";
+
+"UserID" = "ผู้ใช้ ID：";
+"UserIDFooter" = "โปรดป้อนรหัสผู้ใช้ SPONSORBLOCK ที่กำหนดเองที่คุณต้องการใช้ที่นี่ หากคุณไม่คุ้นเคยกับฟังก์ชั่นนี้ให้ใช้การตั้งค่าเริ่มต้น";
+"API_URL" = "API ที่อยู่：";
+"APIFooter" = "โปรดป้อนที่อยู่ API ที่กำหนดเองที่คุณต้องการใช้ที่นี่ หากคุณไม่คุ้นเคยกับฟังก์ชั่นนี้ให้ใช้การตั้งค่าเริ่มต้น ตัวอย่างที่เป็นแบบอย่าง：https://sponsor.ajay.app/api。";
+"MinimumSegmentDuration" = "เวลาที่สั้นที่สุดสามารถข้ามเวลา (ที่สอง)：";
+"HowLongNoticeWillAppear" = "ข้ามระยะเวลาการแสดงหน้าต่างพรอมต์ (วินาที)：";
+"ShowSkipNotice" = "ข้ามหน้าต่างพรอมต์";
+"ShowButtonsInPlayer" = "แสดงปุ่ม iSponsoRblock ในเครื่องเล่นวิดีโอ";
+"HideStartEndButtonInPlayer" = "ซ่อนปุ่มเริ่มต้น/จบเวลาในเครื่องเล่นวิดีโอที่ซ่อนอยู่";
+"ShowModifiedTime" = "แสดงหลังจากสั้นลงระยะเวลาวิดีโอ";
+"AudioNotificationOnSkip" = "กระโดดเคล็ดลับ";
+"AudioFooter" = "มันไม่สามารถใช้ได้ในโหมดปิดเสียง";
+"EnableSkipCountTracking" = "บันทึกได้ข้ามเวลา";
+"DonateOnVenmo" = "บริจาคใน Venmo";
+"DonateOnPayPal" = "บริจาคใน PayPal";
+
+/* Segments stuff */
+"SegmentStartsNow" = "เวลาเริ่มต้น";
+"SegmentEndsNow" = "จบ";
+"WhitelistChannel" = "อย่าข้ามช่องทางนี้";
+"SegmentsInDatabase" = "ช่วงเวลาต่อไปนี้อยู่ในฐานข้อมูลแล้ว：";
+"YourSegments" = "ช่วงเวลาของคุณ：";
+"SubmitSegments" = "ระยะเวลาการส่ง";
+"SuccessfullySubmittedSegments" = "ระยะเวลาการส่งที่ประสบความสำเร็จ";
+"EndTimeLessThanStartTime" = "เวลาสิ้นสุดไม่สามารถตั้งค่าก่อนเวลาเริ่มต้น โปรดปรับเวลาสิ้นสุดให้กับตราประทับเวลานี้:"; //Example: ..., Please Select a Time After 10:15
+"UnfinishedSegments" = "คุณมีช่วงเวลาที่ยังไม่เสร็จ \ n โปรดยืนยันว่าการจำแนกประเภทและเวลาสิ้นสุดได้รับการตั้งค่าหรือไม่";
+"EditStartTime" = "ปรับเวลาเริ่มต้น";
+"EditStartTime_Desc" = "โปรดป้อนเวลาเริ่มต้น (ตัวอย่าง: 1: 15)";
+"EditEndTime" = "ปรับเวลาสิ้นสุด";
+"EditEndTime_Desc" = "โปรดป้อนเวลาสิ้นสุด (ตัวอย่าง: 1: 15)";
+"From" = ""; // Time. Example: From 1:15 to 3:00. If you dont need it, just leave empty
+"to" = "至"; // Time. Example: From 1:15 to 3:00
+"EditCategory" = "เปลี่ยนการจำแนกประเภท";
+"EditSegment" = "ระยะเวลาการแก้ไข";
+"Edit" = "แก้ไข";
+"Error" = "ความผิดพลาด";
+"ErrorCode" = "รหัสข้อผิดพลาด";
+"Success" = "ความสำเร็จ";
+"OK" = "แน่นอน";
+"Cancel" = "ยกเลิก";
+"Delete" = "ลบ";
+"Upvote" = "ชื่นชม";
+"Downvote" = "รีวิวที่ไม่ดี";
+"VoteToChangeCategory" = "การจำแนกประเภทการแก้ไขการลงคะแนน";
+"VoteOnSegment" = "สำหรับคะแนนเวลา";
+"SuccessfullyVoted" = "การลงคะแนนให้สำเร็จ";
+"ErrorVoting" = "โหวตผิด";
+
+/* Pop-ups*/
+"ManuallySkipReminder" = "คลิกเพื่อข้าม%@ช่วงเวลา：%ld:%02ld 至 %ld:%02ld";
+"Skip" = "กระโดดข้าม";
+"SkippedSegment" = "ข้ามระยะเวลา%@";
+"Unskip" = "อนุญาตให้ออกไป";
+
+/* Segments in pop-ups*/
+"sponsor" = "โฆษณา";
+"intro" = "เริ่ม";
+"outro" = "ตอนจบ";
+"interaction" = "เชิงโต้ตอบ";
+"selfpromo" = "ตนเอง";
+"music_offtopic" = "ไม่ใช่ดนตรี";
