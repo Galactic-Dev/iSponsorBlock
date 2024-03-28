@@ -529,12 +529,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 
 static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <SponsorSegment *> *arg1) {
     [self removeSponsorMarkers];
-    YTPlayerViewController *playerViewController;
-    if ([self isKindOfClass:%c(YTModularPlayerBarView)]) {
-        playerViewController = (YTPlayerViewController *)self.accessibilityDelegate.parentViewController;
-    } else {
-        playerViewController = ((YTSegmentableInlinePlayerBarView *)self).playerViewController;
-    }
+    YTPlayerViewController *playerViewController = (YTPlayerViewController *)self.accessibilityDelegate.parentViewController;
     if ([kWhitelistedChannels containsObject:playerViewController.channelID]) {
         return;
     }
@@ -549,9 +544,12 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
     if (referenceView == nil) return;
     CGFloat totalTime = self.totalTime;
     if (totalTime == 0) {
-        YTIModularPlayerBarModel *model = [self valueForKey:@"_model"];
-        totalTime = model.playingState.totalTimeSec;
+        @try {
+            YTIModularPlayerBarModel *model = [self valueForKey:@"_model"];
+            totalTime = model.playingState.totalTimeSec;
+        } @catch (id ex) {}
     }
+    if (totalTime == 0) return;
     CGFloat originY = referenceView.frame.origin.y;
     for (SponsorSegment *segment in arg1) {
         CGFloat startTime = segment.startTime;
