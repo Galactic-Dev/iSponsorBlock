@@ -1,9 +1,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 #import <dlfcn.h>
+#import "YouTubeHeader/YTIModularPlayerBarModel.h"
 #import "YouTubeHeader/YTInlinePlayerBarView.h"
 #import "YouTubeHeader/YTMainAppControlsOverlayView.h"
 #import "YouTubeHeader/YTMainAppVideoPlayerOverlayViewController.h"
+#import "YouTubeHeader/YTModularPlayerBarController.h"
 #import "YouTubeHeader/YTRightNavigationButtons.h"
 #import "YouTubeHeader/YTPageStyleController.h"
 #import "YouTubeHeader/YTPlayerView.h"
@@ -84,6 +86,13 @@ extern NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTSegmentableInlinePlayerBarView (iSB)
+@property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+@property (strong, nonatomic) NSMutableArray *skipSegments;
+- (void)removeSponsorMarkers;
+- (void)maybeCreateMarkerViewsISB;
+@end
+
+@interface YTModularPlayerBarView (iSB)
 @property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 @property (strong, nonatomic) NSMutableArray *skipSegments;
 - (void)removeSponsorMarkers;

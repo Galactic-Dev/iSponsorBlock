@@ -52,8 +52,14 @@
                 YTPlayerView *playerView = (YTPlayerView *)playerViewController.view;
                 YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
                 if ([overlayView isKindOfClass:objc_getClass("YTMainAppVideoPlayerOverlayView")]) {
-                    if (overlayView.playerBar.playerBar) {
-                        [overlayView.playerBar.playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                    id playerBar = overlayView.playerBar.playerBar;
+                    if (playerBar) {
+                        if ([playerBar isKindOfClass:objc_getClass("YTModularPlayerBarController")]) {
+                            YTModularPlayerBarView *view = ((YTModularPlayerBarController *)playerBar).view;
+                            [view performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                        } else {
+                            [playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                        }
                     }
                     else {
                         [overlayView.playerBar.segmentablePlayerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
