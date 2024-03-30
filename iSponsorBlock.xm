@@ -957,6 +957,7 @@ NSInteger pageStyle = 0;
     [self addSubview:self.sponsorBlockButton];
     if (!self.sponsorBlockButton || pageStyle != [%c(YTPageStyleController) pageStyle]) {
         self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
+	[self.sponsorBlockButton enableNewTouchFeedback];
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if ([%c(YTPageStyleController) pageStyle]) { //dark mode
