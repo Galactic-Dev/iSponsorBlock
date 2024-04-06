@@ -69,7 +69,7 @@
     // I'm using the playerBar skipSegments instead of the playerViewController ones because of the show in seek bar option
     YTPlayerView *playerView = (YTPlayerView *)self.playerViewController.view;
     YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
-    if ([overlayView.playerBar.playerBar skipSegments].count > 0 || overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) {
+    if ([overlayView.playerBar.playerBar skipSegments].count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.segmentsInDatabaseLabel.userInteractionEnabled = YES;
         
@@ -86,13 +86,7 @@
         [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:playerView.widthAnchor].active = YES;
         [self.segmentsInDatabaseLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
         
-        NSArray *segmentViewsForSegments;
-        if (overlayView.playerBar.playerBar) {
-            segmentViewsForSegments = overlayView.playerBar.playerBar.skipSegments;
-        }
-        else {
-            segmentViewsForSegments = overlayView.playerBar.segmentablePlayerBar.skipSegments;
-        }
+        NSArray *segmentViewsForSegments = overlayView.playerBar.playerBar.skipSegments;
         self.sponsorSegmentViews = [self segmentViewsForSegments:segmentViewsForSegments editable:NO];
         
         for (int i = 0; i < self.sponsorSegmentViews.count; i++) {
@@ -154,7 +148,7 @@
         [playerView addSubview:self.userSegmentsLabel];
         self.userSegmentsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        if ([overlayView.playerBar.playerBar skipSegments].count > 0 || overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
+        if ([overlayView.playerBar.playerBar skipSegments].count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
         else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-10].active = YES;
         
         [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:playerView.centerXAnchor].active = YES;

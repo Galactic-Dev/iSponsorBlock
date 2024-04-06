@@ -8,6 +8,7 @@
 #import "YouTubeHeader/YTModularPlayerBarController.h"
 #import "YouTubeHeader/YTRightNavigationButtons.h"
 #import "YouTubeHeader/YTPageStyleController.h"
+#import "YouTubeHeader/YTPlayerBarProtocol.h"
 #import "YouTubeHeader/YTPlayerView.h"
 #import "YouTubeHeader/YTPlayerViewController.h"
 #import "YouTubeHeader/YTPlayerBarSegmentMarkerView.h"

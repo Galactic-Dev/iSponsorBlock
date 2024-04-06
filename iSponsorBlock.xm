@@ -56,7 +56,7 @@ NSDictionary *categoryLocalization = @{
 %group Main
 NSString *modifiedTimeString;
 
-void maybeCreateMarkerViewsISBInner(id object) {
+void maybeCreateMarkerViewsISBInner(id <YTPlayerBarProtocol> object) {
     if ([object isKindOfClass:%c(YTSegmentableInlinePlayerBarView)])
         [(YTSegmentableInlinePlayerBarView *)object maybeCreateMarkerViewsISB];
     else if ([object isKindOfClass:%c(YTModularPlayerBarController)]) {
@@ -70,7 +70,7 @@ void maybeCreateMarkerViewsISB(YTPlayerViewController *self) {
     YTPlayerView *playerView = (YTPlayerView *)self.view;
     YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
     if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTSegmentableInlinePlayerBarView *object = overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> object = overlayView.playerBar.segmentablePlayerBar;
         maybeCreateMarkerViewsISBInner(object);
     }
 }
@@ -185,20 +185,21 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         }
     }
     if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTSegmentableInlinePlayerBarView *playerBarView = overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> playerBarView = overlayView.playerBar.segmentablePlayerBar;
         
         maybeCreateMarkerViewsISBInner(playerBarView);
 
         NSArray *subviews;
         if ([playerBarView isKindOfClass:%c(YTSegmentableInlinePlayerBarView)]) {
-            subviews = playerBarView.subviews;
+            subviews = ((YTSegmentableInlinePlayerBarView *)playerBarView).subviews;
         } else if ([playerBarView isKindOfClass:%c(YTModularPlayerBarController)]) {
             playerBarView = (YTSegmentableInlinePlayerBarView *)((YTModularPlayerBarController *)playerBarView).view;
-            subviews = playerBarView.subviews;
+            subviews = ((YTSegmentableInlinePlayerBarView *)playerBarView).subviews;
         }
         
         for (UIView *markerView in subviews) {
-            if (![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
+            YTModularPlayerBarView *castedPlayerBarView = (YTModularPlayerBarView *)playerBarView;
+            if (![castedPlayerBarView.sponsorMarkerViews containsObject:markerView] && castedPlayerBarView.skipSegments.count == 0) {
                 maybeCreateMarkerViewsISBInner(playerBarView);
                 return;
             }
@@ -645,7 +646,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
 }
 
 //thanks @iCraze >>
-%new
+%new(@@:)
 - (id)playerBar {
     return [self segmentablePlayerBar];
 }

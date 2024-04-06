@@ -62,7 +62,7 @@
                         }
                     }
                     else {
-                        [overlayView.playerBar.segmentablePlayerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
+                        [overlayView.playerBar.playerBar performSelectorOnMainThread:@selector(setSkipSegments:) withObject:seekBarSegments waitUntilDone:NO];
                     }
                 }
             }
