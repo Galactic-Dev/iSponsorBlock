@@ -519,7 +519,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
 }
 
-%new
+%new(v@:)
 - (void)removeSponsorMarkers {
     for (UIView *markerView in self.sponsorMarkerViews) {
         [markerView removeFromSuperview];
@@ -540,7 +540,12 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
     @try {
         referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
     } @catch (id ex) {
-        referenceView = self.subviews.count > 1 ? self.subviews[1] : nil;
+        for (UIView *subview in self.subviews) {
+            if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")]) {
+                referenceView = subview;
+                break;
+            }
+        }
     }
     if (referenceView == nil) return;
     CGFloat totalTime = self.totalTime;
@@ -592,7 +597,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
     setSkipSegments((YTModularPlayerBarView *)self, arg1);
 }
 
-%new
+%new(v@:)
 - (void)removeSponsorMarkers {
     for (UIView *markerView in self.sponsorMarkerViews) {
         [markerView removeFromSuperview];
@@ -614,7 +619,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
     setSkipSegments(self, arg1);
 }
 
-%new
+%new(v@:)
 - (void)removeSponsorMarkers {
     for (UIView *markerView in self.sponsorMarkerViews) {
         [markerView removeFromSuperview];
