@@ -70,7 +70,7 @@ void maybeCreateMarkerViewsISB(YTPlayerViewController *self) {
     YTPlayerView *playerView = (YTPlayerView *)self.view;
     YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
     if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        id <YTPlayerBarProtocol> object = overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> object = overlayView.playerBar.modularPlayerBar ?: overlayView.playerBar.segmentablePlayerBar;
         maybeCreateMarkerViewsISBInner(object);
     }
 }
@@ -185,7 +185,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         }
     }
     if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        id <YTPlayerBarProtocol> playerBarView = overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> playerBarView = overlayView.playerBar.modularPlayerBar ?: overlayView.playerBar.segmentablePlayerBar;
         
         maybeCreateMarkerViewsISBInner(playerBarView);
 
@@ -653,7 +653,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
 //thanks @iCraze >>
 %new(@@:)
 - (id)playerBar {
-    return [self segmentablePlayerBar];
+    return self.modularPlayerBar ? [self modularPlayerBar] : [self segmentablePlayerBar];
 }
 %end
 
