@@ -37,6 +37,10 @@ extern BOOL kEnableSkipCountTracking;
 extern CGFloat kSkipNoticeDuration;
 extern NSMutableArray <NSString *> *kWhitelistedChannels;
 
+@interface YTInlinePlayerBarContainerView (iSB)
+@property (nonatomic, strong, readwrite) id modularPlayerBar;
+@end
+
 @interface YTPlayerViewController (iSB)
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *skipSegments;
 @property (nonatomic, assign) NSInteger currentSponsorSegment;
