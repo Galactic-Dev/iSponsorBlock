@@ -16,7 +16,7 @@
     YTPlayerView *playerView = (YTPlayerView *)self.playerViewController.view;
     YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
     if ([overlayView isKindOfClass:NSClassFromString(@"YTMainAppVideoPlayerOverlayView")]) {
-        id <YTPlayerBarProtocol> object = overlayView.playerBar.modularPlayerBar ?: overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> object = [overlayView.playerBar respondsToSelector:@selector(modularPlayerBar)] ? overlayView.playerBar.modularPlayerBar : overlayView.playerBar.segmentablePlayerBar;
         if ([object isKindOfClass:NSClassFromString(@"YTSegmentableInlinePlayerBarView")])
             return ((YTSegmentableInlinePlayerBarView *)object).skipSegments;
         if ([object isKindOfClass:NSClassFromString(@"YTModularPlayerBarController")]) {
