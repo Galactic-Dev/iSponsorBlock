@@ -437,7 +437,15 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     self.isDisplayingSponsorBlockViewController = YES;
     self.sponsorBlockButton.hidden = YES;
     self.sponsorStartedEndedButton.hidden = YES;
-    if ([self.playerViewController playerViewLayout] == 3) [self.playerViewController didPressToggleFullscreen];
+    YTPlayerViewController *pvc = self.playerViewController;
+    if ([pvc playerViewLayout] == 3) {
+        if ([pvc respondsToSelector:@selector(didPressToggleFullscreen)])
+            [pvc didPressToggleFullscreen];
+        else {
+            YTPlayerOverlayManager *overlayManager = pvc.overlayManager;
+            [overlayManager didPressToggleFullscreen];
+        }
+    }
     [self presentSponsorBlockViewController];
 }
 %new

@@ -13,6 +13,7 @@
 #import "YouTubeHeader/YTPlayerViewController.h"
 #import "YouTubeHeader/YTPlayerBarSegmentMarkerView.h"
 #import "YouTubeHeader/YTPlayerBarSegmentedProgressView.h"
+#import "YouTubeHeader/YTPlayerOverlayManager.h"
 #import "YouTubeHeader/YTSegmentableInlinePlayerBarView.h"
 #import "YouTubeHeader/YTSingleVideoTime.h"
 #import "YouTubeHeader/YTNGWatchLayerViewController.h"
