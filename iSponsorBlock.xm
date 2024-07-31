@@ -13,10 +13,7 @@ extern "C" NSBundle *iSponsorBlockBundle() {
     static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
         NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:@"iSponsorBlock" ofType:@"bundle"];
-        if (tweakBundlePath)
-            bundle = [NSBundle bundleWithPath:tweakBundlePath];
-        else
-            bundle = [NSBundle bundleWithPath:ROOT_PATH_NS("/Library/Application Support/iSponsorBlock.bundle")];
+        bundle = [NSBundle bundleWithPath:(tweakBundlePath ?: ROOT_PATH_NS(@"/Library/Application Support/iSponsorBlock.bundle"))];
     });
     return bundle;
 }
@@ -58,6 +55,25 @@ NSDictionary *categoryLocalization = @{
 
 %group Main
 NSString *modifiedTimeString;
+
+void maybeCreateMarkerViewsISBInner(id <YTPlayerBarProtocol> object) {
+    if ([object isKindOfClass:%c(YTSegmentableInlinePlayerBarView)])
+        [(YTSegmentableInlinePlayerBarView *)object maybeCreateMarkerViewsISB];
+    else if ([object isKindOfClass:%c(YTModularPlayerBarController)]) {
+        YTModularPlayerBarView *view = ((YTModularPlayerBarController *)object).view;
+        if ([view isKindOfClass:%c(YTModularPlayerBarView)])
+            [view maybeCreateMarkerViewsISB];
+    }
+}
+
+void maybeCreateMarkerViewsISB(YTPlayerViewController *self) {
+    YTPlayerView *playerView = (YTPlayerView *)self.view;
+    YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
+    if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
+        id <YTPlayerBarProtocol> object = [overlayView.playerBar respondsToSelector:@selector(modularPlayerBar)] ? overlayView.playerBar.modularPlayerBar : overlayView.playerBar.segmentablePlayerBar;
+        maybeCreateMarkerViewsISBInner(object);
+    }
+}
 
 void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *arg2) {
     YTPlayerView *playerView = (YTPlayerView *)self.view;
@@ -169,13 +185,22 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         }
     }
     if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTSegmentableInlinePlayerBarView *playerBarView = overlayView.playerBar.segmentablePlayerBar;
+        id <YTPlayerBarProtocol> playerBarView = [overlayView.playerBar respondsToSelector:@selector(modularPlayerBar)] ? overlayView.playerBar.modularPlayerBar : overlayView.playerBar.segmentablePlayerBar;
         
-        [playerBarView maybeCreateMarkerViewsISB];
+        maybeCreateMarkerViewsISBInner(playerBarView);
+
+        NSArray *subviews;
+        if ([playerBarView isKindOfClass:%c(YTSegmentableInlinePlayerBarView)]) {
+            subviews = ((YTSegmentableInlinePlayerBarView *)playerBarView).subviews;
+        } else if ([playerBarView isKindOfClass:%c(YTModularPlayerBarController)]) {
+            playerBarView = (YTSegmentableInlinePlayerBarView *)((YTModularPlayerBarController *)playerBarView).view;
+            subviews = ((YTSegmentableInlinePlayerBarView *)playerBarView).subviews;
+        }
         
-        for (UIView *markerView in playerBarView.subviews) {
-            if (![playerBarView.sponsorMarkerViews containsObject:markerView] && playerBarView.skipSegments.count == 0) {
-                [playerBarView maybeCreateMarkerViewsISB];
+        for (UIView *markerView in subviews) {
+            YTModularPlayerBarView *castedPlayerBarView = (YTModularPlayerBarView *)playerBarView;
+            if (![castedPlayerBarView.sponsorMarkerViews containsObject:markerView] && castedPlayerBarView.skipSegments.count == 0) {
+                maybeCreateMarkerViewsISBInner(playerBarView);
                 return;
             }
         }
@@ -254,12 +279,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 %new
 - (void)isb_fixVisualGlitch {
     if (!self.isPlayingAd) {
-        YTPlayerView *playerView = (YTPlayerView *)self.view;
-        YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
-        if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-            YTSegmentableInlinePlayerBarView *playerBarView = overlayView.playerBar.segmentablePlayerBar;
-            [playerBarView maybeCreateMarkerViewsISB];
-        }
+        maybeCreateMarkerViewsISB(self);
     }
 }
 
@@ -326,22 +346,12 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 
 - (void)setPlayerViewLayout:(NSInteger)arg1 {
     %orig;
-    YTPlayerView *playerView = (YTPlayerView *)self.view;
-    YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
-    if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTSegmentableInlinePlayerBarView *playerBarView = overlayView.playerBar.segmentablePlayerBar;
-        [playerBarView maybeCreateMarkerViewsISB];
-    }
+    maybeCreateMarkerViewsISB(self);
 }
 
 - (void)updateViewportSizeProvider {
     %orig;
-    YTPlayerView *playerView = (YTPlayerView *)self.view;
-    YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
-    if ([overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) {
-        YTSegmentableInlinePlayerBarView *playerBarView = overlayView.playerBar.segmentablePlayerBar;
-        [playerBarView maybeCreateMarkerViewsISB];
-    }
+    maybeCreateMarkerViewsISB(self);
 }
 %end
 
@@ -427,7 +437,15 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     self.isDisplayingSponsorBlockViewController = YES;
     self.sponsorBlockButton.hidden = YES;
     self.sponsorStartedEndedButton.hidden = YES;
-    if ([self.playerViewController playerViewLayout] == 3) [self.playerViewController didPressToggleFullscreen];
+    YTPlayerViewController *pvc = self.playerViewController;
+    if ([pvc playerViewLayout] == 3) {
+        if ([pvc respondsToSelector:@selector(didPressToggleFullscreen)])
+            [pvc didPressToggleFullscreen];
+        else {
+            YTPlayerOverlayManager *overlayManager = pvc.overlayManager;
+            [overlayManager didPressToggleFullscreen];
+        }
+    }
     [self presentSponsorBlockViewController];
 }
 %new
@@ -509,7 +527,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
 }
 
-%new
+%new(v@:)
 - (void)removeSponsorMarkers {
     for (UIView *markerView in self.sponsorMarkerViews) {
         [markerView removeFromSuperview];
@@ -518,31 +536,41 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 }
 %end
 
-%hook YTSegmentableInlinePlayerBarView
-%property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
-%property (strong, nonatomic) NSMutableArray *skipSegments;
-%property (strong, nonatomic) YTPlayerViewController *playerViewController;
-%new
-- (void)maybeCreateMarkerViewsISB {
+static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <SponsorSegment *> *arg1) {
     [self removeSponsorMarkers];
-    self.skipSegments = self.skipSegments;
-}
-- (void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
-    %orig;
-    [self removeSponsorMarkers];
-    if ([kWhitelistedChannels containsObject:self.playerViewController.channelID]) {
+    UIViewController *delegate = (UIViewController *)self.accessibilityDelegate;
+    YTPlayerViewController *playerViewController = (YTPlayerViewController *)delegate.parentViewController;
+    if ([kWhitelistedChannels containsObject:playerViewController.channelID]) {
         return;
     }
     self.sponsorMarkerViews = [NSMutableArray array];
     UIView *scrubber = [self valueForKey:@"_scrubberCircle"];
-    UIView *referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
+    UIView *referenceView;
+    @try {
+        referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
+    } @catch (id ex) {
+        for (UIView *subview in self.subviews) {
+            if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")]) {
+                referenceView = subview;
+                break;
+            }
+        }
+    }
     if (referenceView == nil) return;
+    CGFloat totalTime = self.totalTime;
+    if (totalTime == 0) {
+        @try {
+            YTIModularPlayerBarModel *model = [self valueForKey:@"_model"];
+            totalTime = model.playingState.totalTimeSec;
+        } @catch (id ex) {}
+    }
+    if (totalTime == 0) return;
     CGFloat originY = referenceView.frame.origin.y;
     for (SponsorSegment *segment in arg1) {
         CGFloat startTime = segment.startTime;
         CGFloat endTime = segment.endTime;
-        CGFloat beginX = (startTime * self.frame.size.width) / self.totalTime;
-        CGFloat endX = (endTime * self.frame.size.width) / self.totalTime;
+        CGFloat beginX = (startTime * self.frame.size.width) / totalTime;
+        CGFloat endX = (endTime * self.frame.size.width) / totalTime;
         CGFloat markerWidth = MAX(endX - beginX, 0);
         
         UIColor *color;
@@ -565,7 +593,20 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
 }
 
+%hook YTSegmentableInlinePlayerBarView
+%property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+%property (strong, nonatomic) NSMutableArray *skipSegments;
 %new
+- (void)maybeCreateMarkerViewsISB {
+    [self removeSponsorMarkers];
+    self.skipSegments = self.skipSegments;
+}
+- (void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
+    %orig;
+    setSkipSegments((YTModularPlayerBarView *)self, arg1);
+}
+
+%new(v@:)
 - (void)removeSponsorMarkers {
     for (UIView *markerView in self.sponsorMarkerViews) {
         [markerView removeFromSuperview];
@@ -574,6 +615,27 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 }
 %end
 
+%hook YTModularPlayerBarView
+%property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+%property (strong, nonatomic) NSMutableArray *skipSegments;
+%new
+- (void)maybeCreateMarkerViewsISB {
+    [self removeSponsorMarkers];
+    self.skipSegments = self.skipSegments;
+}
+- (void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)arg1 {
+    %orig;
+    setSkipSegments(self, arg1);
+}
+
+%new(v@:)
+- (void)removeSponsorMarkers {
+    for (UIView *markerView in self.sponsorMarkerViews) {
+        [markerView removeFromSuperview];
+    }
+    self.sponsorMarkerViews = [NSMutableArray array];
+}
+%end
 
 %hook YTInlinePlayerBarContainerView
 - (instancetype)initWithScrubbedTimeLabelsDisplayBelowStoryboard:(BOOL)arg1 enableSegmentedProgressView:(BOOL)arg2 {
@@ -597,9 +659,9 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 }
 
 //thanks @iCraze >>
-%new
+%new(@@:)
 - (id)playerBar {
-    return [self segmentablePlayerBar];
+    return [self respondsToSelector:@selector(modularPlayerBar)] && self.modularPlayerBar ? [self modularPlayerBar] : [self segmentablePlayerBar];
 }
 %end
 
@@ -909,6 +971,7 @@ NSInteger pageStyle = 0;
     [self addSubview:self.sponsorBlockButton];
     if (!self.sponsorBlockButton || pageStyle != [%c(YTPageStyleController) pageStyle]) {
         self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
+	[self.sponsorBlockButton enableNewTouchFeedback];
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
         
         if ([%c(YTPageStyleController) pageStyle]) { //dark mode

@@ -11,6 +11,23 @@
     [self setupViews];
 }
 
+- (NSArray *)skipSegments {
+    // I'm using the playerBar skipSegments instead of the playerViewController ones because of the show in seek bar option
+    YTPlayerView *playerView = (YTPlayerView *)self.playerViewController.view;
+    YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
+    if ([overlayView isKindOfClass:NSClassFromString(@"YTMainAppVideoPlayerOverlayView")]) {
+        id <YTPlayerBarProtocol> object = [overlayView.playerBar respondsToSelector:@selector(modularPlayerBar)] ? overlayView.playerBar.modularPlayerBar : overlayView.playerBar.segmentablePlayerBar;
+        if ([object isKindOfClass:NSClassFromString(@"YTSegmentableInlinePlayerBarView")])
+            return ((YTSegmentableInlinePlayerBarView *)object).skipSegments;
+        if ([object isKindOfClass:NSClassFromString(@"YTModularPlayerBarController")]) {
+            YTModularPlayerBarView *view = ((YTModularPlayerBarController *)object).view;
+            if ([view isKindOfClass:NSClassFromString(@"YTModularPlayerBarView")])
+                return view.skipSegments;
+        }
+    }
+    return nil;
+}
+
 - (void)setupViews {
     [self.segmentsInDatabaseLabel removeFromSuperview];
     [self.userSegmentsLabel removeFromSuperview];
@@ -66,10 +83,9 @@
         [whitelistSwitch setOn:NO animated:NO];
     }
 
-    // I'm using the playerBar skipSegments instead of the playerViewController ones because of the show in seek bar option
     YTPlayerView *playerView = (YTPlayerView *)self.playerViewController.view;
-    YTMainAppVideoPlayerOverlayView *overlayView = (YTMainAppVideoPlayerOverlayView *)playerView.overlayView;
-    if ([overlayView.playerBar.playerBar skipSegments].count > 0 || overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) {
+    NSArray *skipSegments = [self skipSegments];
+    if (skipSegments.count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.segmentsInDatabaseLabel.userInteractionEnabled = YES;
         
@@ -86,14 +102,7 @@
         [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:playerView.widthAnchor].active = YES;
         [self.segmentsInDatabaseLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
         
-        NSArray *segmentViewsForSegments;
-        if (overlayView.playerBar.playerBar) {
-            segmentViewsForSegments = overlayView.playerBar.playerBar.skipSegments;
-        }
-        else {
-            segmentViewsForSegments = overlayView.playerBar.segmentablePlayerBar.skipSegments;
-        }
-        self.sponsorSegmentViews = [self segmentViewsForSegments:segmentViewsForSegments editable:NO];
+        self.sponsorSegmentViews = [self segmentViewsForSegments:skipSegments editable:NO];
         
         for (int i = 0; i < self.sponsorSegmentViews.count; i++) {
             [self.segmentsInDatabaseLabel addSubview:self.sponsorSegmentViews[i]];
@@ -154,7 +163,7 @@
         [playerView addSubview:self.userSegmentsLabel];
         self.userSegmentsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
-        if ([overlayView.playerBar.playerBar skipSegments].count > 0 || overlayView.playerBar.segmentablePlayerBar.skipSegments.count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
+        if (skipSegments.count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
         else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-10].active = YES;
         
         [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:playerView.centerXAnchor].active = YES;

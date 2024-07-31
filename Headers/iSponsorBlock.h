@@ -1,15 +1,19 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 #import <dlfcn.h>
+#import "YouTubeHeader/YTIModularPlayerBarModel.h"
 #import "YouTubeHeader/YTInlinePlayerBarView.h"
 #import "YouTubeHeader/YTMainAppControlsOverlayView.h"
 #import "YouTubeHeader/YTMainAppVideoPlayerOverlayViewController.h"
+#import "YouTubeHeader/YTModularPlayerBarController.h"
 #import "YouTubeHeader/YTRightNavigationButtons.h"
 #import "YouTubeHeader/YTPageStyleController.h"
+#import "YouTubeHeader/YTPlayerBarProtocol.h"
 #import "YouTubeHeader/YTPlayerView.h"
 #import "YouTubeHeader/YTPlayerViewController.h"
 #import "YouTubeHeader/YTPlayerBarSegmentMarkerView.h"
 #import "YouTubeHeader/YTPlayerBarSegmentedProgressView.h"
+#import "YouTubeHeader/YTPlayerOverlayManager.h"
 #import "YouTubeHeader/YTSegmentableInlinePlayerBarView.h"
 #import "YouTubeHeader/YTSingleVideoTime.h"
 #import "YouTubeHeader/YTNGWatchLayerViewController.h"
@@ -33,6 +37,10 @@ extern BOOL kSkipAudioNotification;
 extern BOOL kEnableSkipCountTracking;
 extern CGFloat kSkipNoticeDuration;
 extern NSMutableArray <NSString *> *kWhitelistedChannels;
+
+@interface YTInlinePlayerBarContainerView (iSB)
+@property (nonatomic, strong, readwrite) id modularPlayerBar;
+@end
 
 @interface YTPlayerViewController (iSB)
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *skipSegments;
@@ -84,6 +92,13 @@ extern NSMutableArray <NSString *> *kWhitelistedChannels;
 @end
 
 @interface YTSegmentableInlinePlayerBarView (iSB)
+@property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
+@property (strong, nonatomic) NSMutableArray *skipSegments;
+- (void)removeSponsorMarkers;
+- (void)maybeCreateMarkerViewsISB;
+@end
+
+@interface YTModularPlayerBarView (iSB)
 @property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 @property (strong, nonatomic) NSMutableArray *skipSegments;
 - (void)removeSponsorMarkers;
