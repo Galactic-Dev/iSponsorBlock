@@ -557,7 +557,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         }
     }
     if (referenceView == nil) return;
-    CGFloat totalTime = self.totalTime;
+    CGFloat totalTime = [self respondsToSelector:@selector(totalTime)] ? self.totalTime : 0;
     if (totalTime == 0) {
         @try {
             YTIModularPlayerBarModel *model = [self valueForKey:@"_model"];
