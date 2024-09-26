@@ -538,7 +538,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 
 static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <SponsorSegment *> *arg1) {
     [self removeSponsorMarkers];
-    UIViewController *delegate = (UIViewController *)self.accessibilityDelegate;
+    UIViewController *delegate = [self valueForKey:@"_accessibilityDelegate"];
     YTPlayerViewController *playerViewController = (YTPlayerViewController *)delegate.parentViewController;
     if ([kWhitelistedChannels containsObject:playerViewController.channelID]) {
         return;
