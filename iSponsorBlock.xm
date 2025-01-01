@@ -217,7 +217,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 %property (nonatomic, assign) BOOL hudDisplayed;
 
 // used to keep support for older versions, as seekToTime is new
-%new
+%new(v@:d)
 - (void)isb_scrubToTime:(CGFloat)time {
     // YT v17.30.1 switched scrubToTime to seekToTime
     [self respondsToSelector:@selector(scrubToTime:)] ? [self scrubToTime:time] : [self seekToTime:time];
@@ -276,7 +276,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
 }
 
-%new
+%new(v@:)
 - (void)isb_fixVisualGlitch {
     if (!self.isPlayingAd) {
         maybeCreateMarkerViewsISB(self);
@@ -293,7 +293,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     [self isb_fixVisualGlitch];
 }
 
-%new
+%new(v@:@)
 - (void)unskipSegment:(UIButton *)sender {
     if (self.currentSponsorSegment > 0) {
         [self isb_scrubToTime:self.skipSegments[self.currentSponsorSegment-1].startTime];
@@ -305,7 +305,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
-%new
+%new(v@:@)
 - (void)manuallySkipSegment:(UIButton *)sender {
     SponsorSegment *sponsorSegment = [[SponsorSegment alloc] initWithStartTime:-1 endTime:-1 category:nil UUID:nil];
     if (self.currentSponsorSegment <= self.skipSegments.count-1) {
@@ -339,7 +339,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
 }
 
-%new
+%new(v@:@)
 - (void)cancelHUD:(UIButton *)sender {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
@@ -432,7 +432,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     %orig;
 }
 
-%new
+%new(v@:@)
 - (void)sponsorBlockButtonPressed:(YTQTMButton *)sender {
     self.isDisplayingSponsorBlockViewController = YES;
     self.sponsorBlockButton.hidden = YES;
@@ -448,7 +448,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
     }
     [self presentSponsorBlockViewController];
 }
-%new
+%new(v@:@)
 - (void)sponsorStartedEndedButtonPressed:(YTQTMButton *)sender {
     if (self.playerViewController.userSkipSegments.lastObject.endTime != -1) {
         [self.playerViewController.userSkipSegments addObject:[[SponsorSegment alloc] initWithStartTime:self.playerViewController.currentVideoMediaTime endTime:-1 category:nil UUID:nil]];
@@ -467,7 +467,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         [self.sponsorStartedEndedButton setImage:[UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblockstart-20@2x" ofType:@"png"]] forState:UIControlStateNormal];
     }
 }
-%new
+%new(v@:)
 - (void)presentSponsorBlockViewController {
     SponsorBlockViewController *addSponsorViewController = [[SponsorBlockViewController alloc] init];
     addSponsorViewController.playerViewController = self.playerViewController;
@@ -485,7 +485,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 %property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 %property (strong, nonatomic) NSMutableArray *skipSegments;
 %property (strong, nonatomic) YTPlayerViewController *playerViewController;
-%new
+%new(v@:)
 - (void)maybeCreateMarkerViewsISB {
     [self removeSponsorMarkers];
     self.skipSegments = self.skipSegments;
@@ -596,7 +596,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
 %hook YTSegmentableInlinePlayerBarView
 %property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 %property (strong, nonatomic) NSMutableArray *skipSegments;
-%new
+%new(v@:)
 - (void)maybeCreateMarkerViewsISB {
     [self removeSponsorMarkers];
     self.skipSegments = self.skipSegments;
@@ -618,7 +618,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
 %hook YTModularPlayerBarView
 %property (strong, nonatomic) NSMutableArray *sponsorMarkerViews;
 %property (strong, nonatomic) NSMutableArray *skipSegments;
-%new
+%new(v@:)
 - (void)maybeCreateMarkerViewsISB {
     [self removeSponsorMarkers];
     self.skipSegments = self.skipSegments;
@@ -720,7 +720,7 @@ AVQueuePlayer *queuePlayer;
     return downloadObject;
 }
 
-%new
+%new(v@:@)
 - (void)setSkipSegments:(NSMutableArray <SponsorSegment *> *)skipSegments {
     NSString *path = [self.filePath.stringByDeletingLastPathComponent stringByAppendingPathComponent:[[self.fileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"plist"]];
     [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
@@ -793,7 +793,7 @@ AVQueuePlayer *queuePlayer;
     if (self.currentPlayerItem != 0) self.currentPlayerItem --;
     [self sponsorBlockSetup];
 }
-%new
+%new(v@:)
 - (void)updateMarkerViews {
     if (self.skipSegments.count > 0) {
         CGFloat totalTime = [@([self items][self.currentPlayerItem].duration.value) floatValue] / [self items][self.currentPlayerItem].duration.timescale;
@@ -808,7 +808,7 @@ AVQueuePlayer *queuePlayer;
         }
     }
 }
-%new
+%new(v@:)
 - (void)sponsorBlockSetup {
     if ([self items].count <= 0) return;
     NSString *path = [[[[self items][self.currentPlayerItem] _URL].path stringByDeletingPathExtension] stringByAppendingPathExtension:@"plist"];
@@ -947,7 +947,7 @@ AVQueuePlayer *queuePlayer;
         }
     }];
 }
-%new
+%new(v@:@)
 - (void)unskipSegment:(UIButton *)sender {
     if (self.currentSponsorSegment > 0) {
         [self seekToTime:CMTimeMake(self.skipSegments[self.currentSponsorSegment-1].startTime,1)];
@@ -1002,7 +1002,7 @@ NSInteger pageStyle = 0;
     }
     return retVal;
 }
-%new
+%new(v@:@)
 - (void)sponsorBlockButtonPressed:(UIButton *)sender {
     SponsorBlockSettingsController *settingsController = [[SponsorBlockSettingsController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:settingsController];
