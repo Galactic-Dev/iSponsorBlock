@@ -3,7 +3,7 @@ THEOS_PACKAGE_SCHEME=rootless
 endif
 
 export ARCHS = arm64
-TARGET := iphone:clang:latest:13.0
+TARGET := iphone:clang:16.5:13.0
 INSTALL_TARGET_PROCESSES = YouTube
 
 include $(THEOS)/makefiles/common.mk
