@@ -1,6 +1,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 #import <dlfcn.h>
+#import "YouTubeHeader/QTMIcon.h"
+#import "YouTubeHeader/YTAppDelegate.h"
+#import "YouTubeHeader/YTAppViewControllerImpl.h"
 #import "YouTubeHeader/YTIModularPlayerBarModel.h"
 #import "YouTubeHeader/YTInlinePlayerBarView.h"
 #import "YouTubeHeader/YTMainAppControlsOverlayView.h"
@@ -8,6 +11,7 @@
 #import "YouTubeHeader/YTModularPlayerBarController.h"
 #import "YouTubeHeader/YTRightNavigationButtons.h"
 #import "YouTubeHeader/YTPageStyleController.h"
+#import "YouTubeHeader/YTPageStyleControllerImpl.h"
 #import "YouTubeHeader/YTPlayerBarProtocol.h"
 #import "YouTubeHeader/YTPlayerView.h"
 #import "YouTubeHeader/YTPlayerViewController.h"
