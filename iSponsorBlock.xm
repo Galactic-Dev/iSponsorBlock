@@ -962,36 +962,35 @@ AVQueuePlayer *queuePlayer;
 %end
 
 %group JustSettings
-NSInteger pageStyle = 0;
 %hook YTRightNavigationButtons
 %property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
 - (NSMutableArray *)buttons {
     NSMutableArray *retVal = %orig.mutableCopy;
     [self.sponsorBlockButton removeFromSuperview];
     [self addSubview:self.sponsorBlockButton];
-    NSInteger currentPageStyle;
+    NSInteger pageStyle;
     Class YTPageStyleControllerClass = %c(YTPageStyleController);
     if (YTPageStyleControllerClass)
-        currentPageStyle = [YTPageStyleControllerClass pageStyle];
+        pageStyle = [YTPageStyleControllerClass pageStyle];
     else {
         YTAppDelegate *delegate = (YTAppDelegate *)[UIApplication sharedApplication].delegate;
         YTAppViewControllerImpl *appViewController = [delegate valueForKey:@"_appViewController"];
-        currentPageStyle = [appViewController pageStyle];
+        pageStyle = [appViewController pageStyle];
     }
-    if (!self.sponsorBlockButton || pageStyle != currentPageStyle) {
+    UIImage *image;
+    if (!self.sponsorBlockButton) {
         self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
 
         [self.sponsorBlockButton enableNewTouchFeedback];
         self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
 
-        UIImage *image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
-        if (!pageStyle)
-            image = [%c(QTMIcon) tintImage:image color:UIColor.blackColor];
-        pageStyle = currentPageStyle;
-        [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
+        image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
         [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [retVal insertObject:self.sponsorBlockButton atIndex:0];
+    } else {
+        image = [%c(QTMIcon) tintImage:self.sponsorBlockButton.currentImage color:pageStyle ? UIColor.whiteColor : UIColor.blackColor];
     }
+    [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
     return retVal;
 }
 - (NSMutableArray *)visibleButtons {
