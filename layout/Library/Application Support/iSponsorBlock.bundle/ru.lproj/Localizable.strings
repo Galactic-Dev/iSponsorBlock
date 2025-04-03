@@ -14,6 +14,7 @@
 "SelfPromo" = "Самореклама";
 "Non-MusicSection" = "Музыка: Сегмент без музыки";
 "Non-Music" = "Сегмент без музыки";
+"Preview" = "Preview";
 "SponsorBlockUserID" = "Идентификатор SponsorBlock";
 "SponsorBlockAPIInstance" = "Используемый API";
 
@@ -84,3 +85,4 @@
 "interaction" = "сегмент со\nвзаимодействием";
 "selfpromo" = "сегмент с\nсаморекламой";
 "music_offtopic" = "сегмент\nбез музыки";
+"preview" = "preview";

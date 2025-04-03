@@ -14,6 +14,7 @@
 "SelfPromo" = "自我宣传";
 "Non-MusicSection" = "音乐视频：非音乐时段";
 "Non-Music" = "非音乐时段";
+"Preview" = "Preview";
 "SponsorBlockUserID" = "SponsorBlock 用户 ID";
 "SponsorBlockAPIInstance" = "SponsorBlock API";
 
@@ -84,3 +85,4 @@
 "interaction" = "互动";
 "selfpromo" = "自我宣传";
 "music_offtopic" = "非音乐";
+"preview" = "preview";

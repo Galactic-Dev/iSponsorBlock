@@ -50,7 +50,8 @@ NSDictionary *categoryLocalization = @{
     @"outro": LOC(@"outro"),
     @"interaction": LOC(@"interaction"),
     @"selfpromo": LOC(@"selfpromo"),
-    @"music_offtopic": LOC(@"music_offtopic")
+    @"music_offtopic": LOC(@"music_offtopic"),
+    @"preview": LOC(@"preview"),
 };
 
 %group Main
@@ -511,6 +512,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         else if ([segment.category isEqualToString:@"interaction"]) color = colorWithHexString([kCategorySettings objectForKey:@"interactionColor"]);
         else if ([segment.category isEqualToString:@"selfpromo"]) color = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) color = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
+        else if ([segment.category isEqualToString:@"preview"]) color = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
         UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectZero];
         newMarkerView.backgroundColor = color;
         [self addSubview:newMarkerView];
@@ -580,6 +582,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         else if ([segment.category isEqualToString:@"interaction"]) color = colorWithHexString([kCategorySettings objectForKey:@"interactionColor"]);
         else if ([segment.category isEqualToString:@"selfpromo"]) color = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) color = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
+        else if ([segment.category isEqualToString:@"preview"]) color = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
 
         if (isnan(markerWidth) || !isfinite(beginX)) {
             return;
@@ -590,6 +593,23 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         newMarkerView.backgroundColor = color;
         [self insertSubview:newMarkerView belowSubview:scrubber];
         [self.sponsorMarkerViews addObject:newMarkerView];
+    }
+}
+
+static void updateSkipSegments(YTInlinePlayerBarContainerView *self) {
+    UIView *playerBar = [self playerBar];
+    if ([playerBar isKindOfClass:%c(YTModularPlayerBarController)])
+        playerBar = ((YTModularPlayerBarController *)playerBar).view;
+    NSUInteger index = [playerBar.subviews indexOfObjectPassingTest:^BOOL(UIView *view, NSUInteger idx, BOOL *stop) {
+        return [view isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")];
+    }];
+    if (index == NSNotFound) return;
+    UIView *referenceView = playerBar.subviews[index];
+    CGFloat originY = referenceView.frame.origin.y;
+    for (UIView *sponsorMarkerView in ((YTModularPlayerBarView *)playerBar).sponsorMarkerViews) {
+        CGRect frame = sponsorMarkerView.frame;
+        frame.origin.y = originY;
+        sponsorMarkerView.frame = frame;
     }
 }
 
@@ -656,6 +676,11 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         self.durationLabel.text = text;
         [self.durationLabel sizeToFit];
     }
+}
+
+- (void)layoutSubviews {
+    %orig;
+    updateSkipSegments(self);
 }
 
 //thanks @iCraze >>
@@ -837,6 +862,7 @@ AVQueuePlayer *queuePlayer;
         else if ([segment.category isEqualToString:@"interaction"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"interactionColor"]);
         else if ([segment.category isEqualToString:@"selfpromo"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
+        else if ([segment.category isEqualToString:@"preview"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
         [scrubber addSubview:markerView];
         [self.markerViews addObject:markerView];
     }
@@ -1042,7 +1068,9 @@ static void loadPrefs() {
         @"selfpromo" : @0,
         @"selfpromoColor" : hexFromUIColor(UIColor.yellowColor),
         @"music_offtopic" : @0,
-        @"music_offtopicColor" : hexFromUIColor(UIColor.orangeColor)
+        @"music_offtopicColor" : hexFromUIColor(UIColor.orangeColor),
+        @"preview": @0,
+        @"previewColor" : hexFromUIColor(UIColor.systemPurpleColor)
     };
     kMinimumDuration = [settings objectForKey:@"minimumDuration"] ? [[settings objectForKey:@"minimumDuration"] floatValue] : 0.0f;
     kShowSkipNotice = [settings objectForKey:@"showSkipNotice"] ? [[settings objectForKey:@"showSkipNotice"] boolValue] : YES;

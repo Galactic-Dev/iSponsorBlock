@@ -14,6 +14,7 @@
 "SelfPromo" = "自薦";
 "Non-MusicSection" = "音樂: 非音樂片段";
 "Non-Music" = "非音樂片段";
+"Preview" = "Preview";
 "SponsorBlockUserID" = "SponsorBlock 使用者 ID";
 "SponsorBlockAPIInstance" = "SponsorBlock API 範例";
 
@@ -84,3 +85,4 @@
 "interaction" = "推廣頻道";
 "selfpromo" = "自薦";
 "music_offtopic" = "非音樂";
+"preview" = "preview";

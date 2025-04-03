@@ -27,6 +27,9 @@
         else if ([segment.category isEqualToString:@"music_offtopic"]) {
             category = LOC(@"Non-Music");
         }
+        else if ([segment.category isEqualToString:@"preview"]) {
+            category = LOC(@"Preview");
+        }
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.segmentLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.categoryLabel.text = category;

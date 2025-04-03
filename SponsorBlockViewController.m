@@ -353,6 +353,16 @@
             }
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"music_offtopic" withViewController:self];
         }]];
+
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Preview") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            if (sponsorSegmentView.editable) {
+                sponsorSegmentView.sponsorSegment.category = @"preview";
+                [self setupViews];
+                return;
+            }
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"preview" withViewController:self];
+        }]];
+
         NSMutableArray* actions = [NSMutableArray array];
         if (sponsorSegmentView.editable) {
             [actions addObject:[UIAction actionWithTitle:LOC(@"EditStartTime") image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {

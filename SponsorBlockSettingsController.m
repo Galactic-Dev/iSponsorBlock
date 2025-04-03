@@ -96,7 +96,7 @@
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
 
-    self.sectionTitles = @[LOC(@"Sponsor"), LOC(@"Intermission/IntroAnimation"), LOC(@"Endcards/Credits"), LOC(@"InteractionReminder"), LOC(@"Unpaid/SelfPromotion"), LOC(@"Non-MusicSection"), LOC(@"SponsorBlockUserID"), LOC(@"SponsorBlockAPIInstance")];
+    self.sectionTitles = @[LOC(@"Sponsor"), LOC(@"Intermission/IntroAnimation"), LOC(@"Endcards/Credits"), LOC(@"InteractionReminder"), LOC(@"Unpaid/SelfPromotion"), LOC(@"Non-MusicSection"), LOC(@"Preview"), LOC(@"SponsorBlockUserID"), LOC(@"SponsorBlockAPIInstance")];
 }
 
 //Add iSponsorBlock text to Navbar label if header text out of screen
@@ -121,12 +121,12 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 18;
+    return 19;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) return 1;
-    else if (section <= 6 || section == 17) return 2;
+    else if (section <= 7 || section == 18) return 2;
     return 1;
 }
 
@@ -151,7 +151,7 @@
         return cell;
     }
 
-    if (indexPath.section <= 6) {
+    if (indexPath.section <= 7) {
         SponsorBlockTableCell *tableCell = [[SponsorBlockTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell2"];
         NSDictionary *categorySettings = [self.settings objectForKey:@"categorySettings"];
         UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[LOC(@"Disable"), LOC(@"AutoSkip"), LOC(@"ShowInSeekBar"), LOC(@"ManualSkip")]];
@@ -187,6 +187,10 @@
                 segmentedControl.selectedSegmentIndex = [[categorySettings objectForKey:@"music_offtopic"] intValue];
                 tableCell.category = @"music_offtopic";
                 break;
+            case 7:
+                segmentedControl.selectedSegmentIndex = [[categorySettings objectForKey:@"preview"] intValue];
+                tableCell.category = @"preview";
+                break;
                 
             default:
                 break;
@@ -211,7 +215,7 @@
         }
         return tableCell;
     }
-    if (indexPath.section == 7) {
+    if (indexPath.section == 8) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = LOC(@"UserID");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -219,7 +223,7 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section == 8) {
+    if (indexPath.section == 9) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = LOC(@"API_URL");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -227,7 +231,7 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section == 9) {
+    if (indexPath.section == 10) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = LOC(@"MinimumSegmentDuration");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -236,7 +240,7 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section == 10) {
+    if (indexPath.section == 11) {
         UITableViewCell *textCell = [[UITableViewCell alloc] initWithStyle:1000 reuseIdentifier:@"SponsorBlockTextCell"];
         textCell.textLabel.text = LOC(@"HowLongNoticeWillAppear");
         textCell.textLabel.adjustsFontSizeToFitWidth = YES;
@@ -245,26 +249,26 @@
         [textCell editableTextField].delegate = self;
         return textCell;
     }
-    if (indexPath.section >= 11 && indexPath.section < 17) {
+    if (indexPath.section >= 12 && indexPath.section < 18) {
         NSArray *titles = @[LOC(@"ShowSkipNotice"), LOC(@"ShowButtonsInPlayer"), LOC(@"HideStartEndButtonInPlayer"), LOC(@"ShowModifiedTime"), LOC(@"AudioNotificationOnSkip"), LOC(@"EnableSkipCountTracking")];
         NSArray *titlesNames = @[@"showSkipNotice", @"showButtonsInPlayer", @"hideStartEndButtonInPlayer", @"showModifiedTime", @"skipAudioNotification", @"enableSkipCountTracking"];
         UITableViewCell *tableCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockCell3"];
 
-        tableCell.textLabel.text = titles[indexPath.section-11];
+        tableCell.textLabel.text = titles[indexPath.section-12];
         tableCell.textLabel.adjustsFontSizeToFitWidth = YES;
 
         UISwitch *toggleSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0,0,51,31)];
         tableCell.accessoryView = toggleSwitch;
         [toggleSwitch addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
-        if ([self.settings valueForKey:titlesNames[indexPath.section-11]]) {
-            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-11]] boolValue] animated:NO];
+        if ([self.settings valueForKey:titlesNames[indexPath.section-12]]) {
+            [toggleSwitch setOn:[[self.settings valueForKey:titlesNames[indexPath.section-12]] boolValue] animated:NO];
         } else {
             [toggleSwitch setOn:YES animated:NO];
             [self switchToggled:toggleSwitch];
         }
         return tableCell;
     }
-    if (indexPath.section == 17) {
+    if (indexPath.section == 18) {
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SponsorBlockDonationCell"];
         cell.textLabel.text = indexPath.row == 0 ? LOC(@"DonateOnVenmo") : LOC(@"DonateOnPayPal");
         cell.imageView.image = [UIImage systemImageNamed:@"dollarsign.circle.fill"];
@@ -275,21 +279,21 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) return nil;
-    if (section <= 8) return self.sectionTitles[section-1];
+    if (section <= 9) return self.sectionTitles[section-1];
     return nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == 0) return LOC(@"RestartFooter");
-    if (section == 7) return LOC(@"UserIDFooter");
-    if (section == 8) return LOC(@"APIFooter");
-    if (section == 15) return LOC(@"AudioFooter");
+    if (section == 8) return LOC(@"UserIDFooter");
+    if (section == 9) return LOC(@"APIFooter");
+    if (section == 16) return LOC(@"AudioFooter");
     return nil;
 }
 
 //To allow highlights only for certain sections
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 17) {
+    if (indexPath.section == 18) {
         return YES;
     } else {
         return NO;
@@ -301,7 +305,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 17) {
+    if (indexPath.section == 18) {
         if (indexPath.row == 0) {
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"venmo://venmo.com/code?user_id=3178620965093376215"] options:@{} completionHandler:nil];

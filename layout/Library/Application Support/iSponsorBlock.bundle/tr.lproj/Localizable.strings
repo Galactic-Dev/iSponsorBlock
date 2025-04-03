@@ -14,6 +14,7 @@
 "SelfPromo" = "Kendi Rek.";
 "Non-MusicSection" = "Müzik Dışı Bölüm";
 "Non-Music" = "Müzik Dışı";
+"Preview" = "Preview";
 "SponsorBlockUserID" = "SponsorBlock Kullanıcı Adı:";
 "SponsorBlockAPIInstance" = "SponsorBlock API Örneği";
 
@@ -84,3 +85,4 @@
 "interaction" = "Etk.";
 "selfpromo" = "Kendi Rek.";
 "music_offtopic" = "Müzik Dışı";
+"preview" = "preview";

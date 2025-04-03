@@ -14,6 +14,7 @@
 "SelfPromo" = "Tự giới thiệu";
 "Non-MusicSection" = "Nhạc: Phần không nhạc";
 "Non-Music" = "Không có nhạc";
+"Preview" = "Preview";
 "SponsorBlockUserID" = "ID người dùng SponsorBlock";
 "SponsorBlockAPIInstance" = "Phiên bản API SponsorBlock";
 
@@ -84,3 +85,4 @@
 "interaction" = "tương tác";
 "selfpromo" = "tự giới thiệu";
 "music_offtopic" = "không có nhạc";
+"preview" = "preview";
