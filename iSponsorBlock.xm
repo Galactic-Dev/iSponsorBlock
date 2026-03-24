@@ -546,7 +546,22 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         return;
     }
     self.sponsorMarkerViews = [NSMutableArray array];
-    UIView *scrubber = [self valueForKey:@"_scrubberCircle"];
+
+    UIView *scrubber = nil;
+    @try {
+        scrubber = [self valueForKey:@"_scrubberCircle"];
+    } @catch (id ex) {} // KVC key got removed :(
+
+    // fallback
+    if (scrubber == nil) {
+        for (UIView *subview in self.subviews) {
+            if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarScrubberDotDecorationView")]) {
+                scrubber = subview.subviews.firstObject;
+                break;
+            }
+        }
+    }
+
     UIView *referenceView;
     @try {
         referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
