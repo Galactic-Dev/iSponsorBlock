@@ -1,13 +1,62 @@
 #import "Headers/SponsorBlockViewController.h"
 #import "Headers/Localization.h"
 
+static NSInteger const kSponsorBlockControlsScrollViewTag = 991001;
+static NSInteger const kSponsorBlockControlsContentViewTag = 991002;
+
 @implementation SponsorBlockViewController
+
+- (UIView *)controlsContentView {
+    UIScrollView *scrollView = (UIScrollView *)[self.view viewWithTag:kSponsorBlockControlsScrollViewTag];
+    UIView *contentView = [self.view viewWithTag:kSponsorBlockControlsContentViewTag];
+    if (scrollView && contentView) {
+        return contentView;
+    }
+
+    scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    scrollView.tag = kSponsorBlockControlsScrollViewTag;
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    contentView.tag = kSponsorBlockControlsContentViewTag;
+    contentView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self.view addSubview:scrollView];
+    [scrollView addSubview:contentView];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [scrollView.topAnchor constraintEqualToAnchor:self.playerViewController.view.bottomAnchor constant:8],
+        [scrollView.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
+        [scrollView.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
+        [scrollView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+
+        [contentView.topAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.topAnchor],
+        [contentView.leadingAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.leadingAnchor],
+        [contentView.trailingAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.trailingAnchor],
+        [contentView.bottomAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.bottomAnchor],
+        [contentView.widthAnchor constraintEqualToAnchor:scrollView.frameLayoutGuide.widthAnchor]
+    ]];
+
+    return contentView;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     [self addChildViewController:self.playerViewController];
     [self.view addSubview:self.playerViewController.view];
+
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        self.playerViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+        [NSLayoutConstraint activateConstraints:@[
+            [self.playerViewController.view.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+            [self.playerViewController.view.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
+            [self.playerViewController.view.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
+            [self.playerViewController.view.heightAnchor constraintEqualToAnchor:self.view.heightAnchor multiplier:0.45]
+        ]];
+        [self controlsContentView];
+    }
+
     [self setupViews];
 }
 
@@ -29,6 +78,9 @@
 }
 
 - (void)setupViews {
+    BOOL isPad = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
+    UIView *controlsContainer = isPad ? [self controlsContentView] : self.playerViewController.view;
+
     [self.segmentsInDatabaseLabel removeFromSuperview];
     [self.userSegmentsLabel removeFromSuperview];
     [self.submitSegmentsButton removeFromSuperview];
@@ -46,22 +98,30 @@
         else [self.startEndSegmentButton setTitle:LOC(@"SegmentEndsNow") forState:UIControlStateNormal];
         self.startEndSegmentButton.titleLabel.adjustsFontSizeToFitWidth = YES;
         
-        [self.playerViewController.view addSubview:self.startEndSegmentButton];
+        [controlsContainer addSubview:self.startEndSegmentButton];
         
         self.startEndSegmentButton.layer.cornerRadius = 12;
         self.startEndSegmentButton.frame = CGRectMake(0,0,512,50);
         self.startEndSegmentButton.translatesAutoresizingMaskIntoConstraints = NO;
         
-        [self.startEndSegmentButton.topAnchor constraintEqualToAnchor:self.playerViewController.view.bottomAnchor constant:10].active = YES;
-        [self.startEndSegmentButton.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
-        [self.startEndSegmentButton.widthAnchor constraintEqualToConstant:self.view.frame.size.width/2].active = YES;
+        if (isPad) {
+            [self.startEndSegmentButton.topAnchor constraintEqualToAnchor:controlsContainer.topAnchor constant:10].active = YES;
+            [self.startEndSegmentButton.centerXAnchor constraintEqualToAnchor:controlsContainer.centerXAnchor].active = YES;
+            [self.startEndSegmentButton.widthAnchor constraintEqualToAnchor:controlsContainer.widthAnchor multiplier:0.5].active = YES;
+        } else {
+            [self.startEndSegmentButton.topAnchor constraintEqualToAnchor:self.playerViewController.view.bottomAnchor constant:10].active = YES;
+            [self.startEndSegmentButton.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+            [self.startEndSegmentButton.widthAnchor constraintEqualToConstant:self.view.frame.size.width/2].active = YES;
+        }
         [self.startEndSegmentButton.heightAnchor constraintEqualToConstant:50].active = YES;
         self.startEndSegmentButton.clipsToBounds = YES;
+    } else if (self.startEndSegmentButton.superview != controlsContainer) {
+        [controlsContainer addSubview:self.startEndSegmentButton];
     }
     
     self.whitelistChannelLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     self.whitelistChannelLabel.text = LOC(@"WhitelistChannel");
-    [self.playerViewController.view addSubview:self.whitelistChannelLabel];
+    [controlsContainer addSubview:self.whitelistChannelLabel];
     self.whitelistChannelLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.whitelistChannelLabel.topAnchor constraintEqualToAnchor:self.startEndSegmentButton.bottomAnchor constant:10].active = YES;
     [self.whitelistChannelLabel.centerXAnchor constraintEqualToAnchor:self.startEndSegmentButton.centerXAnchor].active = YES;
@@ -83,7 +143,6 @@
         [whitelistSwitch setOn:NO animated:NO];
     }
 
-    YTPlayerView *playerView = (YTPlayerView *)self.playerViewController.view;
     NSArray *skipSegments = [self skipSegments];
     if (skipSegments.count > 0) {
         self.segmentsInDatabaseLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -94,12 +153,12 @@
         self.segmentsInDatabaseLabel.adjustsFontSizeToFitWidth = YES;
         self.segmentsInDatabaseLabel.textAlignment = NSTextAlignmentCenter;
         
-        [playerView addSubview:self.segmentsInDatabaseLabel];
+        [controlsContainer addSubview:self.segmentsInDatabaseLabel];
         self.segmentsInDatabaseLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
         [self.segmentsInDatabaseLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-15].active = YES;
-        [self.segmentsInDatabaseLabel.centerXAnchor constraintEqualToAnchor:playerView.centerXAnchor].active = YES;
-        [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:playerView.widthAnchor].active = YES;
+        [self.segmentsInDatabaseLabel.centerXAnchor constraintEqualToAnchor:controlsContainer.centerXAnchor].active = YES;
+        [self.segmentsInDatabaseLabel.widthAnchor constraintEqualToAnchor:controlsContainer.widthAnchor].active = YES;
         [self.segmentsInDatabaseLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
         
         self.sponsorSegmentViews = [self segmentViewsForSegments:skipSegments editable:NO];
@@ -109,7 +168,9 @@
             [self.sponsorSegmentViews[i] addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
             
             self.sponsorSegmentViews[i].translatesAutoresizingMaskIntoConstraints = NO;
-            [self.sponsorSegmentViews[i].widthAnchor constraintEqualToConstant:playerView.frame.size.width/self.sponsorSegmentViews.count-10].active = YES;
+            CGFloat availableWidth = CGRectGetWidth(self.view.bounds) > 0 ? CGRectGetWidth(self.view.bounds) - 20.0f : 320.0f;
+            CGFloat segmentWidth = MAX(44.0f, floor((availableWidth - (5.0f * (self.sponsorSegmentViews.count - 1))) / self.sponsorSegmentViews.count));
+            [self.sponsorSegmentViews[i].widthAnchor constraintEqualToConstant:segmentWidth].active = YES;
             [self.sponsorSegmentViews[i].heightAnchor constraintEqualToConstant:30].active = YES;
             [self.sponsorSegmentViews[i].topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-25].active = YES;
             
@@ -122,7 +183,7 @@
                 [self.sponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.sponsorSegmentViews[i-1].rightAnchor constant:5].active = YES;
             }
             else {
-                [self.sponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.leftAnchor constant:5*(self.sponsorSegmentViews.count / 2)].active = YES;
+                [self.sponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.leftAnchor constant:5].active = YES;
             }
         }
 
@@ -140,7 +201,9 @@
             [self.userSponsorSegmentViews[i] addInteraction:[[UIContextMenuInteraction alloc] initWithDelegate:self]];
             
             self.userSponsorSegmentViews[i].translatesAutoresizingMaskIntoConstraints = NO;
-            [self.userSponsorSegmentViews[i].widthAnchor constraintEqualToConstant:playerView.frame.size.width/self.userSponsorSegmentViews.count-10].active = YES;
+            CGFloat availableWidth = CGRectGetWidth(self.view.bounds) > 0 ? CGRectGetWidth(self.view.bounds) - 20.0f : 320.0f;
+            CGFloat segmentWidth = MAX(44.0f, floor((availableWidth - (5.0f * (self.userSponsorSegmentViews.count - 1))) / self.userSponsorSegmentViews.count));
+            [self.userSponsorSegmentViews[i].widthAnchor constraintEqualToConstant:segmentWidth].active = YES;
             [self.userSponsorSegmentViews[i].heightAnchor constraintEqualToConstant:30].active = YES;
             [self.userSponsorSegmentViews[i].topAnchor constraintEqualToAnchor:self.userSegmentsLabel.bottomAnchor constant:-25].active = YES;
             
@@ -153,21 +216,21 @@
                 [self.userSponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.userSponsorSegmentViews[i-1].rightAnchor constant:5].active = YES;
             }
             else {
-                [self.userSponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.userSegmentsLabel.leftAnchor constant:5*(self.userSponsorSegmentViews.count / 2)].active = YES;
+                [self.userSponsorSegmentViews[i].leftAnchor constraintEqualToAnchor:self.userSegmentsLabel.leftAnchor constant:5].active = YES;
             }
         }
         self.userSegmentsLabel.numberOfLines = 2;
         self.userSegmentsLabel.adjustsFontSizeToFitWidth = YES;
         self.userSegmentsLabel.textAlignment = NSTextAlignmentCenter;
         
-        [playerView addSubview:self.userSegmentsLabel];
+        [controlsContainer addSubview:self.userSegmentsLabel];
         self.userSegmentsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
         if (skipSegments.count > 0) [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.segmentsInDatabaseLabel.bottomAnchor constant:-10].active = YES;
         else [self.userSegmentsLabel.topAnchor constraintEqualToAnchor:self.whitelistChannelLabel.bottomAnchor constant:-10].active = YES;
         
-        [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:playerView.centerXAnchor].active = YES;
-        [self.userSegmentsLabel.widthAnchor constraintEqualToAnchor:playerView.widthAnchor].active = YES;
+        [self.userSegmentsLabel.centerXAnchor constraintEqualToAnchor:controlsContainer.centerXAnchor].active = YES;
+        [self.userSegmentsLabel.widthAnchor constraintEqualToAnchor:controlsContainer.widthAnchor].active = YES;
         [self.userSegmentsLabel.heightAnchor constraintEqualToConstant:75.0f].active = YES;
         
         self.submitSegmentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -176,16 +239,23 @@
         [self.submitSegmentsButton addTarget:self action:@selector(submitSegmentsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self.submitSegmentsButton setTitle:LOC(@"SubmitSegments") forState:UIControlStateNormal];
         
-        [playerView addSubview:self.submitSegmentsButton];
+        [controlsContainer addSubview:self.submitSegmentsButton];
         self.submitSegmentsButton.layer.cornerRadius = 12;
         self.submitSegmentsButton.frame = CGRectMake(0,0,512,50);
         
         self.submitSegmentsButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self.submitSegmentsButton.topAnchor constraintEqualToAnchor:self.userSegmentsLabel.bottomAnchor constant:15].active = YES;
-        [self.submitSegmentsButton.centerXAnchor constraintEqualToAnchor:playerView.centerXAnchor].active = YES;
-        [self.submitSegmentsButton.widthAnchor constraintEqualToConstant:self.view.frame.size.width/2].active = YES;
+        [self.submitSegmentsButton.centerXAnchor constraintEqualToAnchor:controlsContainer.centerXAnchor].active = YES;
+        [self.submitSegmentsButton.widthAnchor constraintEqualToAnchor:controlsContainer.widthAnchor multiplier:0.5].active = YES;
         [self.submitSegmentsButton.heightAnchor constraintEqualToConstant:50].active = YES;
         self.submitSegmentsButton.clipsToBounds = YES;
+
+        if (isPad) {
+            [self.submitSegmentsButton.bottomAnchor constraintEqualToAnchor:controlsContainer.bottomAnchor constant:-12].active = YES;
+        }
+    } else if (isPad) {
+        UIView *lastView = self.segmentsInDatabaseLabel ?: self.whitelistChannelLabel;
+        [lastView.bottomAnchor constraintEqualToAnchor:controlsContainer.bottomAnchor constant:-12].active = YES;
     }
 }
 
@@ -214,9 +284,20 @@
     [self.userSegmentsLabel removeFromSuperview];
     [self.submitSegmentsButton removeFromSuperview];
     [self.whitelistChannelLabel removeFromSuperview];
+
+    UIView *controlsScrollView = [self.view viewWithTag:kSponsorBlockControlsScrollViewTag];
+    [controlsScrollView removeFromSuperview];
+
+    [self.playerViewController willMoveToParentViewController:nil];
+    [self.playerViewController.view removeFromSuperview];
+    [self.playerViewController removeFromParentViewController];
+    self.playerViewController.view.translatesAutoresizingMaskIntoConstraints = YES;
+    self.playerViewController.view.frame = self.previousParentViewController.view.bounds;
+    self.playerViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     [self.previousParentViewController addChildViewController:self.playerViewController];
     [self.previousParentViewController.view addSubview:self.playerViewController.view];
+    [self.playerViewController didMoveToParentViewController:self.previousParentViewController];
     
     self.overlayView.isDisplayingSponsorBlockViewController = NO;
     self.overlayView.sponsorBlockButton.hidden = NO;
