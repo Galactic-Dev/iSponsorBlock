@@ -1003,54 +1003,50 @@ AVQueuePlayer *queuePlayer;
 %end
 
 %group JustSettings
-%hook YTRightNavigationButtons
+%hook YTHeaderViewController
 %property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
-- (NSMutableArray *)buttons {
-    NSMutableArray *retVal = %orig.mutableCopy;
-    [self.sponsorBlockButton removeFromSuperview];
-    [self addSubview:self.sponsorBlockButton];
-    NSInteger pageStyle;
-    Class YTPageStyleControllerClass = %c(YTPageStyleController);
-    if (YTPageStyleControllerClass)
-        pageStyle = [YTPageStyleControllerClass pageStyle];
-    else {
-        YTAppDelegate *delegate = (YTAppDelegate *)[UIApplication sharedApplication].delegate;
-        YTAppViewControllerImpl *appViewController = [delegate valueForKey:@"_appViewController"];
-        pageStyle = [appViewController pageStyle];
-    }
-    UIImage *image;
-    if (!self.sponsorBlockButton) {
-        self.sponsorBlockButton = [%c(YTQTMButton) iconButton];
-
-        [self.sponsorBlockButton enableNewTouchFeedback];
-        self.sponsorBlockButton.frame = CGRectMake(0, 0, 40, 40);
-
-        image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
-        [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [retVal insertObject:self.sponsorBlockButton atIndex:0];
-    } else {
-        image = [%c(QTMIcon) tintImage:self.sponsorBlockButton.currentImage color:pageStyle ? UIColor.whiteColor : UIColor.blackColor];
-    }
-    [self.sponsorBlockButton setImage:image forState:UIControlStateNormal];
-    return retVal;
+- (id)initWithParentResponder:(id)arg {
+    self = %orig;
+    UIImage *image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
+    self.sponsorBlockButton = [%c(YTQTMButton) barButtonWithImage:image accessibilityLabel:@"Sponsor Block" accessibilityIdentifier:@"sponsorBlockButton"];
+    [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    YTRightNavigationButtons *rightButtons = [self valueForKey:@"_rightNavigationButtons"];
+    [rightButtons setButton:self.sponsorBlockButton forType:'ispb'];
+    return self;
 }
-- (NSMutableArray *)visibleButtons {
-    NSMutableArray *retVal = %orig.mutableCopy;
-    
-    //fixes button overlapping yt logo on smaller devices
-    [self setLeadingPadding:-10];
-    if (self.sponsorBlockButton) {
-        [self.sponsorBlockButton removeFromSuperview];
-        [self addSubview:self.sponsorBlockButton];
-        [retVal insertObject:self.sponsorBlockButton atIndex:0];
-    }
-    return retVal;
+- (void)setRightButtons {
+    %orig;
+    YTRightNavigationButtons *rightButtons = [self valueForKey:@"_rightNavigationButtons"];
+    [rightButtons setButton:[self isTopLevelPage] ? self.sponsorBlockButton : nil forType:'ispb'];
 }
 %new(v@:@)
 - (void)sponsorBlockButtonPressed:(UIButton *)sender {
     SponsorBlockSettingsController *settingsController = [[SponsorBlockSettingsController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:settingsController];
     [[[UIApplication sharedApplication] delegate].window.rootViewController presentViewController:navigationController animated:YES completion:nil];
+}
+%end
+
+%hook YTRightNavigationButtons
+- (NSArray *)visibleButtons {
+    NSMutableArray *visibleButtons = [NSMutableArray array];
+    NSMapTable <NSNumber *, YTQTMButton *> *buttons = [self valueForKey:@"_buttons"];
+    for (NSNumber *key in buttons) {
+        YTQTMButton *button = [buttons objectForKey:key];
+        if (!button.hidden) {
+            if (key.intValue == 'ispb')
+                [visibleButtons insertObject:button atIndex:0];
+            else
+                [visibleButtons addObject:button];
+        }
+    }
+    NSArray *dynamicButtons = [self valueForKey:@"_dynamicButtons"];
+    for (YTQTMButton *button in dynamicButtons) {
+        if (!button.hidden) [visibleButtons addObject:button];
+    }
+    YTQTMButton *button7 = [buttons objectForKey:@7];
+    if (button7 && !button7.hidden) [visibleButtons addObject:button7];
+    return visibleButtons;
 }
 %end
 %end
