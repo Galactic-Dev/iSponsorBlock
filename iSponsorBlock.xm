@@ -567,7 +567,8 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
     } @catch (id ex) {
         for (UIView *subview in self.subviews) {
-            if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")]) {
+            if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")]
+                || [subview isKindOfClass:NSClassFromString(@"YTPlayerBarProgressDecorationView")]) {
                 referenceView = subview;
                 break;
             }
