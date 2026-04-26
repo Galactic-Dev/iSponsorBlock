@@ -604,7 +604,7 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
             return;
         }
 
-        UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectMake(beginX, originY, markerWidth, 2)];
+        UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectMake(beginX, originY, markerWidth, referenceView.frame.size.height)];
         newMarkerView.userInteractionEnabled = NO;
         newMarkerView.backgroundColor = color;
         [self insertSubview:newMarkerView belowSubview:scrubber];
