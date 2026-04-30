@@ -1006,13 +1006,16 @@ AVQueuePlayer *queuePlayer;
 %group JustSettings
 %hook YTHeaderViewController
 %property (retain, nonatomic) YTQTMButton *sponsorBlockButton;
-- (id)initWithParentResponder:(id)arg {
+- (id)initWithParentResponder:(id)parentResponder {
     self = %orig;
-    UIImage *image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
-    self.sponsorBlockButton = [%c(YTQTMButton) barButtonWithImage:[%c(YTUIResources) tintImage:image color:[%c(YTColor) white1]] accessibilityLabel:@"Sponsor Block" accessibilityIdentifier:@"sponsorBlockButton"];
-    [self.sponsorBlockButton addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    YTRightNavigationButtons *rightButtons = [self valueForKey:@"_rightNavigationButtons"];
-    [rightButtons setButton:self.sponsorBlockButton forType:'ispb'];
+    if (self) {
+        UIImage *image = [UIImage imageWithContentsOfFile:[tweakBundle pathForResource:@"sponsorblocksettings-20@2x" ofType:@"png"]];
+        YTQTMButton *button = [%c(YTQTMButton) barButtonWithImage:[%c(YTUIResources) tintImage:image color:[%c(YTColor) white1]] accessibilityLabel:@"Sponsor Block" accessibilityIdentifier:@"sponsorBlockButton"];
+        [button addTarget:self action:@selector(sponsorBlockButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        YTRightNavigationButtons *rightButtons = [self valueForKey:@"_rightNavigationButtons"];
+        [rightButtons setButton:button forType:'ispb'];
+        self.sponsorBlockButton = button;
+    }
     return self;
 }
 - (void)setRightButtons {
@@ -1031,15 +1034,14 @@ AVQueuePlayer *queuePlayer;
 static NSArray *filterButtons(YTRightNavigationButtons *self, BOOL visibleOnly) {
     NSMutableArray *buttons = [NSMutableArray array];
     NSMapTable <NSNumber *, YTQTMButton *> *buttonsTable = [self valueForKey:@"_buttons"];
-    for (NSNumber *key in buttonsTable) {
-        YTQTMButton *button = [buttonsTable objectForKey:key];
-        if (!visibleOnly || !button.hidden) {
-            if (key.intValue == 'ispb') {
-                if ([self valueForKey:@"_buttons"][key])
-                    [buttons insertObject:button atIndex:0];
-            } else
-                [buttons addObject:button];
-        }
+    NSUInteger isbIndex = 'ispb';
+    YTQTMButton *isbButton = [buttonsTable objectForKey:@(isbIndex)];
+    if (isbButton && (!visibleOnly || !isbButton.hidden))
+        [buttons addObject:isbButton];
+    for (NSUInteger i = 0; i < 7; ++i) {
+        YTQTMButton *button = [buttonsTable objectForKey:@(i)];
+        if (button && (!visibleOnly || !button.hidden))
+            [buttons addObject:button];
     }
     NSArray *dynamicButtons = [self valueForKey:@"_dynamicButtons"];
     for (YTQTMButton *button in dynamicButtons) {
