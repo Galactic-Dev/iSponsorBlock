@@ -94,12 +94,16 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         if (self.currentSponsorSegment <= self.skipSegments.count-1) {
             sponsorSegment = self.skipSegments[self.currentSponsorSegment];
         } else if (self.unskippedSegment != self.currentSponsorSegment-1) {
-            sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
+            SponsorSegment *fallback = self.skipSegments[self.currentSponsorSegment-1];
+            // poi_highlight has no range to "unskip" — never use it as a fallback segment
+            if (![fallback.category isEqualToString:@"poi_highlight"]) {
+                sponsorSegment = fallback;
+            }
         }
         
-        if ((lroundf(arg2.time) == ceil(sponsorSegment.startTime) && arg2.time >= sponsorSegment.startTime) || (lroundf(arg2.time) >= ceil(sponsorSegment.startTime) && arg2.time < sponsorSegment.endTime) || ([sponsorSegment.category isEqualToString:@"poi_highlight"] && arg2.time < sponsorSegment.startTime)) {
+        if ((lroundf(arg2.time) == ceil(sponsorSegment.startTime) && arg2.time >= sponsorSegment.startTime) || (lroundf(arg2.time) >= ceil(sponsorSegment.startTime) && arg2.time < sponsorSegment.endTime)) {
 
-            if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3 && ![sponsorSegment.category isEqualToString:@"poi_highlight"]) {
+            if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3) {
                 if (self.hud.superview != self.view && self.hudDisplayed == NO) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                     self.hudDisplayed = YES; // Set yes to make sure that HUD is not persistent (Issue #62)
@@ -131,17 +135,20 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
                     self.hud.offset = CGPointMake(self.view.frame.size.width, -MBProgressMaxOffset);
 
                     // Use a delay equal to the length of the sponsored segment to avoid HUD call
-                    double delayInSeconds = sponsorSegment.endTime - sponsorSegment.startTime;
+                    // poi_highlight has zero duration — use a fixed 5s delay instead
+                    double delayInSeconds = [sponsorSegment.category isEqualToString:@"poi_highlight"] ? 5.0 : sponsorSegment.endTime - sponsorSegment.startTime;
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                         [MBProgressHUD hideHUDForView:self.view animated:YES]; // Hide HUD if user is not interacting with buttons
                         self.hudDisplayed = NO; // Reset flag to make it work for the next segment
                     });
                 }
             }
-            //edge case where segment end time is longer than the video
             else if ([sponsorSegment.category isEqualToString:@"poi_highlight"]) {
-                [self isb_scrubToTime:sponsorSegment.startTime];
-                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+                // AutoSkip (1): player is already at the highlight point — just track the view
+                // ShowInSeekBar (2) or Disable (0): no action; ManualSkip (3) is handled above
+                if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 1) {
+                    if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
+                }
             }
             //edge case where segment end time is longer than the video
             else if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
