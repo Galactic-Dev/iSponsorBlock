@@ -58,6 +58,7 @@ extern NSMutableArray <NSString *> *kWhitelistedChannels;
 @property (nonatomic, assign) NSInteger unskippedSegment;
 @property (strong, nonatomic) NSMutableArray <SponsorSegment *> *userSkipSegments;
 @property (nonatomic, assign) BOOL hudDisplayed;
+@property (strong, nonatomic) SponsorSegment *pendingPoiSegment;
 - (void)isb_scrubToTime:(CGFloat)time;
 - (void)isb_fixVisualGlitch;
 @end
