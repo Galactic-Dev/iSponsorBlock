@@ -444,6 +444,24 @@ static NSInteger const kSponsorBlockControlsContentViewTag = 991002;
             [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"preview" withViewController:self];
         }]];
 
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Hook/Greetings") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            if (sponsorSegmentView.editable) {
+                sponsorSegmentView.sponsorSegment.category = @"hook";
+                [self setupViews];
+                return;
+            }
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"hook" withViewController:self];
+        }]];
+
+        [categoryActions addObject:[UIAction actionWithTitle:LOC(@"Tangents/Jokes") image:nil identifier:nil handler:^(__kindof UIAction* _Nonnull action) {
+            if (sponsorSegmentView.editable) {
+                sponsorSegmentView.sponsorSegment.category = @"filler";
+                [self setupViews];
+                return;
+            }
+            [SponsorBlockRequest categoryVoteForSegment:sponsorSegmentView.sponsorSegment userID:[settings objectForKey:@"userID"] category:@"filler" withViewController:self];
+        }]];
+
         NSMutableArray* actions = [NSMutableArray array];
         if (sponsorSegmentView.editable) {
             [actions addObject:[UIAction actionWithTitle:LOC(@"EditStartTime") image:[UIImage systemImageNamed:@"arrow.left.to.line"] identifier:nil handler:^(__kindof UIAction* _Nonnull action) {

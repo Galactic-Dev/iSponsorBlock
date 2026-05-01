@@ -86,3 +86,10 @@
 "selfpromo" = "auto promoción";
 "music_offtopic" = "no musical";
 "preview" = "preview";
+"hook" = "gancho/saludo";
+"filler" = "tangente/chistes";
+"poi_highlight" = "destacado";
+
+"Hook/Greetings" = "Gancho/Saludos";
+"Tangents/Jokes" = "Tangentes/Chistes";
+"Highlight" = "Destacado";

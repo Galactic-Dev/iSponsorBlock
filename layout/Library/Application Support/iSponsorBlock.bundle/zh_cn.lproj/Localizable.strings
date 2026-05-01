@@ -86,3 +86,10 @@
 "selfpromo" = "自我宣传";
 "music_offtopic" = "非音乐";
 "preview" = "preview";
+"hook" = "开场钩/问候";
+"filler" = "离题/玩笑";
+"poi_highlight" = "精彩时刻";
+
+"Hook/Greetings" = "开场钩/问候";
+"Tangents/Jokes" = "离题/玩笑";
+"Highlight" = "精彩时刻";

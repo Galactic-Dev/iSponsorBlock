@@ -86,3 +86,10 @@
 "selfpromo" = "Kendi Rek.";
 "music_offtopic" = "Müzik Dışı";
 "preview" = "preview";
+"hook" = "Kanca/Selamlama";
+"filler" = "Konu Dışı/Şaka";
+"poi_highlight" = "Vurgu";
+
+"Hook/Greetings" = "Kanca/Selamlama";
+"Tangents/Jokes" = "Konu Dışı/Şakalar";
+"Highlight" = "Vurgu";

@@ -52,6 +52,9 @@ NSDictionary *categoryLocalization = @{
     @"selfpromo": LOC(@"selfpromo"),
     @"music_offtopic": LOC(@"music_offtopic"),
     @"preview": LOC(@"preview"),
+    @"hook": LOC(@"hook"),
+    @"filler": LOC(@"filler"),
+    @"poi_highlight": LOC(@"poi_highlight"),
 };
 
 %group Main
@@ -94,9 +97,9 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
             sponsorSegment = self.skipSegments[self.currentSponsorSegment-1];
         }
         
-        if ((lroundf(arg2.time) == ceil(sponsorSegment.startTime) && arg2.time >= sponsorSegment.startTime) || (lroundf(arg2.time) >= ceil(sponsorSegment.startTime) && arg2.time < sponsorSegment.endTime)) {
+        if ((lroundf(arg2.time) == ceil(sponsorSegment.startTime) && arg2.time >= sponsorSegment.startTime) || (lroundf(arg2.time) >= ceil(sponsorSegment.startTime) && arg2.time < sponsorSegment.endTime) || ([sponsorSegment.category isEqualToString:@"poi_highlight"] && arg2.time < sponsorSegment.startTime)) {
 
-            if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3) {
+            if ([[kCategorySettings objectForKey:sponsorSegment.category] intValue] == 3 && ![sponsorSegment.category isEqualToString:@"poi_highlight"]) {
                 if (self.hud.superview != self.view && self.hudDisplayed == NO) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                     self.hudDisplayed = YES; // Set yes to make sure that HUD is not persistent (Issue #62)
@@ -134,6 +137,11 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
                         self.hudDisplayed = NO; // Reset flag to make it work for the next segment
                     });
                 }
+            }
+            //edge case where segment end time is longer than the video
+            else if ([sponsorSegment.category isEqualToString:@"poi_highlight"]) {
+                [self isb_scrubToTime:sponsorSegment.startTime];
+                if (kEnableSkipCountTracking) [SponsorBlockRequest viewedVideoSponsorTime:sponsorSegment];
             }
             //edge case where segment end time is longer than the video
             else if (sponsorSegment.endTime > self.currentVideoTotalMediaTime) {
@@ -513,6 +521,9 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         else if ([segment.category isEqualToString:@"selfpromo"]) color = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) color = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
         else if ([segment.category isEqualToString:@"preview"]) color = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
+        else if ([segment.category isEqualToString:@"hook"]) color = colorWithHexString([kCategorySettings objectForKey:@"hookColor"]);
+        else if ([segment.category isEqualToString:@"filler"]) color = colorWithHexString([kCategorySettings objectForKey:@"fillerColor"]);
+        else if ([segment.category isEqualToString:@"poi_highlight"]) color = colorWithHexString([kCategorySettings objectForKey:@"poi_highlightColor"]);
         UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectZero];
         newMarkerView.backgroundColor = color;
         [self addSubview:newMarkerView];
@@ -599,6 +610,9 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         else if ([segment.category isEqualToString:@"selfpromo"]) color = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) color = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
         else if ([segment.category isEqualToString:@"preview"]) color = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
+        else if ([segment.category isEqualToString:@"hook"]) color = colorWithHexString([kCategorySettings objectForKey:@"hookColor"]);
+        else if ([segment.category isEqualToString:@"filler"]) color = colorWithHexString([kCategorySettings objectForKey:@"fillerColor"]);
+        else if ([segment.category isEqualToString:@"poi_highlight"]) color = colorWithHexString([kCategorySettings objectForKey:@"poi_highlightColor"]);
 
         if (isnan(markerWidth) || !isfinite(beginX)) {
             return;
@@ -879,6 +893,9 @@ AVQueuePlayer *queuePlayer;
         else if ([segment.category isEqualToString:@"selfpromo"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"selfpromoColor"]);
         else if ([segment.category isEqualToString:@"music_offtopic"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"music_offtopicColor"]);
         else if ([segment.category isEqualToString:@"preview"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"previewColor"]);
+        else if ([segment.category isEqualToString:@"hook"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"hookColor"]);
+        else if ([segment.category isEqualToString:@"filler"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"fillerColor"]);
+        else if ([segment.category isEqualToString:@"poi_highlight"]) markerView.backgroundColor = colorWithHexString([kCategorySettings objectForKey:@"poi_highlightColor"]);
         [scrubber addSubview:markerView];
         [self.markerViews addObject:markerView];
     }
@@ -1080,7 +1097,7 @@ static void loadPrefs() {
     // reset to official if user set to an empty string
     if ([kAPIInstance isEqualToString:@""]) kAPIInstance = @"https://sponsor.ajay.app/api";
 
-    kCategorySettings = [settings objectForKey:@"categorySettings"] ? [settings objectForKey:@"categorySettings"] : @{
+    NSDictionary *defaultCategorySettings = @{
         @"sponsor" : @1,
         @"sponsorColor" : hexFromUIColor(UIColor.greenColor),
         @"intro" : @0,
@@ -1094,8 +1111,20 @@ static void loadPrefs() {
         @"music_offtopic" : @0,
         @"music_offtopicColor" : hexFromUIColor(UIColor.orangeColor),
         @"preview": @0,
-        @"previewColor" : hexFromUIColor(UIColor.systemPurpleColor)
+        @"previewColor" : hexFromUIColor(UIColor.systemPurpleColor),
+        @"hook" : @0,
+        @"hookColor" : hexFromUIColor(UIColor.systemIndigoColor),
+        @"filler" : @0,
+        @"fillerColor" : hexFromUIColor(UIColor.systemBrownColor),
+        @"poi_highlight" : @0,
+        @"poi_highlightColor" : hexFromUIColor(UIColor.cyanColor)
     };
+    NSMutableDictionary *mergedCategorySettings = [defaultCategorySettings mutableCopy];
+    NSDictionary *savedCategorySettings = [settings objectForKey:@"categorySettings"];
+    if ([savedCategorySettings isKindOfClass:[NSDictionary class]]) {
+        [mergedCategorySettings addEntriesFromDictionary:savedCategorySettings];
+    }
+    kCategorySettings = [mergedCategorySettings copy];
     kMinimumDuration = [settings objectForKey:@"minimumDuration"] ? [[settings objectForKey:@"minimumDuration"] floatValue] : 0.0f;
     kShowSkipNotice = [settings objectForKey:@"showSkipNotice"] ? [[settings objectForKey:@"showSkipNotice"] boolValue] : YES;
     kShowButtonsInPlayer = [settings objectForKey:@"showButtonsInPlayer"] ? [[settings objectForKey:@"showButtonsInPlayer"] boolValue] : YES;

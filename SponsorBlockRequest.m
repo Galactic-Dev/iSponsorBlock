@@ -5,7 +5,7 @@
 + (void)getSponsorTimes:(NSString *)videoID completionTarget:(id)target completionSelector:(SEL)sel apiInstance:(NSString *)apiInstance {
     __block NSMutableArray *skipSegments = [NSMutableArray array];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *categories = @"%5B%22sponsor%22%2C%22intro%22%2C%22outro%22%2C%22interaction%22%2C%22selfpromo%22%2C%22music_offtopic%22%2C%22preview%22%2C%22poi_highlight%22%2C%22filler%22%5D";
+    NSString *categories = @"%5B%22sponsor%22%2C%22intro%22%2C%22outro%22%2C%22interaction%22%2C%22selfpromo%22%2C%22music_offtopic%22%2C%22preview%22%2C%22poi_highlight%22%2C%22filler%22%2C%22hook%22%5D";
 
     //NSString *categories = @"[%22sponsor%22,%20%22intro%22,%20%22outro%22,%20%22interaction%22,%20%22selfpromo%22,%20%22music_offtopic%22,%20%22preview%22,%20%22filler%22]";
 
@@ -39,7 +39,7 @@
                     default:
                         break;
                 }
-                if (segment.endTime - segment.startTime < kMinimumDuration) {
+                if (![segment.category isEqualToString:@"poi_highlight"] && segment.endTime - segment.startTime < kMinimumDuration) {
                     [skipSegments removeObject:segment];
                     [seekBarSegments removeObject:segment];
                 }

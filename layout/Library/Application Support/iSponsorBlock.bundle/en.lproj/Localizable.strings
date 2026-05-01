@@ -86,3 +86,10 @@
 "selfpromo" = "self promo";
 "music_offtopic" = "non-music";
 "preview" = "preview";
+"hook" = "hook/greetings";
+"filler" = "tangents/jokes";
+"poi_highlight" = "highlight";
+
+"Hook/Greetings" = "Hook/Greetings";
+"Tangents/Jokes" = "Tangents/Jokes";
+"Highlight" = "Highlight";

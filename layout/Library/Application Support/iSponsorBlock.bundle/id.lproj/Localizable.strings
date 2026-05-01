@@ -86,3 +86,10 @@
 "selfpromo" = "promosi diri sendiri";
 "music_offtopic" = "non-musik";
 "preview" = "preview";
+"hook" = "pengait/salam";
+"filler" = "tangensial/lelucon";
+"poi_highlight" = "sorotan";
+
+"Hook/Greetings" = "Pengait/Salam";
+"Tangents/Jokes" = "Tangensial/Lelucon";
+"Highlight" = "Sorotan";

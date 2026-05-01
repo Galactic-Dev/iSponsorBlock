@@ -86,3 +86,10 @@
 "selfpromo" = "自己宣伝";
 "music_offtopic" = "音楽以外";
 "preview" = "preview";
+"hook" = "フック/挨拶";
+"filler" = "余談/ジョーク";
+"poi_highlight" = "ハイライト";
+
+"Hook/Greetings" = "フック/挨拶";
+"Tangents/Jokes" = "余談/ジョーク";
+"Highlight" = "ハイライト";

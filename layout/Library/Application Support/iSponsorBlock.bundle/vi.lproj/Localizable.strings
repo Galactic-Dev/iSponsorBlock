@@ -86,3 +86,10 @@
 "selfpromo" = "tự giới thiệu";
 "music_offtopic" = "không có nhạc";
 "preview" = "preview";
+"hook" = "mở đầu/lời chào";
+"filler" = "lạc đề/đùa giỡn";
+"poi_highlight" = "điểm nổi bật";
+
+"Hook/Greetings" = "Mở Đầu/Lời Chào";
+"Tangents/Jokes" = "Lạc Đề/Đùa Giỡn";
+"Highlight" = "Điểm Nổi Bật";

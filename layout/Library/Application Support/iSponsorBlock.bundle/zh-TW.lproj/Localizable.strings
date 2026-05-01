@@ -86,3 +86,10 @@
 "selfpromo" = "自薦";
 "music_offtopic" = "非音樂";
 "preview" = "preview";
+"hook" = "吸引片段/問候";
+"filler" = "離題/玩笑";
+"poi_highlight" = "精彩片段";
+
+"Hook/Greetings" = "吸引片段/問候";
+"Tangents/Jokes" = "離題/玩笑";
+"Highlight" = "精彩片段";

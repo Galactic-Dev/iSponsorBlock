@@ -30,6 +30,15 @@
         else if ([segment.category isEqualToString:@"preview"]) {
             category = LOC(@"Preview");
         }
+        else if ([segment.category isEqualToString:@"hook"]) {
+            category = LOC(@"Hook/Greetings");
+        }
+        else if ([segment.category isEqualToString:@"filler"]) {
+            category = LOC(@"Tangents/Jokes");
+        }
+        else if ([segment.category isEqualToString:@"poi_highlight"]) {
+            category = LOC(@"Highlight");
+        }
         self.categoryLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.segmentLabel = [[UILabel alloc] initWithFrame:self.frame];
         self.categoryLabel.text = category;
@@ -58,7 +67,11 @@
             endTime = [NSString stringWithFormat:@"%ld:%02ld", endMinutes, endSeconds];
         }
         
-        self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@", LOC(@"From"), startTime, LOC(@"to"), endTime];
+        if ([segment.category isEqualToString:@"poi_highlight"]) {
+            self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@", LOC(@"From"), startTime];
+        } else {
+            self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@", LOC(@"From"), startTime, LOC(@"to"), endTime];
+        }
         
         [self addSubview:self.categoryLabel];
         self.categoryLabel.adjustsFontSizeToFitWidth = YES;
