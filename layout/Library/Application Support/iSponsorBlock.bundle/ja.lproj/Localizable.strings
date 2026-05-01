@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "%@セグメントを手動でスキップします。\n%ld:%02ldから%ld:%02ldまで?";
+"ManuallySkipReminderPoi" = "%@に%ld:%02ldでジャンプしますか?";
 "Skip" = "スキップ";
 "SkippedSegment" = "%@セグメントをスキップしました";
 "Unskip" = "スキップを解除";

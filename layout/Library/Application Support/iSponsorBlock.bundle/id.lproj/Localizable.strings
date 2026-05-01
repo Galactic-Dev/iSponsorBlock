@@ -74,6 +74,7 @@
 
 /* Pop-up */
 "ManuallySkipReminder" = "Lewati %@ segmen\n dari %ld:%02ld ke %ld:%02ld?";
+"ManuallySkipReminderPoi" = "Loncat ke %@ pada %ld:%02ld?";
 "Skip" = "Lewati";
 "SkippedSegment" = "Segmen %@ dilewati";
 "Unskip" = "Batalkan lewati";

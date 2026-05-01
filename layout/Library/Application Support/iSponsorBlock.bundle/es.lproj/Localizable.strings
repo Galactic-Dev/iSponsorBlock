@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "¿Saltar manualmente el segmento %@\nde %ld:%02ld a %ld:%02ld?";
+"ManuallySkipReminderPoi" = "¿Saltar al %@ en %ld:%02ld?";
 "Skip" = "Saltar";
 "SkippedSegment" = "Segmento %@ Saltado";
 "Unskip" = "Deshacer salto";

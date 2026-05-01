@@ -74,6 +74,7 @@
 
 /* Pop-ups */
 "ManuallySkipReminder" = "Bỏ qua phân đoạn %@ từ %ld:%02ld đến %ld:%02ld?";
+"ManuallySkipReminderPoi" = "Bỏ qua đến %@ lúc %ld:%02ld?";
 "Skip" = "Bỏ qua";
 "SkippedSegment" = "Đã bỏ qua phân đoạn %@";
 "Unskip" = "Hủy bỏ qua";

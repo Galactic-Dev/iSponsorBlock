@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "Manually Skip %@ segment\nfrom %ld:%02ld to %ld:%02ld?";
+"ManuallySkipReminderPoi" = "Skip to %@ at %ld:%02ld?";
 "Skip" = "Skip";
 "SkippedSegment" = "Skipped %@ Segment";
 "Unskip" = "Unskip";

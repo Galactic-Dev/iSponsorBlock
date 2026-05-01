@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "Перемотать %@ с %ld:%02ld до %ld:%02ld?";
+"ManuallySkipReminderPoi" = "Перейти к %@ в %ld:%02ld?";
 "Skip" = "Да";
 "SkippedSegment" = "Перемотан\n%@";
 "Unskip" = "Отмена";

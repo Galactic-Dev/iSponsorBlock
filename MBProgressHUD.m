@@ -1189,7 +1189,21 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
     [super setTitleColor:color forState:state];
     // Update related colors
     [self setHighlighted:self.highlighted];
-    self.layer.borderColor = color.CGColor;
+    [self mb_updateBorderColor];
+}
+
+- (void)mb_updateBorderColor {
+    UIColor *color = [self titleColorForState:UIControlStateNormal];
+    if (color) {
+        self.layer.borderColor = [color resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+    }
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+        [self mb_updateBorderColor];
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted {

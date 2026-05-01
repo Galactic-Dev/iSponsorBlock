@@ -68,7 +68,7 @@
         }
         
         if ([segment.category isEqualToString:@"poi_highlight"]) {
-            self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@", LOC(@"From"), startTime];
+            self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@", LOC(@"to"), startTime];
         } else {
             self.segmentLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@", LOC(@"From"), startTime, LOC(@"to"), endTime];
         }

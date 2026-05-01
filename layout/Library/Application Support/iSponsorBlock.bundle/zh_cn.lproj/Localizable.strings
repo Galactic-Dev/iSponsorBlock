@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "点击跳过%@时段：%ld:%02ld 至 %ld:%02ld";
+"ManuallySkipReminderPoi" = "跳转到%@：%ld:%02ld";
 "Skip" = "跳过";
 "SkippedSegment" = "已自动跳过%@时段";
 "Unskip" = "撤消跳过";

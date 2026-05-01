@@ -73,6 +73,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "Manuelles Überspringen des %@ Segments\nvon %ld:%02ld zu %ld:%02ld?";
+"ManuallySkipReminderPoi" = "Zum %@ springen bei %ld:%02ld?";
 "Skip" = "Überspringen";
 "SkippedSegment" = "%@ Segment übersprungen";
 "Unskip" = "Zurückspringen";

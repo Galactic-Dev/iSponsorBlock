@@ -335,15 +335,15 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
                     self.hudDisplayed = YES;
                     self.hud.mode = MBProgressHUDModeCustomView;
                     NSString *localizedSegment = categoryLocalization[@"poi_highlight"] ?: @"poi_highlight";
-                    NSString *localizedManualSkip = LOC(@"ManuallySkipReminder");
-                    self.hud.label.text = [NSString stringWithFormat:localizedManualSkip, localizedSegment, lroundf(poi.startTime)/60, lroundf(poi.startTime)%60, lroundf(poi.startTime)/60, lroundf(poi.startTime)%60];
+                    NSString *localizedManualSkip = LOC(@"ManuallySkipReminderPoi");
+                    self.hud.label.text = [NSString stringWithFormat:localizedManualSkip, localizedSegment, lroundf(poi.startTime)/60, lroundf(poi.startTime)%60];
                     self.hud.label.numberOfLines = 0;
                     [self.hud.button setTitle:LOC(@"Skip") forState:UIControlStateNormal];
                     [self.hud.button addTarget:self action:@selector(skipToHighlight:) forControlEvents:UIControlEventTouchUpInside];
                     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
                     UIImage *cancelImage = [[UIImage systemImageNamed:@"x.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                     [cancelButton setImage:cancelImage forState:UIControlStateNormal];
-                    [cancelButton setTintColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+                    [cancelButton setTintColor:[[UIColor labelColor] colorWithAlphaComponent:0.7]];
                     [cancelButton addTarget:self action:@selector(cancelHUD:) forControlEvents:UIControlEventTouchUpInside];
                     UIView *buttonSuperview = self.hud.button.superview;
                     [buttonSuperview addSubview:cancelButton];
@@ -602,6 +602,9 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         CGFloat beginX = (startTime * self.frame.size.width) / self.totalTime;
         CGFloat endX = (endTime * self.frame.size.width) / self.totalTime;
         CGFloat markerWidth = MAX(endX - beginX, 0);
+        // poi_highlight is a single point (startTime == endTime): give it a fixed visible width
+        BOOL isPoi = [segment.category isEqualToString:@"poi_highlight"];
+        if (isPoi) { markerWidth = 3.0; beginX = MAX(0, beginX - 1.5); }
         
         UIColor *color;
         if ([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
@@ -617,6 +620,7 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
         UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectZero];
         newMarkerView.backgroundColor = color;
         [self addSubview:newMarkerView];
+        [self bringSubviewToFront:newMarkerView];
         newMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
         if (isnan(markerWidth) || !isfinite(beginX)) {
             return;
@@ -691,6 +695,9 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         CGFloat beginX = (startTime * self.frame.size.width) / totalTime;
         CGFloat endX = (endTime * self.frame.size.width) / totalTime;
         CGFloat markerWidth = MAX(endX - beginX, 0);
+        // poi_highlight is a single point (startTime == endTime): give it a fixed visible width
+        BOOL isPoi = [segment.category isEqualToString:@"poi_highlight"];
+        if (isPoi) { markerWidth = 3.0; beginX = MAX(0, beginX - 1.5); }
         
         UIColor *color;
         if ([segment.category isEqualToString:@"sponsor"]) color = colorWithHexString([kCategorySettings objectForKey:@"sponsorColor"]);
@@ -711,9 +718,12 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         UIView *newMarkerView = [[UIView alloc] initWithFrame:CGRectMake(beginX, originY, markerWidth, referenceView.frame.size.height)];
         newMarkerView.userInteractionEnabled = NO;
         newMarkerView.backgroundColor = color;
-        [self insertSubview:newMarkerView belowSubview:scrubber];
+        // insertSubview:aboveSubview: keeps markers above the bar track but below the scrubber
+        [self insertSubview:newMarkerView aboveSubview:referenceView];
         [self.sponsorMarkerViews addObject:newMarkerView];
     }
+    // Keep the scrubber circle on top of all segment markers
+    if (scrubber) [self bringSubviewToFront:scrubber.superview ?: scrubber];
 }
 
 static void updateSkipSegments(YTInlinePlayerBarContainerView *self) {

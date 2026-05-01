@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "手動跳過 %@ 片段\n從 %ld:%02ld 到 %ld:%02ld?";
+"ManuallySkipReminderPoi" = "跳到 %@ 於 %ld:%02ld?";
 "Skip" = "跳過";
 "SkippedSegment" = "已跳過 %@ 片段";
 "Unskip" = "取消跳過";

@@ -74,6 +74,7 @@
 
 /* Pop-ups*/
 "ManuallySkipReminder" = "Elle Geç %@ Bölüm %ld:%02ld 'den %ld:%02ld? 'e";
+"ManuallySkipReminderPoi" = "%@ noktasına %ld:%02ld'de atla?";
 "Skip" = "Geç";
 "SkippedSegment" = "Bölüm %@ Geçildi";
 "Unskip" = "Geçme";
