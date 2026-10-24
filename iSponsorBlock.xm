@@ -645,8 +645,30 @@ void currentVideoTimeDidChange(YTPlayerViewController *self, YTSingleVideoTime *
 
 static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <SponsorSegment *> *arg1) {
     [self removeSponsorMarkers];
-    UIViewController *delegate = [self valueForKey:@"_accessibilityDelegate"];
-    YTPlayerViewController *playerViewController = (YTPlayerViewController *)delegate.parentViewController;
+    if (arg1.count == 0) return;
+
+    // Newer player bars no longer expose the legacy accessibility delegate.
+    // Prefer the owning player, then the responder chain, to preserve whitelisting.
+    YTPlayerViewController *playerViewController = nil;
+    if ([self respondsToSelector:@selector(playerViewController)]) {
+        playerViewController = [(YTSegmentableInlinePlayerBarView *)self playerViewController];
+    }
+    for (UIResponder *responder = self; !playerViewController && responder; responder = responder.nextResponder) {
+        if ([responder isKindOfClass:%c(YTPlayerViewController)]) {
+            playerViewController = (YTPlayerViewController *)responder;
+        }
+    }
+    if (!playerViewController) {
+        @try {
+            id delegate = [self valueForKey:@"_accessibilityDelegate"];
+            if ([delegate isKindOfClass:[UIViewController class]]) {
+                UIViewController *parent = [delegate parentViewController];
+                if ([parent isKindOfClass:%c(YTPlayerViewController)]) {
+                    playerViewController = (YTPlayerViewController *)parent;
+                }
+            }
+        } @catch (id ex) {}
+    }
     if ([kWhitelistedChannels containsObject:playerViewController.channelID]) {
         return;
     }
@@ -667,10 +689,11 @@ static void setSkipSegments(YTModularPlayerBarView *self, NSMutableArray <Sponso
         }
     }
 
-    UIView *referenceView;
+    UIView *referenceView = nil;
     @try {
         referenceView = [[self valueForKey:@"_segmentViews"] firstObject];
-    } @catch (id ex) {
+    } @catch (id ex) {}
+    if (referenceView == nil) {
         for (UIView *subview in self.subviews) {
             if ([subview isKindOfClass:NSClassFromString(@"YTPlayerBarRectangleDecorationView")]
                 || [subview isKindOfClass:NSClassFromString(@"YTPlayerBarProgressDecorationView")]) {
